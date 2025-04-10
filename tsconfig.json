@@ -1,0 +1,20 @@
+{
+  "compilerOptions": {
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "target": "ES2022",
+    "esModuleInterop": true,
+    "noImplicitAny": true,
+    "newLine": "LF",
+    "sourceMap": true,
+    "declarationMap": true,
+    "outDir": "dist",
+    "rootDir": "src",
+    "declaration": true,
+  },
+  "exclude": [
+    "node_modules",
+    "dist",
+    ".git"
+  ],
+}
