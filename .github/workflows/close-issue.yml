@@ -1,0 +1,28 @@
+# https://docs.github.com/en/actions/managing-issues-and-pull-requests/closing-inactive-issues
+# https://github.com/marketplace/actions/close-stale-issues
+name: Close inactive issues
+on:
+  schedule:
+    # Every day at 1:30 UTC -> 10:30 JST
+    - cron: "30 1 * * *"
+
+jobs:
+  close-issues:
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+      pull-requests: write
+    if: github.repository == 'line/line-bot-mcp-server'
+    steps:
+      - uses: actions/stale@5bef64f19d7facfb25b37b414482c7164d639639 # v9.1.0
+        with:
+          days-before-issue-stale: 28 # 4 weeks
+          days-before-issue-close: 0
+          stale-issue-label: "no-activity"
+          close-issue-message: "This issue was closed because it has been inactive for 28 days."
+          exempt-issue-labels: "bug,enhancement,keep"
+          days-before-pr-stale: -1
+          days-before-pr-close: 28
+          stale-pr-label: "no-activity"
+          close-pr-message: "This pull request was closed because it has been inactive for 28 days. Please reopen if you still intend to submit this pull request."
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
