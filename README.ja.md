@@ -36,7 +36,7 @@ LINE公式アカウントとAI Agentを接続するために、LINE Messaging AP
 このリポジトリをクローンします:
 
 ```
-git clone git@github.com/line/line-bot-mcp-server.git
+git clone git@github.com:line/line-bot-mcp-server.git
 ```
 
 Node.jsを利用する場合は、必要な依存関係をインストールし、line-bot-mcp-serverをビルドします。Dockerを利用する場合は不要です。:

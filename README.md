@@ -39,7 +39,7 @@ requirements:
 Clone this repository:
 
 ```
-git clone git@github.com/line/line-bot-mcp-server.git
+git clone git@github.com:line/line-bot-mcp-server.git
 ```
 
 Install the necessary dependencies and build line-bot-mcp-server when using Node.js. This step is not required when using Docker:
