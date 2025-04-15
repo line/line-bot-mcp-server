@@ -20,13 +20,16 @@ import * as line from "@line/bot-sdk";
 import { z } from "zod";
 import pkg from "../package.json" with { type: "json" };
 
+const NO_USER_ID_ERROR =
+  "Error: Specify the userId or set the DESTINATION_USER_ID in the environment variables of this MCP Server.";
+
 const server = new McpServer({
   name: "line-bot",
   version: pkg.version,
 });
 
 const channelAccessToken = process.env.CHANNEL_ACCESS_TOKEN || "";
-const destinationId = process.env.DESTINATION_USER_ID;
+const destinationId = process.env.DESTINATION_USER_ID || "";
 
 const messagingApiClient = new line.messagingApi.MessagingApiClient({
   channelAccessToken: channelAccessToken,
@@ -35,113 +38,157 @@ const messagingApiClient = new line.messagingApi.MessagingApiClient({
   },
 });
 
+function createErrorResponse(message: string) {
+  return {
+    isError: true,
+    content: [
+      {
+        type: "text" as const,
+        text: message,
+      },
+    ],
+  };
+}
+
+function createSuccessResponse(response: object) {
+  return {
+    content: [
+      {
+        type: "text" as const,
+        text: JSON.stringify(response),
+      },
+    ],
+  };
+}
+
+const userIdSchema = z
+  .string()
+  .optional()
+  .default(destinationId)
+  .describe(
+    "The user ID to receive a message. Defaults to DESTINATION_USER_ID.",
+  );
+
+const textMessageSchema = z.object({
+  type: z.literal("text").default("text"),
+  text: z
+    .string()
+    .max(5000)
+    .describe("The plain text content to send to the user."),
+});
+
+const flexMessageSchema = z.object({
+  type: z.literal("flex").default("flex"),
+  altText: z
+    .string()
+    .describe("Alternative text shown when flex message cannot be displayed."),
+  contents: z
+    .object({
+      type: z
+        .enum(["bubble", "carousel"])
+        .describe(
+          "Type of the container. 'bubble' for single container, 'carousel' for multiple swipeable bubbles.",
+        ),
+    })
+    .passthrough()
+    .describe(
+      "Flexible container structure following LINE Flex Message format. For 'bubble' type, can include header, " +
+        "hero, body, footer, and styles sections. For 'carousel' type, includes an array of bubble containers in " +
+        "the 'contents' property.",
+    ),
+});
+
 server.tool(
   "push_text_message",
-  "Push a simple text message to user via LINE. Use this for sending plain text messages without formatting.",
+  "Push a simple text message to a user via LINE. Use this for sending plain text messages without formatting.",
   {
-    userId: z
-      .string()
-      .optional()
-      .describe(
-        "The user ID to receive a message. Defaults to DESTINATION_USER_ID.",
-      ),
-    message: z.object({
-      type: z.literal("text").default("text"),
-      text: z
-        .string()
-        .max(5000)
-        .describe("The plain text content to send to the user."),
-    }),
+    userId: userIdSchema,
+    message: textMessageSchema,
   },
   async ({ userId, message }) => {
-    const to = userId ?? destinationId
-    if (!to) {
-      return {
-        isError: true,
-        content: [
-          {
-            type: "text",
-            text: "Error: Specify the userId or set the DESTINATION_USER_ID in the environment variables of this MCP Server.",
-          },
-        ],
-      };
+    if (!userId) {
+      return createErrorResponse(NO_USER_ID_ERROR);
     }
 
-    const response = await messagingApiClient.pushMessage({
-      to: to,
-      messages: [message as unknown as line.messagingApi.FlexMessage],
-    });
-    return {
-      content: [
-        {
-          type: "text",
-          text: JSON.stringify(response),
-        },
-      ],
-    };
+    try {
+      const response = await messagingApiClient.pushMessage({
+        to: userId,
+        messages: [message as unknown as line.messagingApi.Message],
+      });
+      return createSuccessResponse(response);
+    } catch (error) {
+      return createErrorResponse(`Failed to push message: ${error.message}`);
+    }
   },
 );
 
 server.tool(
   "push_flex_message",
-  "Push a highly customizable flex message to user via LINE. Supports both bubble (single container) and carousel " +
+  "Push a highly customizable flex message to a user via LINE. Supports both bubble (single container) and carousel " +
     "(multiple swipeable bubbles) layouts.",
   {
-    userId: z
-      .string()
-      .optional()
-      .describe(
-        "The user ID to receive a message. Defaults to DESTINATION_USER_ID.",
-      ),
-    message: z.object({
-      type: z.literal("flex").default("flex"),
-      altText: z
-        .string()
-        .describe(
-          "Alternative text shown when flex message cannot be displayed.",
-        ),
-      contents: z
-        .object({
-          type: z
-            .enum(["bubble", "carousel"])
-            .describe(
-              "Type of the container. 'bubble' for single container, 'carousel' for multiple swipeable bubbles.",
-            ),
-        })
-        .passthrough()
-        .describe(
-          "Flexible container structure following LINE Flex Message format. For 'bubble' type, can include header, " +
-            "hero, body, footer, and styles sections. For 'carousel' type, includes an array of bubble containers in " +
-            "the 'contents' property.",
-        ),
-    }),
+    userId: userIdSchema,
+    message: flexMessageSchema,
   },
   async ({ userId, message }) => {
-    const to = userId ?? destinationId
-    if (!to) {
-      return {
-        isError: true,
-        content: [
-          {
-            type: "text",
-            text: "Error: Specify the userId or set the DESTINATION_USER_ID in the environment variables of this MCP Server.",
-          },
-        ],
-      };
+    if (!userId) {
+      return createErrorResponse(NO_USER_ID_ERROR);
     }
 
-    const response = await messagingApiClient.pushMessage({
-      to: to,
-      messages: [message as unknown as line.messagingApi.FlexMessage],
-    });
-    return {
-      content: [
-        {
-          type: "text",
-          text: JSON.stringify(response),
-        },
-      ],
-    };
+    try {
+      const response = await messagingApiClient.pushMessage({
+        to: userId,
+        messages: [message as unknown as line.messagingApi.Message],
+      });
+      return createSuccessResponse(response);
+    } catch (error) {
+      return createErrorResponse(
+        `Failed to push flex message: ${error.message}`,
+      );
+    }
+  },
+);
+
+server.tool(
+  "broadcast_text_message",
+  "Broadcast a simple text message via LINE to all users who have followed your LINE Official Account. Use this for sending " +
+    "plain text messages without formatting. Please be aware that this message will be sent to all users.",
+  {
+    message: textMessageSchema,
+  },
+  async ({ message }) => {
+    try {
+      const response = await messagingApiClient.broadcast({
+        messages: [message as unknown as line.messagingApi.Message],
+      });
+      return createSuccessResponse(response);
+    } catch (error) {
+      return createErrorResponse(
+        `Failed to broadcast message: ${error.message}`,
+      );
+    }
+  },
+);
+
+server.tool(
+  "broadcast_flex_message",
+  "Broadcast a highly customizable flex message via LINE to all users who have added your LINE Official Account. " +
+    "Supports both bubble (single container) and carousel (multiple swipeable bubbles) layouts. Please be aware that " +
+    "this message will be sent to all users.",
+  {
+    message: flexMessageSchema,
+  },
+  async ({ message }) => {
+    try {
+      const response = await messagingApiClient.broadcast({
+        messages: [message as unknown as line.messagingApi.Message],
+      });
+      return createSuccessResponse(response);
+    } catch (error) {
+      return createErrorResponse(
+        `Failed to broadcast message: ${error.message}`,
+      );
+    }
   },
 );
 
@@ -149,38 +196,19 @@ server.tool(
   "get_profile",
   "Get detailed profile information of a LINE user including display name, profile picture URL, status message and language.",
   {
-    userId: z
-      .string()
-      .optional()
-      .describe(
-        "The ID of the user whose profile you want to retrieve. Defaults to DESTINATION_USER_ID.",
-      ),
+    userId: userIdSchema,
   },
   async ({ userId }) => {
-    const targetUserId = userId ?? destinationId
-    if (!targetUserId) {
-      return {
-        isError: true,
-        content: [
-          {
-            type: "text",
-            text: "Error: Specify the userId or set the DESTINATION_USER_ID in the environment variables of this MCP Server.",
-          },
-        ],
-      };
+    if (!userId) {
+      return createErrorResponse(NO_USER_ID_ERROR);
     }
 
-    const response = await messagingApiClient.getProfile(
-      targetUserId,
-    );
-    return {
-      content: [
-        {
-          type: "text",
-          text: JSON.stringify(response),
-        },
-      ],
-    };
+    try {
+      const response = await messagingApiClient.getProfile(userId);
+      return createSuccessResponse(response);
+    } catch (error) {
+      return createErrorResponse(`Failed to get profile: ${error.message}`);
+    }
   },
 );
 
