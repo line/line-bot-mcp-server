@@ -26,7 +26,7 @@ const server = new McpServer({
 });
 
 const channelAccessToken = process.env.CHANNEL_ACCESS_TOKEN || "";
-const destinationId = process.env.DESTINATION_USER_ID || "";
+const destinationId = process.env.DESTINATION_USER_ID;
 
 const messagingApiClient = new line.messagingApi.MessagingApiClient({
   channelAccessToken: channelAccessToken,
@@ -54,8 +54,21 @@ server.tool(
     }),
   },
   async ({ userId, message }) => {
+    const to = userId ?? destinationId
+    if (!to) {
+      return {
+        isError: true,
+        content: [
+          {
+            type: "text",
+            text: "Error: Specify the userId or set the DESTINATION_USER_ID in the environment variables of this MCP Server.",
+          },
+        ],
+      };
+    }
+
     const response = await messagingApiClient.pushMessage({
-      to: userId ?? destinationId,
+      to: to,
       messages: [message as unknown as line.messagingApi.FlexMessage],
     });
     return {
@@ -104,8 +117,21 @@ server.tool(
     }),
   },
   async ({ userId, message }) => {
+    const to = userId ?? destinationId
+    if (!to) {
+      return {
+        isError: true,
+        content: [
+          {
+            type: "text",
+            text: "Error: Specify the userId or set the DESTINATION_USER_ID in the environment variables of this MCP Server.",
+          },
+        ],
+      };
+    }
+
     const response = await messagingApiClient.pushMessage({
-      to: userId ?? destinationId,
+      to: to,
       messages: [message as unknown as line.messagingApi.FlexMessage],
     });
     return {
@@ -131,8 +157,21 @@ server.tool(
       ),
   },
   async ({ userId }) => {
+    const targetUserId = userId ?? destinationId
+    if (!targetUserId) {
+      return {
+        isError: true,
+        content: [
+          {
+            type: "text",
+            text: "Error: Specify the userId or set the DESTINATION_USER_ID in the environment variables of this MCP Server.",
+          },
+        ],
+      };
+    }
+
     const response = await messagingApiClient.getProfile(
-      userId ?? destinationId,
+      targetUserId,
     );
     return {
       content: [
@@ -148,11 +187,6 @@ server.tool(
 async function main() {
   if (!process.env.CHANNEL_ACCESS_TOKEN) {
     console.error("Please set CHANNEL_ACCESS_TOKEN");
-    process.exit(1);
-  }
-
-  if (!process.env.DESTINATION_USER_ID) {
-    console.error("Please set DESTINATION_USER_ID");
     process.exit(1);
   }
 
