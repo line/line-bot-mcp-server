@@ -32,14 +32,16 @@
   "bugs": "https://github.com/line/line-bot-mcp-server/issues",
   "dependencies": {
     "@line/bot-sdk": "^9.8.0",
-    "@modelcontextprotocol/sdk": "^1.8.0"
+    "@modelcontextprotocol/sdk": "^1.8.0",
+    "zod": "^3.24.2"
   },
   "devDependencies": {
     "@types/node": "^22",
+    "prettier": "3.5.3",
     "shx": "^0.4.0",
     "tsx": "^4.19.3",
-    "typescript": "^5.6.2",
-    "prettier": "3.5.3"
+    "typescript": "^5.6.2"
   },
-  "license": "Apache-2.0"
+  "license": "Apache-2.0",
+  "packageManager": "pnpm@10.8.1+sha512.c50088ba998c67b8ca8c99df8a5e02fd2ae2e2b29aaf238feaa9e124248d3f48f9fb6db2424949ff901cffbb5e0f0cc1ad6aedb602cd29450751d11c35023677"
 }
