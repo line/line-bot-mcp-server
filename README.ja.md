@@ -66,7 +66,7 @@ Claude DesktopやClaudeなどのAI Agentに次の設定を追加してくださ�
 環境変数や引数は次のように設定してください:
 
 - `mcpServers.args`: (必須) `line-bot-mcp-server`へのパス。
-- `CHANNEL_ACCESS_TOKEN`: (必須) チャンネルアクセストークン。これを確認するには、[こちらの手順](https://developers.line.biz/ja/docs/basics/channel-access-token/#long-lived-channel-access-token)に従ってください。
+- `CHANNEL_ACCESS_TOKEN`: (必須) チャネルアクセストークン。これを確認するには、[こちらの手順](https://developers.line.biz/ja/docs/basics/channel-access-token/#long-lived-channel-access-token)に従ってください。
 - `DESTINATION_USER_ID`: (オプション) デフォルトのメッセージ受信者のユーザーID。これを確認するには、[こちらの手順](https://developers.line.biz/ja/docs/messaging-api/getting-user-ids/#get-own-user-id)に従ってください。
 
 #### Option 1: Node.jsを利用する場合
