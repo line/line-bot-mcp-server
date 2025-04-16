@@ -47,11 +47,11 @@ cd line-bot-mcp-server && npm install && npm run build
 
 ### Step 2: チャンネルアクセストークンを取得
 
-このMCP ServerはLINE公式アカウントを利用しています。公式アカウントをお持ちでない場合は、[こちらの手順](https://www.linebiz.com/jp-en/manual/OfficialAccountManager/new_account/)に従って作成してください。
+このMCP ServerはLINE公式アカウントを利用しています。公式アカウントをお持ちでない場合は、[こちらの手順](https://developers.line.biz/ja/docs/messaging-api/getting-started)に従って作成してください。
 
-Messaging APIに接続するには、チャンネルアクセストークンが必要です。これを確認するには、[こちらの手順](https://developers.line.biz/en/docs/basics/channel-access-token/#long-lived-channel-access-token)に従ってください。
+Messaging APIに接続するには、チャンネルアクセストークンが必要です。これを確認するには、[こちらの手順](https://developers.line.biz/ja/docs/basics/channel-access-token/#long-lived-channel-access-token)に従ってください。
 
-加えて、メッセージの受信者のユーザーIDも必要です。これを確認するには、[こちらの手順](https://developers.line.biz/en/docs/messaging-api/getting-user-ids/#get-own-user-id)に従ってください。
+加えて、メッセージの受信者のユーザーIDも必要です。これを確認するには、[こちらの手順](https://developers.line.biz/ja/docs/messaging-api/getting-user-ids/#get-own-user-id)に従ってください。
 
 
 ### Step 3: AI Agentを設定

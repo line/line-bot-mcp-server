@@ -50,7 +50,7 @@ cd line-bot-mcp-server && npm install && npm run build
 
 ### Step 2: Get a channel access token
 
-This MCP server utilizes a LINE Official Account. If you do not have one, please create it by following [this instructions](https://www.linebiz.com/jp-en/manual/OfficialAccountManager/new_account/). 
+This MCP server utilizes a LINE Official Account. If you do not have one, please create it by following [this instructions](https://developers.line.biz/en/docs/messaging-api/getting-started/). 
 
 To connect to the Messaging API, you need to have a channel access token. You can confirm this by following [this instructions](https://developers.line.biz/en/docs/basics/channel-access-token/#long-lived-channel-access-token).
 
