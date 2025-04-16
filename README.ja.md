@@ -47,9 +47,11 @@ cd line-bot-mcp-server && npm install && npm run build
 
 ### Step 2: チャネルアクセストークンを取得
 
-このMCP ServerはLINE公式アカウントを利用しています。公式アカウントをお持ちでない場合は、[こちらの手順](https://developers.line.biz/ja/docs/messaging-api/getting-started)に従って作成してください。
+このMCP ServerはLINE公式アカウントを利用しています。公式アカウントをお持ちでない場合は、[こちらの手順](https://developers.line.biz/ja/docs/messaging-api/getting-started/#create-oa)に従って作成してください。
 
-Messaging APIに接続するには、チャネルアクセストークンが必要です。これを確認するには、[こちらの手順](https://developers.line.biz/ja/docs/basics/channel-access-token/#long-lived-channel-access-token)に従ってください。
+LINE公式アカウントをお持ちであれば、[こちらの手順](/docs/messaging-api/getting-started/#using-oa-manager)に従ってMessaging APIを有効にしてください。
+
+Messaging APIに接続するには、チャネルアクセストークンが必要です。チャネルアクセストークンを取得するには、[こちらの手順](https://developers.line.biz/ja/docs/basics/channel-access-token/#long-lived-channel-access-token)に従ってください。
 
 加えて、メッセージの受信者のユーザーIDも必要です。これを確認するには、[こちらの手順](https://developers.line.biz/ja/docs/messaging-api/getting-user-ids/#get-own-user-id)に従ってください。
 
