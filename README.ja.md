@@ -45,11 +45,11 @@ Node.jsを利用する場合は、必要な依存関係をインストールし�
 cd line-bot-mcp-server && npm install && npm run build
 ```
 
-### Step 2: チャンネルアクセストークンを取得
+### Step 2: チャネルアクセストークンを取得
 
 このMCP ServerはLINE公式アカウントを利用しています。公式アカウントをお持ちでない場合は、[こちらの手順](https://developers.line.biz/ja/docs/messaging-api/getting-started)に従って作成してください。
 
-Messaging APIに接続するには、チャンネルアクセストークンが必要です。これを確認するには、[こちらの手順](https://developers.line.biz/ja/docs/basics/channel-access-token/#long-lived-channel-access-token)に従ってください。
+Messaging APIに接続するには、チャネルアクセストークンが必要です。これを確認するには、[こちらの手順](https://developers.line.biz/ja/docs/basics/channel-access-token/#long-lived-channel-access-token)に従ってください。
 
 加えて、メッセージの受信者のユーザーIDも必要です。これを確認するには、[こちらの手順](https://developers.line.biz/ja/docs/messaging-api/getting-user-ids/#get-own-user-id)に従ってください。
 
@@ -57,7 +57,7 @@ Messaging APIに接続するには、チャンネルアクセストークンが�
 ### Step 3: AI Agentを設定
 
 Claude DesktopやClaudeなどのAI Agentに次の設定を追加してください。
-`CHANNEL_ACCESS_TOKEN`と`DESTINATION_USER_ID`には、先ほど取得したチャンネルアクセストークンとユーザーIDをそれぞれ挿入してください。
+`CHANNEL_ACCESS_TOKEN`と`DESTINATION_USER_ID`には、先ほど取得したチャネルアクセストークンとユーザーIDをそれぞれ挿入してください。
 加えて、`mcpServers.args`にある`line-bot-mcp-server`へのパスを更新してください。
 
 #### Option 1: Node.jsを利用する場合
