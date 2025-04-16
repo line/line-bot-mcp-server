@@ -60,7 +60,7 @@ cd line-bot-mcp-server && npm install && npm run build
 
 ### Step 2: Create LINE Official Account
 
-This MCP server utilizes a LINE Official Account. If you do not have one, please create it by following [this instructions](https://www.linebiz.com/jp-en/manual/OfficialAccountManager/new_account/).
+This MCP server utilizes a LINE Official Account. If you do not have one, please create it by following [this instructions](https://developers.line.biz/en/docs/messaging-api/getting-started/).
 
 ### Step 3: Configure AI Agent
 
