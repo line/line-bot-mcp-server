@@ -63,7 +63,6 @@ function createSuccessResponse(response: object) {
 
 const userIdSchema = z
   .string()
-  .optional()
   .default(destinationId)
   .describe(
     "The user ID to receive a message. Defaults to DESTINATION_USER_ID.",
