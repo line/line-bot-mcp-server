@@ -60,7 +60,7 @@ cd line-bot-mcp-server && npm install && npm run build
 
 このMCP ServerはLINE公式アカウントを利用しています。公式アカウントをお持ちでない場合は、[こちらの手順](https://developers.line.biz/ja/docs/messaging-api/getting-started/#create-oa)に従って作成してください。
 
-LINE公式アカウントをお持ちであれば、[こちらの手順](/docs/messaging-api/getting-started/#using-oa-manager)に従ってMessaging APIを有効にしてください。
+LINE公式アカウントをお持ちであれば、[こちらの手順](https://developers.line.biz/ja/docs/messaging-api/getting-started/#using-oa-manager)に従ってMessaging APIを有効にしてください。
 
 ### Step 3: AI Agentを設定
 
