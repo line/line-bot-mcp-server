@@ -122,3 +122,13 @@ docker build -t line/line-bot-mcp-server .
   }
 }
 ```
+
+## Versioning
+
+This project respects semantic versioning
+
+See http://semver.org/
+
+## Contributing
+
+Please check [CONTRIBUTING](./CONTRIBUTING.md) before making a contribution.
