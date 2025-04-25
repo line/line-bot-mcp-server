@@ -13,7 +13,6 @@
   "files": [
     "dist"
   ],
-  "main": "src/index.ts",
   "scripts": {
     "build": "tsc && shx chmod +x dist/*.js",
     "prettier": "prettier \"src/**/*.ts\"",
