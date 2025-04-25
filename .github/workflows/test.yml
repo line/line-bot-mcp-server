@@ -31,6 +31,8 @@ jobs:
         run: npm ci
       - name: Build
         run: npm run build
+      - name: publint
+        run: npx publint
 
   pinact:
     runs-on: ubuntu-latest
