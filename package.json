@@ -1,23 +1,26 @@
 {
   "name": "@line/line-bot-mcp-server",
-  "version": "0.0.1",
+  "version": "0.0.1-local",
   "description": "MCP server for interacting with your LINE Official Account",
   "type": "module",
   "engines": {
     "node": ">=20"
   },
   "module": "./dist/index.js",
+  "bin": {
+    "line-bot-mcp-server": "./dist/index.js"
+  },
   "files": [
     "dist"
   ],
-  "main": "src/index.ts",
   "scripts": {
     "build": "tsc && shx chmod +x dist/*.js",
     "prettier": "prettier \"src/**/*.ts\"",
     "format": "npm run prettier -- --write",
     "format:check": "npm run prettier -- -l",
     "clean": "rm -rf dist/*",
-    "prebuild": "npm run format:check && npm run clean"
+    "prebuild": "npm run format:check && npm run clean",
+    "release": "npm run build && npm publish --provenance --access public"
   },
   "repository": {
     "type": "git",

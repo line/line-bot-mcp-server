@@ -31,6 +31,10 @@ jobs:
         run: npm ci
       - name: Build
         run: npm run build
+      - name: Install pnpm  # For publint
+        run: npm install -g pnpm
+      - name: publint
+        run: npx publint
 
   pinact:
     runs-on: ubuntu-latest
