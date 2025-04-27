@@ -41,17 +41,28 @@ LINE公式アカウントとAI Agentを接続するために、LINE Messaging AP
    - LINE公式アカウントのメッセージ容量と消費量を取得します。月間メッセージ制限と現在の使用量が表示されます。
    - **入力:**
      - なし
+7. **get_follower_ids**
+   - LINE公式アカウントを友だち追加したユーザーのユーザーID一覧を取得します。
+   - **入力:**
+     - `start` (string?): ページネーション用の継続トークン。省略時は先頭から取得します。
+     - `limit` (number?): 取得するユーザーIDの最大数（1～1000）。デフォルトは1000。
+   - **出力:**
+     - `userIds` (配列): ユーザーIDのリスト。
+     - `next` (string?): 次ページ取得用トークン。存在する場合はこの値で再度リクエストしてください。
+     - `total` (number?): ユーザーIDの総数（取得できる場合）。
+   - **注意:**
+     - 認証済みまたはプレミアムアカウントのみ利用可能です。
+     - 一部ユーザーIDはプライバシーやユーザー操作により取得できない場合があります（詳細は[こちら](https://developers.line.biz/ja/reference/messaging-api/#get-follower-ids-obtainable-ids)を参照してください）。
 
 ## インストール (npxを使用)
 
 要件:
+
 - Node.js v20 以上
 
 ### Step 1: LINE公式アカウントを作成
 
 このMCP ServerはLINE公式アカウントを利用しています。公式アカウントをお持ちでない場合は、[こちらの手順](https://developers.line.biz/ja/docs/messaging-api/getting-started/#create-oa)に従って作成してください。
-
-LINE公式アカウントをお持ちであれば、[こちらの手順](https://developers.line.biz/ja/docs/messaging-api/getting-started/#using-oa-manager)に従ってMessaging APIを有効にしてください。
 
 ### Step 2: AI Agentを設定
 
@@ -96,6 +107,7 @@ git clone git@github.com:line/line-bot-mcp-server.git
 ```
 
 Dockerイメージをビルドします:
+
 ```
 docker build -t line/line-bot-mcp-server .
 ```
