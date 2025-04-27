@@ -218,8 +218,21 @@ server.tool(
   "get_follower_ids",
   "Gets the list of User IDs of users who have added your LINE Official Account as a friend.",
   {
-    start: z.string().optional().describe("Continuation token for pagination. If omitted, fetches from the beginning."),
-    limit: z.number().int().min(1).max(1000).optional().describe("Maximum number of user IDs to retrieve (1-1000). Default is 1000."),
+    start: z
+      .string()
+      .optional()
+      .describe(
+        "Continuation token for pagination. If omitted, fetches from the beginning.",
+      ),
+    limit: z
+      .number()
+      .int()
+      .min(1)
+      .max(1000)
+      .optional()
+      .describe(
+        "Maximum number of user IDs to retrieve (1-1000). Default is 1000.",
+      ),
   },
   async ({ start, limit }) => {
     try {
@@ -234,7 +247,9 @@ server.tool(
       });
       return createSuccessResponse(res.data);
     } catch (error) {
-      return createErrorResponse(`Failed to get follower ids: ${error.message}`);
+      return createErrorResponse(
+        `Failed to get follower ids: ${error.message}`,
+      );
     }
   },
 );
