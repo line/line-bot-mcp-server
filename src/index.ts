@@ -21,6 +21,7 @@ import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js"
 import * as line from "@line/bot-sdk";
 import { z } from "zod";
 import pkg from "../package.json" with { type: "json" };
+import axios from "axios";
 
 const NO_USER_ID_ERROR =
   "Error: Specify the userId or set the DESTINATION_USER_ID in the environment variables of this MCP Server.";
@@ -209,6 +210,31 @@ server.tool(
       return createSuccessResponse(response);
     } catch (error) {
       return createErrorResponse(`Failed to get profile: ${error.message}`);
+    }
+  },
+);
+
+server.tool(
+  "get_follower_ids",
+  "Gets the list of User IDs of users who have added your LINE Official Account as a friend.",
+  {
+    start: z.string().optional().describe("Continuation token for pagination. If omitted, fetches from the beginning."),
+    limit: z.number().int().min(1).max(1000).optional().describe("Maximum number of user IDs to retrieve (1-1000). Default is 1000."),
+  },
+  async ({ start, limit }) => {
+    try {
+      const params = new URLSearchParams();
+      if (limit) params.append("limit", limit.toString());
+      if (start) params.append("start", start);
+      const res = await axios.get("https://api.line.me/v2/bot/followers/ids", {
+        params,
+        headers: {
+          Authorization: `Bearer ${channelAccessToken}`,
+        },
+      });
+      return createSuccessResponse(res.data);
+    } catch (error) {
+      return createErrorResponse(`Failed to get follower ids: ${error.message}`);
     }
   },
 );

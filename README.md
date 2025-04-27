@@ -37,13 +37,25 @@
    - Get detailed profile information of a LINE user including display name, profile picture URL, status message and language.
    - **Inputs:**
      - `user_id` (string?): The ID of the user whose profile you want to retrieve. Defaults to DESTINATION_USER_ID.
-
+6. **get_follower_ids**
+   - Gets the list of User IDs of users who have added your LINE Official Account as a friend.
+   - **Inputs:**
+     - `start` (string, optional): Continuation token for pagination. If omitted, fetches from the beginning.
+     - `limit` (number, optional): Maximum number of user IDs to retrieve (1-1000). Default is 1000.
+   - **Returns:**
+     - `userIds` (array): List of user IDs.
+     - `next` (string, optional): Token for the next page. If present, repeat the request with this value to get more user IDs.
+     - `total` (number, optional): Total number of user IDs (if available).
+   - **Notes:**
+     - Only available for verified or premium accounts.
+     - Some user IDs may not be included due to privacy or user actions (see LINE API docs for details).
 
 ## Installation
 
 ### Step 1: Install line-bot-mcp-server
 
 requirements:
+
 - Node.js v20 or later
 
 Clone this repository:
@@ -60,15 +72,16 @@ cd line-bot-mcp-server && npm install && npm run build
 
 ### Step 2: Create LINE Official Account
 
-This MCP server utilizes a LINE Official Account. If you do not have one, please create it by following [this instructions](https://developers.line.biz/en/docs/messaging-api/getting-started/#create-oa). 
+This MCP server utilizes a LINE Official Account. If you do not have one, please create it by following [this instructions](https://developers.line.biz/en/docs/messaging-api/getting-started/#create-oa).
 
 If you have a LINE Official Account, enable the Messaging API for your LINE Official Account by following [this instructions](https://developers.line.biz/en/docs/messaging-api/getting-started/#using-oa-manager).
 
 ### Step 3: Configure AI Agent
 
-Please add the following configuration for an AI Agent like Claude Desktop or Cline. 
+Please add the following configuration for an AI Agent like Claude Desktop or Cline.
 
 Set the environment variables or arguments as follows:
+
 - `mcpServers.args`: (required) The path to `line-bot-mcp-server`.
 - `CHANNEL_ACCESS_TOKEN`: (required) Channel Access Token. You can confirm this by following [this instructions](https://developers.line.biz/en/docs/basics/channel-access-token/#long-lived-channel-access-token).
 - `DESTINATION_USER_ID`: (optional) The default user ID of the recipient. You can confirm this by following [this instructions](https://developers.line.biz/en/docs/messaging-api/getting-user-ids/#get-own-user-id).
@@ -95,6 +108,7 @@ Set the environment variables or arguments as follows:
 #### Option 2: Use Docker
 
 Build the Docker image first:
+
 ```
 docker build -t line/line-bot-mcp-server .
 ```
@@ -127,7 +141,7 @@ docker build -t line/line-bot-mcp-server .
 
 This project respects semantic versioning
 
-See http://semver.org/
+See <http://semver.org/>
 
 ## Contributing
 
