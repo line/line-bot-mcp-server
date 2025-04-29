@@ -215,7 +215,7 @@ server.tool(
 
 server.tool(
   "push_api_limit",
-  "Push message API is limited messages per month. Use this tool to check the current limit and remaining quota.",
+  "Push message API is limited messages per month. This tool provides the current limit and remaining quota.",
   {},
   async () => {
     const response = await messagingApiClient.getMessageQuota();
@@ -232,7 +232,7 @@ server.tool(
 
 server.tool(
   "push_api_total_usage",
-  "Check the total usage of the push message API.",
+  "Check the total usage of the push message API. This tool provides the total number of messages sent and the remaining quota.",
   {},
   async () => {
     const response = await messagingApiClient.getMessageQuotaConsumption();

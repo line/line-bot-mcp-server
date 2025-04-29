@@ -37,7 +37,14 @@
    - Get detailed profile information of a LINE user including display name, profile picture URL, status message and language.
    - **Inputs:**
      - `user_id` (string?): The ID of the user whose profile you want to retrieve. Defaults to DESTINATION_USER_ID.
-
+6. **push_api_limit**
+  - Push message API is limited messages per month. This tool provides the current limit and remaining quota.
+  - **Inputs:**
+    - None
+7. **push_api_total_usage**
+  - Check the total usage of the push message API. This tool provides the total number of messages sent and the remaining quota.
+  - **Inputs:**
+    - None
 
 ## Installation
 
