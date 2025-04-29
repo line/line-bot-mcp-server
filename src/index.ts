@@ -213,6 +213,40 @@ server.tool(
   },
 );
 
+server.tool(
+  "push_api_limit",
+  "Push message API is limited messages per month. Use this tool to check the current limit and remaining quota.",
+  {},
+  async () => {
+    const response = await messagingApiClient.getMessageQuota();
+    return {
+      content: [
+        {
+          type: "text",
+          text: JSON.stringify(response),
+        },
+      ],
+    };
+  },
+);
+
+server.tool(
+  "push_api_total_usage",
+  "Check the total usage of the push message API.",
+  {},
+  async () => {
+    const response = await messagingApiClient.getMessageQuotaConsumption();
+    return {
+      content: [
+        {
+          type: "text",
+          text: JSON.stringify(response),
+        },
+      ],
+    };
+  },
+);
+
 async function main() {
   if (!process.env.CHANNEL_ACCESS_TOKEN) {
     console.error("Please set CHANNEL_ACCESS_TOKEN");
