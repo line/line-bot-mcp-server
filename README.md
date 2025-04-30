@@ -2,6 +2,8 @@
 
 # LINE Bot MCP Server
 
+[![npmjs](https://badge.fury.io/js/%40line%2Fline-bot-mcp-server.svg)](https://www.npmjs.com/package/@line/line-bot-mcp-server)
+
 [Model Context Protocol (MCP)](https://github.com/modelcontextprotocol) server implementation that integrates the LINE Messaging API to connect an AI Agent to the LINE Official Account.
 
 ![](/assets/demo.png)
