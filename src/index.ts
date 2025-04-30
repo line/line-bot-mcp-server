@@ -214,36 +214,18 @@ server.tool(
 );
 
 server.tool(
-  "push_api_limit",
-  "Push message API is limited messages per month. This tool provides the current limit and remaining quota.",
+  "get_message_quota",
+  "Get the message quota and consumption of the LINE Official Account. This shows the monthly message limit and current usage.",
   {},
   async () => {
-    const response = await messagingApiClient.getMessageQuota();
-    return {
-      content: [
-        {
-          type: "text",
-          text: JSON.stringify(response),
-        },
-      ],
+    const messageQuotaResponse = await messagingApiClient.getMessageQuota();
+    const messageQuotaConsumptionResponse =
+      await messagingApiClient.getMessageQuotaConsumption();
+    const response = {
+      limited: messageQuotaResponse.value,
+      totalUsage: messageQuotaConsumptionResponse.totalUsage,
     };
-  },
-);
-
-server.tool(
-  "push_api_total_usage",
-  "Check the total usage of the push message API. This tool provides the total number of messages sent and the remaining quota.",
-  {},
-  async () => {
-    const response = await messagingApiClient.getMessageQuotaConsumption();
-    return {
-      content: [
-        {
-          type: "text",
-          text: JSON.stringify(response),
-        },
-      ],
-    };
+    return createSuccessResponse(response);
   },
 );
 
