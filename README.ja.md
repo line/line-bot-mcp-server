@@ -36,57 +36,33 @@ LINE公式アカウントとAI Agentを接続するために、LINE Messaging AP
    - **Inputs:**
       - `user_id` (string?): プロフィールを取得したいユーザーのユーザーID。デフォルトはDESTINATION_USER_ID。
 
-## インストール
-
-### Step 1: line-bot-mcp-serverをインストール
+## インストール (npxを使用)
 
 要件:
 - Node.js v20 以上
 
-このリポジトリをクローンします:
-
-```
-git clone git@github.com:line/line-bot-mcp-server.git
-```
-
-Node.jsを利用する場合は、必要な依存関係をインストールし、line-bot-mcp-serverをビルドします。Dockerを利用する場合は不要です。:
-
-```
-cd line-bot-mcp-server && npm install && npm run build
-```
-
-
-### Step 2: LINE公式アカウントを作成
+### Step 1: LINE公式アカウントを作成
 
 このMCP ServerはLINE公式アカウントを利用しています。公式アカウントをお持ちでない場合は、[こちらの手順](https://developers.line.biz/ja/docs/messaging-api/getting-started/#create-oa)に従って作成してください。
 
 LINE公式アカウントをお持ちであれば、[こちらの手順](https://developers.line.biz/ja/docs/messaging-api/getting-started/#using-oa-manager)に従ってMessaging APIを有効にしてください。
 
-### Step 3: AI Agentを設定
+### Step 2: AI Agentを設定
 
 Claude DesktopやClaudeなどのAI Agentに次の設定を追加してください。
 
 環境変数や引数は次のように設定してください:
 
-- `mcpServers.args`: (必須) `line-bot-mcp-server`へのパス。
 - `CHANNEL_ACCESS_TOKEN`: (必須) チャネルアクセストークン。これを取得するには、[こちらの手順](https://developers.line.biz/ja/docs/basics/channel-access-token/#long-lived-channel-access-token)に従ってください。
 - `DESTINATION_USER_ID`: (オプション) デフォルトのメッセージ受信者のユーザーID。これを確認するには、[こちらの手順](https://developers.line.biz/ja/docs/messaging-api/getting-user-ids/#get-own-user-id)に従ってください。
-
-### Step 3: AI Agentを設定
-
-Claude DesktopやClaudeなどのAI Agentに次の設定を追加してください。
-`CHANNEL_ACCESS_TOKEN`と`DESTINATION_USER_ID`には、先ほど取得したチャネルアクセストークンとユーザーIDをそれぞれ挿入してください。
-加えて、`mcpServers.args`にある`line-bot-mcp-server`へのパスを更新してください。
-
-#### Option 1: Node.jsを利用する場合
 
 ```json
 {
   "mcpServers": {
     "line-bot": {
-      "command": "node",
+      "command": "npx",
       "args": [
-        "PATH/TO/line-bot-mcp-server/dist/index.js"
+        "@line/line-bot-mcp-server"
       ],
       "env": {
         "CHANNEL_ACCESS_TOKEN" : "FILL_HERE",
@@ -97,14 +73,36 @@ Claude DesktopやClaudeなどのAI Agentに次の設定を追加してくださ�
 }
 ```
 
-#### Option 2: Dockerを利用する場合
+## インストール (Dockerを使用)
 
-まずDockerイメージをビルドします:
+### Step 1: LINE公式アカウントを作成
+
+このMCP ServerはLINE公式アカウントを利用しています。公式アカウントをお持ちでない場合は、[こちらの手順](https://developers.line.biz/ja/docs/messaging-api/getting-started/#create-oa)に従って作成してください。
+
+LINE公式アカウントをお持ちであれば、[こちらの手順](https://developers.line.biz/ja/docs/messaging-api/getting-started/#using-oa-manager)に従ってMessaging APIを有効にしてください。
+
+### Step 2: line-bot-mcp-serverをインストール
+
+このリポジトリをクローンします:
+
+```
+git clone git@github.com:line/line-bot-mcp-server.git
+```
+
+Dockerイメージをビルドします:
 ```
 docker build -t line/line-bot-mcp-server .
 ```
 
-次のように設定します:
+### Step 3: AI Agentを設定
+
+Claude DesktopやClaudeなどのAI Agentに次の設定を追加してください。
+
+環境変数や引数は次のように設定してください:
+
+- `mcpServers.args`: (必須) `line-bot-mcp-server`へのパス。
+- `CHANNEL_ACCESS_TOKEN`: (必須) チャネルアクセストークン。これを取得するには、[こちらの手順](https://developers.line.biz/ja/docs/basics/channel-access-token/#long-lived-channel-access-token)に従ってください。
+- `DESTINATION_USER_ID`: (オプション) デフォルトのメッセージ受信者のユーザーID。これを確認するには、[こちらの手順](https://developers.line.biz/ja/docs/messaging-api/getting-user-ids/#get-own-user-id)に従ってください。
 
 ```json
 {
