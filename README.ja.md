@@ -56,7 +56,7 @@ Claude DesktopやClaudeなどのAI Agentに次の設定を追加してくださ�
 環境変数や引数は次のように設定してください:
 
 - `CHANNEL_ACCESS_TOKEN`: (必須) チャネルアクセストークン。これを取得するには、[こちらの手順](https://developers.line.biz/ja/docs/basics/channel-access-token/#long-lived-channel-access-token)に従ってください。
-- `DESTINATION_USER_ID`: (オプション) デフォルトのメッセージ受信者のユーザーID。`user_id`または`DESTINATION_USER_ID`のどちらか一方は必ず設定する必要があります。これを確認するには、[こちらの手順](https://developers.line.biz/ja/docs/messaging-api/getting-user-ids/#get-own-user-id)に従ってください。
+- `DESTINATION_USER_ID`: (オプション) デフォルトのメッセージ受信者のユーザーID。Toolの入力に`user_id`が含まれる場合、`user_id`または`DESTINATION_USER_ID`のどちらか一方は必ず設定する必要があります。これを確認するには、[こちらの手順](https://developers.line.biz/ja/docs/messaging-api/getting-user-ids/#get-own-user-id)に従ってください。
 
 ```json
 {
