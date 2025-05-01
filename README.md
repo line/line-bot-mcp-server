@@ -59,7 +59,7 @@ Please add the following configuration for an AI Agent like Claude Desktop or Cl
 Set the environment variables or arguments as follows:
 
 - `CHANNEL_ACCESS_TOKEN`: (required) Channel Access Token. You can confirm this by following [this instructions](https://developers.line.biz/en/docs/basics/channel-access-token/#long-lived-channel-access-token).
-- `DESTINATION_USER_ID`: (optional) The default user ID of the recipient. If the Tool's input includes user_id, either `user_id` or `DESTINATION_USER_ID` must be set. You can confirm this by following [this instructions](https://developers.line.biz/en/docs/messaging-api/getting-user-ids/#get-own-user-id).
+- `DESTINATION_USER_ID`: (optional) The default user ID of the recipient. If the Tool's input does not include `user_id`, `DESTINATION_USER_ID` is required. You can confirm this by following [this instructions](https://developers.line.biz/en/docs/messaging-api/getting-user-ids/#get-own-user-id).
 
 ```json
 {
@@ -109,7 +109,8 @@ Set the environment variables or arguments as follows:
 
 - `mcpServers.args`: (required) The path to `line-bot-mcp-server`.
 - `CHANNEL_ACCESS_TOKEN`: (required) Channel Access Token. You can confirm this by following [this instructions](https://developers.line.biz/en/docs/basics/channel-access-token/#long-lived-channel-access-token).
-- `DESTINATION_USER_ID`: (optional) The default user ID of the recipient. You can confirm this by following [this instructions](https://developers.line.biz/en/docs/messaging-api/getting-user-ids/#get-own-user-id).
+- `DESTINATION_USER_ID`: (optional) The default user ID of the recipient. If the Tool's input does not include `user_id`, `DESTINATION_USER_ID` is required.
+You can confirm this by following [this instructions](https://developers.line.biz/en/docs/messaging-api/getting-user-ids/#get-own-user-id).
 
 
 ```json
