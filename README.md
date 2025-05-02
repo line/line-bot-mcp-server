@@ -2,6 +2,8 @@
 
 # LINE Bot MCP Server
 
+[![npmjs](https://badge.fury.io/js/%40line%2Fline-bot-mcp-server.svg)](https://www.npmjs.com/package/@line/line-bot-mcp-server)
+
 [Model Context Protocol (MCP)](https://github.com/modelcontextprotocol) server implementation that integrates the LINE Messaging API to connect an AI Agent to the LINE Official Account.
 
 ![](/assets/demo.png)
@@ -50,13 +52,54 @@
      - Only available for verified or premium accounts.
      - Some user IDs may not be included due to privacy or user actions (see LINE API docs for details).
 
-## Installation
-
-### Step 1: Install line-bot-mcp-server
+## Installation (Using npx)
 
 requirements:
 
 - Node.js v20 or later
+
+### Step 1: Create LINE Official Account
+
+This MCP server utilizes a LINE Official Account. If you do not have one, please create it by following [this instructions](https://developers.line.biz/en/docs/messaging-api/getting-started/#create-oa).
+
+If you have a LINE Official Account, enable the Messaging API for your LINE Official Account by following [this instructions](https://developers.line.biz/en/docs/messaging-api/getting-started/#using-oa-manager).
+
+### Step 2: Configure AI Agent
+
+Please add the following configuration for an AI Agent like Claude Desktop or Cline.
+
+Set the environment variables or arguments as follows:
+
+- `CHANNEL_ACCESS_TOKEN`: (required) Channel Access Token. You can confirm this by following [this instructions](https://developers.line.biz/en/docs/basics/channel-access-token/#long-lived-channel-access-token).
+- `DESTINATION_USER_ID`: (optional) The default user ID of the recipient. You can confirm this by following [this instructions](https://developers.line.biz/en/docs/messaging-api/getting-user-ids/#get-own-user-id).
+
+```json
+{
+  "mcpServers": {
+    "line-bot": {
+      "command": "npx",
+      "args": [
+        "@line/line-bot-mcp-server"
+      ],
+      "env": {
+        "CHANNEL_ACCESS_TOKEN" : "FILL_HERE",
+        "DESTINATION_USER_ID" : "FILL_HERE"
+      }
+    }
+  }
+}
+```
+
+## Installation (Using Docker)
+
+### Step 1: Create LINE Official Account
+
+This MCP server utilizes a LINE Official Account. If you do not have one, please create it by following [this instructions](https://developers.line.biz/en/docs/messaging-api/getting-started/#create-oa).
+
+If you have a LINE Official Account, enable the Messaging API for your LINE Official Account by following [this instructions](https://developers.line.biz/en/docs/messaging-api/getting-started/#using-oa-manager).
+
+
+### Step 2: Build line-bot-mcp-server image
 
 Clone this repository:
 
@@ -64,17 +107,11 @@ Clone this repository:
 git clone git@github.com:line/line-bot-mcp-server.git
 ```
 
-Install the necessary dependencies and build line-bot-mcp-server when using Node.js. This step is not required when using Docker:
+Build the Docker image:
 
 ```
-cd line-bot-mcp-server && npm install && npm run build
+docker build -t line/line-bot-mcp-server .
 ```
-
-### Step 2: Create LINE Official Account
-
-This MCP server utilizes a LINE Official Account. If you do not have one, please create it by following [this instructions](https://developers.line.biz/en/docs/messaging-api/getting-started/#create-oa).
-
-If you have a LINE Official Account, enable the Messaging API for your LINE Official Account by following [this instructions](https://developers.line.biz/en/docs/messaging-api/getting-started/#using-oa-manager).
 
 ### Step 3: Configure AI Agent
 
@@ -86,32 +123,6 @@ Set the environment variables or arguments as follows:
 - `CHANNEL_ACCESS_TOKEN`: (required) Channel Access Token. You can confirm this by following [this instructions](https://developers.line.biz/en/docs/basics/channel-access-token/#long-lived-channel-access-token).
 - `DESTINATION_USER_ID`: (optional) The default user ID of the recipient. You can confirm this by following [this instructions](https://developers.line.biz/en/docs/messaging-api/getting-user-ids/#get-own-user-id).
 
-#### Option 1: Use Node
-
-```json
-{
-  "mcpServers": {
-    "line-bot": {
-      "command": "node",
-      "args": [
-        "PATH/TO/line-bot-mcp-server/dist/index.js"
-      ],
-      "env": {
-        "CHANNEL_ACCESS_TOKEN" : "FILL_HERE",
-        "DESTINATION_USER_ID" : "FILL_HERE"
-      }
-    }
-  }
-}
-```
-
-#### Option 2: Use Docker
-
-Build the Docker image first:
-
-```
-docker build -t line/line-bot-mcp-server .
-```
 
 ```json
 {
