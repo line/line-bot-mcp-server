@@ -35,8 +35,13 @@ LINE公式アカウントとAI Agentを接続するために、LINE Messaging AP
      - `message.contents.type` (enum): コンテナのタイプ。'bubble'は単一コンテナ、'carousel'は複数のスワイプ可能なバブルを示す。
 5. **get_profile**
    - LINEユーザーの詳細なプロフィール情報を取得する。表示名、プロフィール画像URL、ステータスメッセージ、言語を取得できる。
-   - **Inputs:**
+   - **入力:**
       - `user_id` (string?): プロフィールを取得したいユーザーのユーザーID。デフォルトはDESTINATION_USER_ID。
+6. **get_message_quota**
+   - LINE公式アカウントのメッセージ容量と消費量を取得します。月間メッセージ制限と現在の使用量が表示されます。
+   - **入力:**
+     - なし
+
 
 ## インストール (npxを使用)
 

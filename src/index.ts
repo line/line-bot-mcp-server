@@ -213,6 +213,22 @@ server.tool(
   },
 );
 
+server.tool(
+  "get_message_quota",
+  "Get the message quota and consumption of the LINE Official Account. This shows the monthly message limit and current usage.",
+  {},
+  async () => {
+    const messageQuotaResponse = await messagingApiClient.getMessageQuota();
+    const messageQuotaConsumptionResponse =
+      await messagingApiClient.getMessageQuotaConsumption();
+    const response = {
+      limited: messageQuotaResponse.value,
+      totalUsage: messageQuotaConsumptionResponse.totalUsage,
+    };
+    return createSuccessResponse(response);
+  },
+);
+
 async function main() {
   if (!process.env.CHANNEL_ACCESS_TOKEN) {
     console.error("Please set CHANNEL_ACCESS_TOKEN");
