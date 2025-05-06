@@ -251,6 +251,18 @@ server.tool(
         `Failed to get follower ids: ${error.message}`,
       );
     }
+  "get_message_quota",
+  "Get the message quota and consumption of the LINE Official Account. This shows the monthly message limit and current usage.",
+  {},
+  async () => {
+    const messageQuotaResponse = await messagingApiClient.getMessageQuota();
+    const messageQuotaConsumptionResponse =
+      await messagingApiClient.getMessageQuotaConsumption();
+    const response = {
+      limited: messageQuotaResponse.value,
+      totalUsage: messageQuotaConsumptionResponse.totalUsage,
+    };
+    return createSuccessResponse(response);
   },
 );
 

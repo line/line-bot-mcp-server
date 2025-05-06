@@ -39,7 +39,11 @@
    - Get detailed profile information of a LINE user including display name, profile picture URL, status message and language.
    - **Inputs:**
      - `user_id` (string?): The ID of the user whose profile you want to retrieve. Defaults to DESTINATION_USER_ID.
-6. **get_follower_ids**
+6. **get_message_quota**
+  - Get the message quota and consumption of the LINE Official Account. This shows the monthly message limit and current usage.
+  - **Inputs:**
+    - None
+7. **get_follower_ids**
    - Gets the list of User IDs of users who have added your LINE Official Account as a friend.
    - **Inputs:**
      - `start` (string, optional): Continuation token for pagination. If omitted, fetches from the beginning.
