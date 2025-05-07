@@ -4,7 +4,7 @@
   "description": "MCP server for interacting with your LINE Official Account",
   "type": "module",
   "engines": {
-    "node": ">=20"
+    "node": ">=20.10"
   },
   "module": "./dist/index.js",
   "bin": {
