@@ -43,21 +43,34 @@
   - Get the message quota and consumption of the LINE Official Account. This shows the monthly message limit and current usage.
   - **Inputs:**
     - None
+7. **get_follower_ids**
+   - Gets the list of User IDs of users who have added your LINE Official Account as a friend.
+   - **Inputs:**
+     - `start` (string, optional): Continuation token for pagination. If omitted, fetches from the beginning.
+     - `limit` (number, optional): Maximum number of user IDs to retrieve (1-1000). Default is 1000.
+   - **Returns:**
+     - `userIds` (array): List of user IDs.
+     - `next` (string, optional): Token for the next page. If present, repeat the request with this value to get more user IDs.
+     - `total` (number, optional): Total number of user IDs (if available).
+   - **Notes:**
+     - Only available for verified or premium accounts.
+     - Some user IDs may not be included due to privacy or user actions (see LINE API docs for details).
 
 ## Installation (Using npx)
 
 requirements:
+
 - Node.js v20 or later
 
 ### Step 1: Create LINE Official Account
 
-This MCP server utilizes a LINE Official Account. If you do not have one, please create it by following [this instructions](https://developers.line.biz/en/docs/messaging-api/getting-started/#create-oa). 
+This MCP server utilizes a LINE Official Account. If you do not have one, please create it by following [this instructions](https://developers.line.biz/en/docs/messaging-api/getting-started/#create-oa).
 
 If you have a LINE Official Account, enable the Messaging API for your LINE Official Account by following [this instructions](https://developers.line.biz/en/docs/messaging-api/getting-started/#using-oa-manager).
 
 ### Step 2: Configure AI Agent
 
-Please add the following configuration for an AI Agent like Claude Desktop or Cline. 
+Please add the following configuration for an AI Agent like Claude Desktop or Cline.
 
 Set the environment variables or arguments as follows:
 
@@ -143,7 +156,7 @@ Set the environment variables or arguments as follows:
 
 This project respects semantic versioning
 
-See http://semver.org/
+See <http://semver.org/>
 
 ## Contributing
 
