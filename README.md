@@ -40,9 +40,9 @@
    - **Inputs:**
      - `user_id` (string?): The ID of the user whose profile you want to retrieve. Defaults to DESTINATION_USER_ID.
 6. **get_message_quota**
-  - Get the message quota and consumption of the LINE Official Account. This shows the monthly message limit and current usage.
-  - **Inputs:**
-    - None
+   - Get the message quota and consumption of the LINE Official Account. This shows the monthly message limit and current usage.
+   - **Inputs:**
+     - None
 
 ## Installation (Using npx)
 
