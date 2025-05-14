@@ -1,3 +1,5 @@
+[![MseeP.ai Security Assessment Badge](https://mseep.net/pr/line-line-bot-mcp-server-badge.png)](https://mseep.ai/app/line-line-bot-mcp-server)
+
 [日本語版 READMEはこちら](README.ja.md)
 
 # LINE Bot MCP Server
