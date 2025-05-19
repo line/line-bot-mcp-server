@@ -20,14 +20,14 @@ import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import * as line from "@line/bot-sdk";
 import { z } from "zod";
-import pkg from "../package.json" with { type: "json" };
+import { LINE_BOT_MCP_SERVER_VERSION, USER_AGENT } from "./version.js";
 
 const NO_USER_ID_ERROR =
   "Error: Specify the userId or set the DESTINATION_USER_ID in the environment variables of this MCP Server.";
 
 const server = new McpServer({
   name: "line-bot",
-  version: pkg.version,
+  version: LINE_BOT_MCP_SERVER_VERSION,
 });
 
 const channelAccessToken = process.env.CHANNEL_ACCESS_TOKEN || "";
@@ -36,7 +36,7 @@ const destinationId = process.env.DESTINATION_USER_ID || "";
 const messagingApiClient = new line.messagingApi.MessagingApiClient({
   channelAccessToken: channelAccessToken,
   defaultHeaders: {
-    "User-Agent": `${pkg.name}/${pkg.version}`,
+    "User-Agent": USER_AGENT,
   },
 });
 

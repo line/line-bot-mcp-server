@@ -16,12 +16,12 @@
 1. **push_text_message**
    - Push a simple text message to a user via LINE.
    - **Inputs:**
-     - `user_id` (string?): The user ID to receive a message. Defaults to DESTINATION_USER_ID.
+     - `user_id` (string?): The user ID to receive a message. Defaults to DESTINATION_USER_ID. Either `user_id` or `DESTINATION_USER_ID` must be set.
      - `message.text` (string): The plain text content to send to the user.
 2. **push_flex_message**
    - Push a highly customizable flex message to a user via LINE.
    - **Inputs:**
-     - `user_id` (string?): The user ID to receive a message. Defaults to DESTINATION_USER_ID.
+     - `user_id` (string?): The user ID to receive a message. Defaults to DESTINATION_USER_ID. Either `user_id` or `DESTINATION_USER_ID` must be set.
      - `message.altText` (string): Alternative text shown when flex message cannot be displayed.
      - `message.content` (any): The content of the flex message. This is a JSON object that defines the layout and components of the message.
      - `message.contents.type` (enum): Type of the container. 'bubble' for single container, 'carousel' for multiple swipeable bubbles.
@@ -40,9 +40,9 @@
    - **Inputs:**
      - `user_id` (string?): The ID of the user whose profile you want to retrieve. Defaults to DESTINATION_USER_ID.
 6. **get_message_quota**
-  - Get the message quota and consumption of the LINE Official Account. This shows the monthly message limit and current usage.
-  - **Inputs:**
-    - None
+   - Get the message quota and consumption of the LINE Official Account. This shows the monthly message limit and current usage.
+   - **Inputs:**
+     - None
 
 ## Installation (Using npx)
 
@@ -62,7 +62,7 @@ Please add the following configuration for an AI Agent like Claude Desktop or Cl
 Set the environment variables or arguments as follows:
 
 - `CHANNEL_ACCESS_TOKEN`: (required) Channel Access Token. You can confirm this by following [this instructions](https://developers.line.biz/en/docs/basics/channel-access-token/#long-lived-channel-access-token).
-- `DESTINATION_USER_ID`: (optional) The default user ID of the recipient. You can confirm this by following [this instructions](https://developers.line.biz/en/docs/messaging-api/getting-user-ids/#get-own-user-id).
+- `DESTINATION_USER_ID`: (optional) The default user ID of the recipient. If the Tool's input does not include `user_id`, `DESTINATION_USER_ID` is required. You can confirm this by following [this instructions](https://developers.line.biz/en/docs/messaging-api/getting-user-ids/#get-own-user-id).
 
 ```json
 {
@@ -112,7 +112,8 @@ Set the environment variables or arguments as follows:
 
 - `mcpServers.args`: (required) The path to `line-bot-mcp-server`.
 - `CHANNEL_ACCESS_TOKEN`: (required) Channel Access Token. You can confirm this by following [this instructions](https://developers.line.biz/en/docs/basics/channel-access-token/#long-lived-channel-access-token).
-- `DESTINATION_USER_ID`: (optional) The default user ID of the recipient. You can confirm this by following [this instructions](https://developers.line.biz/en/docs/messaging-api/getting-user-ids/#get-own-user-id).
+- `DESTINATION_USER_ID`: (optional) The default user ID of the recipient. If the Tool's input does not include `user_id`, `DESTINATION_USER_ID` is required.
+You can confirm this by following [this instructions](https://developers.line.biz/en/docs/messaging-api/getting-user-ids/#get-own-user-id).
 
 
 ```json

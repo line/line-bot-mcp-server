@@ -9,6 +9,7 @@ async function updateVersion(newVersion) {
   const files = {
     packageJson: './package.json',
     packageLockJson: './package-lock.json',
+    versionTs: './src/version.ts',
   };
 
   // package.json
@@ -23,6 +24,16 @@ async function updateVersion(newVersion) {
     packageLockJsonData.packages[""].version = newVersion;
   }
   await fs.writeFile(files.packageLockJson, JSON.stringify(packageLockJsonData, null, 2) + '\n');
+
+  // src/version.ts
+  const versionTsData = await fs.readFile(files.versionTs, 'utf8');
+  const updatedVersionTsData = versionTsData.replace(
+    /const LINE_BOT_MCP_SERVER_VERSION = ".*?";/,
+    `const LINE_BOT_MCP_SERVER_VERSION = "${newVersion}";`
+  );
+  await fs.writeFile(files.versionTs, updatedVersionTsData);
+
+  console.log(`Version updated to ${newVersion} in all files.`);
 }
 
 async function verifyVersion(expectedVersion) {
@@ -41,6 +52,12 @@ async function verifyVersion(expectedVersion) {
     throw new Error(`package-lock.json root package version mismatch: expected ${expectedVersion}, found ${packageLockJsonData.packages[""].version}`);
   }
 
+  // src/version.ts
+  const versionTsData = await fs.readFile('./src/version.ts', 'utf8');
+  if (!versionTsData.includes(`const LINE_BOT_MCP_SERVER_VERSION = "${expectedVersion}";`)) {
+    throw new Error(`src/version.ts version mismatch: expected ${expectedVersion}`);
+  }
+
   console.log(`All files have the correct version: ${expectedVersion}`);
 }
 
@@ -54,7 +71,7 @@ async function verifyGitDiff() {
       return acc;
     }, { addedLines: 0, deletedLines: 0 });
 
-    if (addedLines !== 3 || deletedLines !== 3) {
+    if (addedLines !== 4 || deletedLines !== 4) {
       throw new Error(`Unexpected number of changed lines: expected 4 added and 4 deleted, found ${addedLines} added and ${deletedLines} deleted`);
     }
 
