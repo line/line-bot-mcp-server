@@ -96,8 +96,8 @@ const flexMessageSchema = z.object({
     .passthrough()
     .describe(
       "Flexible container structure following LINE Flex Message format. For 'bubble' type, can include header, " +
-        "hero, body, footer, and styles sections. For 'carousel' type, includes an array of bubble containers in " +
-        "the 'contents' property.",
+      "hero, body, footer, and styles sections. For 'carousel' type, includes an array of bubble containers in " +
+      "the 'contents' property.",
     ),
 });
 
@@ -128,7 +128,7 @@ server.tool(
 server.tool(
   "push_flex_message",
   "Push a highly customizable flex message to a user via LINE. Supports both bubble (single container) and carousel " +
-    "(multiple swipeable bubbles) layouts.",
+  "(multiple swipeable bubbles) layouts.",
   {
     userId: userIdSchema,
     message: flexMessageSchema,
@@ -155,7 +155,7 @@ server.tool(
 server.tool(
   "broadcast_text_message",
   "Broadcast a simple text message via LINE to all users who have followed your LINE Official Account. Use this for sending " +
-    "plain text messages without formatting. Please be aware that this message will be sent to all users.",
+  "plain text messages without formatting. Please be aware that this message will be sent to all users.",
   {
     message: textMessageSchema,
   },
@@ -176,8 +176,8 @@ server.tool(
 server.tool(
   "broadcast_flex_message",
   "Broadcast a highly customizable flex message via LINE to all users who have added your LINE Official Account. " +
-    "Supports both bubble (single container) and carousel (multiple swipeable bubbles) layouts. Please be aware that " +
-    "this message will be sent to all users.",
+  "Supports both bubble (single container) and carousel (multiple swipeable bubbles) layouts. Please be aware that " +
+  "this message will be sent to all users.",
   {
     message: flexMessageSchema,
   },
@@ -239,30 +239,21 @@ server.tool(
       .string()
       .optional()
       .describe(
-        "Continuation token for pagination. If omitted, fetches from the beginning.",
+        "Value of the continuation token found in the next property of the JSON object returned in the response. Include this parameter to get the next array of user IDs. If omitted, fetches from the beginning.",
       ),
     limit: z
-      .number()
       .int()
       .min(1)
       .max(1000)
-      .optional()
+      .default(300)
       .describe(
-        "Maximum number of user IDs to retrieve (1-1000). Default is 1000.",
+        "Maximum number of user IDs to retrieve (1-1000). Default is 300.",
       ),
   },
   async ({ start, limit }: { start?: string; limit?: number }) => {
     try {
-      const params = new URLSearchParams();
-      if (limit) params.append("limit", limit.toString());
-      if (start) params.append("start", start);
-      const res = await axios.get("https://api.line.me/v2/bot/followers/ids", {
-        params,
-        headers: {
-          Authorization: `Bearer ${channelAccessToken}`,
-        },
-      });
-      return createSuccessResponse(res.data);
+      const response = messagingApiClient.getFollowers(start, limit);
+      return createSuccessResponse(response);
     } catch (error) {
       return createErrorResponse(
         `Failed to get follower ids: ${error.message}`,
