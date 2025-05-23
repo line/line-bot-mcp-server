@@ -1,6 +1,6 @@
 ---
 name: Bug Report Template
-about: Use this template to report bugs in the line-bot-sdk-ruby
+about: Use this template to report bugs in the line-bot-mcp-server
 title: 'Bug Report'
 ---
 
