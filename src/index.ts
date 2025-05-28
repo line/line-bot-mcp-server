@@ -255,6 +255,24 @@ server.tool(
 );
 
 server.tool(
+  "delete_rich_menu",
+  "Delete a rich menu from your LINE Official Account.",
+  {
+    richMenuId: z.string().describe("The ID of the rich menu to delete."),
+  },
+  async ({ richMenuId }) => {
+    try {
+      const response = await messagingApiClient.deleteRichMenu(richMenuId);
+      return createSuccessResponse(response);
+    } catch (error) {
+      return createErrorResponse(
+        `Failed to delete rich menu: ${error.message}`,
+      );
+    }
+  },
+);
+
+server.tool(
   "set_rich_menu_image",
   "Update a rich menu associated with your LINE Official Account.",
   {
@@ -290,6 +308,16 @@ server.tool(
   },
   async ({ richMenuId }) => {
     const response = await messagingApiClient.setDefaultRichMenu(richMenuId);
+    return createSuccessResponse(response);
+  },
+);
+
+server.tool(
+  "cancel_rich_menu_default",
+  "Cancel the default rich menu.",
+  {},
+  async () => {
+    const response = await messagingApiClient.cancelDefaultRichMenu();
     return createSuccessResponse(response);
   },
 );
