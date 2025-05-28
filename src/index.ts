@@ -20,6 +20,8 @@ import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import * as line from "@line/bot-sdk";
 import { z } from "zod";
+import pkg from "../package.json" with { type: "json" };
+import fs from "fs";
 import { LINE_BOT_MCP_SERVER_VERSION, USER_AGENT } from "./version.js";
 
 const NO_USER_ID_ERROR =
@@ -37,6 +39,13 @@ const messagingApiClient = new line.messagingApi.MessagingApiClient({
   channelAccessToken: channelAccessToken,
   defaultHeaders: {
     "User-Agent": USER_AGENT,
+  },
+});
+
+const lineBlobClient = new line.messagingApi.MessagingApiBlobClient({
+  channelAccessToken: channelAccessToken,
+  defaultHeaders: {
+    "User-Agent": `${pkg.name}/${pkg.version}`,
   },
 });
 
@@ -225,6 +234,62 @@ server.tool(
       limited: messageQuotaResponse.value,
       totalUsage: messageQuotaConsumptionResponse.totalUsage,
     };
+    return createSuccessResponse(response);
+  },
+);
+
+server.tool(
+  "get_rich_menu_list",
+  "Get the list of rich menus associated with your LINE Official Account.",
+  {},
+  async () => {
+    try {
+      const response = await messagingApiClient.getRichMenuList();
+      return createSuccessResponse(response);
+    } catch (error) {
+      return createErrorResponse(
+        `Failed to broadcast message: ${error.message}`,
+      );
+    }
+  },
+);
+
+server.tool(
+  "set_rich_menu_image",
+  "Update a rich menu associated with your LINE Official Account.",
+  {
+    richMenuId: z.string().describe("The ID of the rich menu to update."),
+    imagePath: z.string().describe("The path of the image to update."),
+  },
+  async ({ richMenuId, imagePath }) => {
+    try {
+      const imageBuffer = fs.readFileSync(imagePath);
+      const imageType = "image/png";
+      const imageBlob = new Blob([imageBuffer], { type: imageType });
+
+      const response = await lineBlobClient.setRichMenuImage(
+        richMenuId,
+        imageBlob,
+      );
+      return createSuccessResponse(response);
+    } catch (error) {
+      return createErrorResponse(
+        `Failed to update rich menu: ${error.message}`,
+      );
+    }
+  },
+);
+
+server.tool(
+  "set_rich_menu_default",
+  "Set a rich menu as the default rich menu.",
+  {
+    richMenuId: z
+      .string()
+      .describe("The ID of the rich menu to set as default."),
+  },
+  async ({ richMenuId }) => {
+    const response = await messagingApiClient.setDefaultRichMenu(richMenuId);
     return createSuccessResponse(response);
   },
 );
