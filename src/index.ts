@@ -277,10 +277,14 @@ server.tool(
   "Update a rich menu associated with your LINE Official Account.",
   {
     richMenuId: z.string().describe("The ID of the rich menu to update."),
+    projectPath: z.string().describe("The path of the project."),
     imagePath: z.string().describe("The path of the image to update."),
   },
-  async ({ richMenuId, imagePath }) => {
+  async ({ richMenuId, imagePath, projectPath }) => {
     try {
+      if (imagePath.startsWith("@")) {
+        imagePath = imagePath.replace("@", `${projectPath}/`);
+      }
       const imageBuffer = fs.readFileSync(imagePath);
       const imageType = "image/png";
       const imageBlob = new Blob([imageBuffer], { type: imageType });
