@@ -34,7 +34,7 @@
   "homepage": "https://github.com/line/line-bot-mcp-server",
   "bugs": "https://github.com/line/line-bot-mcp-server/issues",
   "dependencies": {
-    "@line/bot-sdk": "^9.8.0",
+    "@line/bot-sdk": "^10.0.0",
     "@modelcontextprotocol/sdk": "^1.8.0",
     "zod": "^3.24.2"
   },
