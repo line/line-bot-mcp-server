@@ -43,6 +43,28 @@
    - Get the message quota and consumption of the LINE Official Account. This shows the monthly message limit and current usage.
    - **Inputs:**
      - None
+7. **get_rich_menu_list**
+   - Get the list of rich menus associated with your LINE Official Account.
+   - **Inputs:**
+     - None
+8. **delete_rich_menu**
+   - Delete a rich menu from your LINE Official Account.
+   - **Inputs:**
+     - `richMenuId` (string): The ID of the rich menu to delete.
+9. **set_rich_menu_image**
+   - Update a rich menu associated with your LINE Official Account.
+   - **Inputs:**
+     - `richMenuId` (string): The ID of the rich menu to update.
+     - `projectPath` (string): The path of the project.
+     - `imagePath` (string): The path of the image to update. Use `@` prefix to specify a path relative to the project root.
+10. **set_rich_menu_default**
+    - Set a rich menu as the default rich menu.
+    - **Inputs:**
+      - `richMenuId` (string): The ID of the rich menu to set as default.
+11. **cancel_rich_menu_default**
+    - Cancel the default rich menu.
+    - **Inputs:**
+      - None
 
 ## Installation (Using npx)
 
