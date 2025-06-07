@@ -14,13 +14,14 @@
     "dist"
   ],
   "scripts": {
-    "build": "tsc && shx chmod +x dist/*.js",
+    "build": "npm run prettier -- --write && tsc && shx chmod +x dist/*.js",
     "prettier": "prettier \"src/**/*.ts\"",
     "format": "npm run prettier -- --write",
     "format:check": "npm run prettier -- -l",
     "clean": "rm -rf dist/*",
     "prebuild": "npm run format:check && npm run clean",
-    "release": "npm run build && npm publish --provenance --access public"
+    "release": "npm run build && npm publish --provenance --access public",
+    "build:slides": "marp slides.md --png -o output01.png"
   },
   "repository": {
     "type": "git",
@@ -35,7 +36,10 @@
   "bugs": "https://github.com/line/line-bot-mcp-server/issues",
   "dependencies": {
     "@line/bot-sdk": "^9.8.0",
+    "@marp-team/marp-cli": "^4.1.2",
+    "@marp-team/marp-core": "^4.1.0",
     "@modelcontextprotocol/sdk": "^1.8.0",
+    "file-type": "^21.0.0",
     "zod": "^3.24.2"
   },
   "devDependencies": {
