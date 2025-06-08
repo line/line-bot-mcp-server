@@ -49,17 +49,11 @@ LINE公式アカウントとAI Agentを接続するために、LINE Messaging AP
    - LINE公式アカウントからリッチメニューを削除する。
    - **入力:**
      - `richMenuId` (string): 削除するリッチメニューのID。
-9. **set_rich_menu_image**
-   - LINE公式アカウントのリッチメニューの画像を更新する。
-   - **入力:**
-     - `richMenuId` (string): 更新するリッチメニューのID。
-     - `projectPath` (string): プロジェクトのパス。
-     - `imagePath` (string): 更新する画像のパス。`@`プレフィックスを使用してプロジェクトルートからの相対パスを指定できます。
-10. **set_rich_menu_default**
+9. **set_rich_menu_default**
     - リッチメニューをデフォルトとして設定する。
     - **入力:**
       - `richMenuId` (string): デフォルトとして設定するリッチメニューのID。
-11. **cancel_rich_menu_default**
+10. **cancel_rich_menu_default**
     - デフォルトのリッチメニューを解除する。
     - **入力:**
       - なし

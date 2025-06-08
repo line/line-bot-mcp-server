@@ -20,8 +20,6 @@ import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import * as line from "@line/bot-sdk";
 import { z } from "zod";
-import pkg from "../package.json" with { type: "json" };
-import fs from "fs";
 import { LINE_BOT_MCP_SERVER_VERSION, USER_AGENT } from "./version.js";
 
 const NO_USER_ID_ERROR =
@@ -39,13 +37,6 @@ const messagingApiClient = new line.messagingApi.MessagingApiClient({
   channelAccessToken: channelAccessToken,
   defaultHeaders: {
     "User-Agent": USER_AGENT,
-  },
-});
-
-const lineBlobClient = new line.messagingApi.MessagingApiBlobClient({
-  channelAccessToken: channelAccessToken,
-  defaultHeaders: {
-    "User-Agent": `${pkg.name}/${pkg.version}`,
   },
 });
 
@@ -267,36 +258,6 @@ server.tool(
     } catch (error) {
       return createErrorResponse(
         `Failed to delete rich menu: ${error.message}`,
-      );
-    }
-  },
-);
-
-server.tool(
-  "set_rich_menu_image",
-  "Update a rich menu associated with your LINE Official Account.",
-  {
-    richMenuId: z.string().describe("The ID of the rich menu to update."),
-    projectPath: z.string().describe("The path of the project."),
-    imagePath: z.string().describe("The path of the image to update."),
-  },
-  async ({ richMenuId, imagePath, projectPath }) => {
-    try {
-      if (imagePath.startsWith("@")) {
-        imagePath = imagePath.replace("@", `${projectPath}/`);
-      }
-      const imageBuffer = fs.readFileSync(imagePath);
-      const imageType = "image/png";
-      const imageBlob = new Blob([imageBuffer], { type: imageType });
-
-      const response = await lineBlobClient.setRichMenuImage(
-        richMenuId,
-        imageBlob,
-      );
-      return createSuccessResponse(response);
-    } catch (error) {
-      return createErrorResponse(
-        `Failed to update rich menu: ${error.message}`,
       );
     }
   },
