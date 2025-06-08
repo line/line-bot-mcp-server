@@ -260,12 +260,13 @@ server.tool(
         texts,
       );
       return createSuccessResponse({
-        message: "creating the image. please wait a moment",
         imagePath: richMenuImagePath,
         templeteNumber,
       });
     } catch (error) {
-      return createErrorResponse(`Failed to generate slide: ${error.message}`);
+      return createErrorResponse(
+        `Failed to generate rich menu image: ${error.message}`,
+      );
     }
   },
 );
