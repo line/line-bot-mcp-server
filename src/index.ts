@@ -21,9 +21,14 @@ import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js"
 import * as line from "@line/bot-sdk";
 import { z } from "zod";
 import pkg from "../package.json" with { type: "json" };
-
+import path from "path";
+import { fileURLToPath } from "url";
+import { generateRichMenuImage } from "./utils/generateRichMenuImage";
 const NO_USER_ID_ERROR =
   "Error: Specify the userId or set the DESTINATION_USER_ID in the environment variables of this MCP Server.";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const server = new McpServer({
   name: "line-bot",
@@ -209,6 +214,29 @@ server.tool(
       return createSuccessResponse(response);
     } catch (error) {
       return createErrorResponse(`Failed to get profile: ${error.message}`);
+    }
+  },
+);
+
+server.tool(
+  "generate_rich_menu_image",
+  "Generate a rich menu image based on the user's request.",
+  {
+    templeteNumber: z.number().describe("The number of the templete. 1-7"),
+    texts: z
+      .array(z.string())
+      .describe("The texts to be displayed on the slide. 1-6"),
+  },
+  async ({ templeteNumber, texts }) => {
+    try {
+      const richMenuImagePath = await generateRichMenuImage(templeteNumber, texts);
+
+      return createSuccessResponse({
+        message: "creating the image. please wait a moment",
+        imagePath: richMenuImagePath,
+      });
+    } catch (error) {
+      return createErrorResponse(`Failed to generate slide: ${error.message}`);
     }
   },
 );
