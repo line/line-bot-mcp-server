@@ -20,10 +20,11 @@ import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import * as line from "@line/bot-sdk";
 import { z } from "zod";
-import pkg from "../package.json" with { type: "json" };
 import path from "path";
 import { fileURLToPath } from "url";
 import { generateRichMenuImage } from "./utils/generateRichMenuImage";
+import { LINE_BOT_MCP_SERVER_VERSION, USER_AGENT } from "./version.js";
+
 const NO_USER_ID_ERROR =
   "Error: Specify the userId or set the DESTINATION_USER_ID in the environment variables of this MCP Server.";
 
@@ -32,7 +33,7 @@ const __dirname = path.dirname(__filename);
 
 const server = new McpServer({
   name: "line-bot",
-  version: pkg.version,
+  version: LINE_BOT_MCP_SERVER_VERSION,
 });
 
 const channelAccessToken = process.env.CHANNEL_ACCESS_TOKEN || "";
@@ -41,7 +42,7 @@ const destinationId = process.env.DESTINATION_USER_ID || "";
 const messagingApiClient = new line.messagingApi.MessagingApiClient({
   channelAccessToken: channelAccessToken,
   defaultHeaders: {
-    "User-Agent": `${pkg.name}/${pkg.version}`,
+    "User-Agent": USER_AGENT,
   },
 });
 
@@ -215,6 +216,22 @@ server.tool(
     } catch (error) {
       return createErrorResponse(`Failed to get profile: ${error.message}`);
     }
+  },
+);
+
+server.tool(
+  "get_message_quota",
+  "Get the message quota and consumption of the LINE Official Account. This shows the monthly message limit and current usage.",
+  {},
+  async () => {
+    const messageQuotaResponse = await messagingApiClient.getMessageQuota();
+    const messageQuotaConsumptionResponse =
+      await messagingApiClient.getMessageQuotaConsumption();
+    const response = {
+      limited: messageQuotaResponse.value,
+      totalUsage: messageQuotaConsumptionResponse.totalUsage,
+    };
+    return createSuccessResponse(response);
   },
 );
 
