@@ -1,0 +1,59 @@
+---
+marp: true
+size: 16:9
+---
+
+
+<style>
+section {
+  padding: 0 !important;
+  background-color: orange;
+  height: 100% !important;
+}
+
+section > :first-child {
+  margin-top: 0 !important;
+}
+section > :last-child {
+  margin-bottom: 0 !important;
+}
+
+.columns-container {
+  display: flex;
+  flex-wrap: wrap;   width: 100%;
+  height: 100%;
+}
+
+.column-item {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background-color: white;
+  margin: 10px 0px 10px 10px;
+  box-sizing: border-box;
+  height: calc((100% - 20px));
+  width: calc((100% - 30px) / 2);
+  overflow: hidden;
+}
+
+.column-item h3 {
+  font-weight: bold;
+  width: 100%;
+  text-align: center;
+  margin: 0;
+  font-size: clamp(16px, 6vw, 50px);
+  white-space: normal;
+  word-break: break-all;
+}
+
+</style>
+
+<div class="columns-container">
+  <div class="column-item">
+    <h3>item01</h3>
+  </div>
+  <div class="column-item">
+    <h3>item02</h3>
+  </div>
+</div>

@@ -7,7 +7,7 @@ size: 16:9
 <style>
 section {
   padding: 0 !important;
-  background-color: lightyellow;
+  background-color: orange;
   height: 100% !important;
 }
 
@@ -31,37 +31,55 @@ section > :last-child {
   height: 100%;
 }
 
-/* 横並びにする各アイテム */
+/* 横並びにする各item0*/
 .column-item {
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  flex: 0 0 33.3333%;
-  background-color: #f0f0f0;
-  border: 1px solid #ccc;
-  padding: 15px;
+  background-color: white;
   box-sizing: border-box;
+  height: calc((100% - 30px) / 2);
+  width: calc((100% - 40px) / 3);
+  overflow: hidden;
 }
+
+.column-item-01 {
+  margin: 10px 0px 0px 10px;
+}
+
+.column-item-02 {
+  margin: 0px 0px 0px 10px;
+}
+
+.column-item h3 {
+  font-weight: bold;
+  width: 100%;
+  text-align: center;
+  font-size: clamp(16px, 6vw, 50px);
+  white-space: normal;
+  word-break: break-all;
+}
+
 </style>
 
 <div class="columns-container">
-  <div class="column-item">
-    <h3>アイテム 1</h3>
+  <div class="column-item column-item-01">
+    <h3>item01</h3>
   </div>
-  <div class="column-item">
-    <h3>アイテム 2</h3>
+  <div class="column-item column-item-01">
+    <h3>item02</h3>
   </div>
-  <div class="column-item">
-    <h3>アイテム 3</h3>
+  <div class="column-item column-item-01">
+    <h3>item03</h3>
   </div>
-  <div class="column-item">
-    <h3>アイテム 1</h3>
+  <div class="column-item column-item-02">
+    <h3>item04</h3>
   </div>
-  <div class="column-item">
-    <h3>アイテム 2</h3>
+  <div class="column-item column-item-02">
+    <h3>item05</h3>
   </div>
-  <div class="column-item">
-    <h3>アイテム 3</h3>
+  <div class="column-item column-item-02">
+    <h3>item06</h3>
   </div>
 </div>
