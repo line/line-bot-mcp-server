@@ -67,9 +67,15 @@ section > :last-child {
 }
 </style>
 <div class="flex-container">
-  <div class="flex-left">item01</div>
+  <div class="flex-left">
+    <h3>item01</h3>
+  </div>
   <div class="flex-right">
-    <div class="flex-right-top-item">item02</div>
-    <div class="flex-right-bottom-item">item03</div>
+    <div class="flex-right-top-item">
+      <h3>item02</h3>
+    </div>
+    <div class="flex-right-bottom-item">
+      <h3>item03</h3>
+    </div>
   </div>
 </div>
