@@ -20,16 +20,15 @@ import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import * as line from "@line/bot-sdk";
 import { z } from "zod";
-import path from "path";
-import { fileURLToPath } from "url";
-import { generateRichMenuImage } from "./utils/generateRichMenuImage";
 import { LINE_BOT_MCP_SERVER_VERSION, USER_AGENT } from "./version.js";
+import {
+  generateRichMenuImage,
+  validateRichMenuImage,
+  initializeTempleteNumber,
+} from "./utils/generateRichMenuImage.js";
 
 const NO_USER_ID_ERROR =
   "Error: Specify the userId or set the DESTINATION_USER_ID in the environment variables of this MCP Server.";
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
 
 const server = new McpServer({
   name: "line-bot",
@@ -239,18 +238,31 @@ server.tool(
   "generate_rich_menu_image",
   "Generate a rich menu image based on the user's request.",
   {
-    templeteNumber: z.number().describe("The number of the templete. 1-7"),
+    templeteNumber: z
+      .number()
+      .optional()
+      .describe(
+        "The number of the templete. 1-7. If not specified, the number will be automatically determined based on the number of texts.",
+      ),
     texts: z
       .array(z.string())
       .describe("The texts to be displayed on the slide. 1-6"),
   },
   async ({ templeteNumber, texts }) => {
     try {
-      const richMenuImagePath = await generateRichMenuImage(templeteNumber, texts);
-
+      templeteNumber = initializeTempleteNumber(templeteNumber, texts);
+      const error = validateRichMenuImage(templeteNumber, texts);
+      if (error) {
+        return createErrorResponse(error);
+      }
+      const richMenuImagePath = await generateRichMenuImage(
+        templeteNumber,
+        texts,
+      );
       return createSuccessResponse({
         message: "creating the image. please wait a moment",
         imagePath: richMenuImagePath,
+        templeteNumber,
       });
     } catch (error) {
       return createErrorResponse(`Failed to generate slide: ${error.message}`);

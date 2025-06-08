@@ -3,16 +3,27 @@ import puppeteer from "puppeteer";
 import { promises as fs } from "fs";
 import path from "path";
 import os from "os";
+import { fileURLToPath } from "url";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 // Function to generate a rich menu image from a Markdown template
-export async function generateRichMenuImage(templeteNumber: number, texts: string[]): Promise<string> {
+export async function generateRichMenuImage(
+  templeteNumber: number,
+  texts: string[],
+): Promise<string> {
   const richMenuImagePath = path.join(
     os.tmpdir(),
     `slide-0${templeteNumber}-${Date.now()}.png`,
   );
-  const serverPath = process.env.SERVER_PATH || path.resolve(__dirname, "..", ".." );
+  const serverPath =
+    process.env.SERVER_PATH || path.resolve(__dirname, "..", "..");
   // 1. Read the Markdown template
-  const srcPath = path.join(serverPath, `richmenu-templetes/templete-0${templeteNumber}.md`);
+  const srcPath = path.join(
+    serverPath,
+    `richmenu-templetes/templete-0${templeteNumber}.md`,
+  );
   let content = await fs.readFile(srcPath, "utf8");
   for (let index = 0; index < texts.length; index++) {
     const pattern = new RegExp(`<h3>item0${index + 1}</h3>`, "g");
@@ -32,7 +43,10 @@ export async function generateRichMenuImage(templeteNumber: number, texts: strin
       <body>${html}</body>
     </html>
   `;
-  const tempHtmlPath = path.join(os.tmpdir(), `temp_marp_slide_${Date.now()}.html`);
+  const tempHtmlPath = path.join(
+    os.tmpdir(),
+    `temp_marp_slide_${Date.now()}.html`,
+  );
   await fs.writeFile(tempHtmlPath, htmlContent);
 
   // 4. Use puppeteer to convert HTML to PNG
@@ -52,4 +66,35 @@ export async function generateRichMenuImage(templeteNumber: number, texts: strin
   await fs.unlink(tempHtmlPath);
 
   return richMenuImagePath;
-} 
+}
+
+export const validateRichMenuImage = (
+  templeteNumber: number,
+  texts: string[],
+): string | null => {
+  if (templeteNumber < 1 || templeteNumber > 7) {
+    return "Invalid templete number";
+  }
+  if (texts.length < 1 || texts.length > 6) {
+    return "Invalid texts length";
+  }
+  return null;
+};
+
+export const initializeTempleteNumber = (
+  templeteNumber: number,
+  texts: string[],
+): number => {
+  if (!templeteNumber) {
+    const templeteNumberMap = {
+      // text length: templete number
+      1: 7,
+      2: 6,
+      3: 4,
+      4: 2,
+    } as const;
+    templeteNumber =
+      templeteNumberMap[texts.length as keyof typeof templeteNumberMap] || 1;
+  }
+  return templeteNumber;
+};
