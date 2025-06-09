@@ -13,11 +13,29 @@ be fantastic if you help us by doing any of the following:
 
 You can freely fork the project, clone the forked repository, and start editing.
 
-You may use the following npm scripts for development:
+### Install dependencies
 
-* `npm run format`: Format source code with [Prettier](https://github.com/prettier/prettier)
-* `npm run format:check`: Silently run `format` and report formatting errors
-* `npm run build`: Build TypeScript code into JavaScript. The built files will
+Run `npm install` to install all dependencies for development.
+
+### Understand the project structure
+
+The project structure is as follows:
+
+- src: The main code.
+- tools: The tools that can be used in the MCP server.
+- common: The common code like utilities and types.
+
+### Add a new Tool
+
+To add a new Tool, you can create a new directory under `src/tools/` and
+implement the Tool in that directory. The Tool should extend `AbstractTool`
+and should be registered in `src/index.ts`.
+
+### Run all CI tasks in your local
+
+-`npm run format`: Format source code with [Prettier](https://github.com/prettier/prettier)
+-`npm run format:check`: Silently run `format` and report formatting errors
+-`npm run build`: Build TypeScript code into JavaScript. The built files will
   be placed in `dist/`.
 
 We lint and build on CI, but it is always nice to check them before
