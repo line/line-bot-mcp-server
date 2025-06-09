@@ -229,6 +229,64 @@ server.tool(
   },
 );
 
+server.tool(
+  "get_rich_menu_list",
+  "Get the list of rich menus associated with your LINE Official Account.",
+  {},
+  async () => {
+    try {
+      const response = await messagingApiClient.getRichMenuList();
+      return createSuccessResponse(response);
+    } catch (error) {
+      return createErrorResponse(
+        `Failed to broadcast message: ${error.message}`,
+      );
+    }
+  },
+);
+
+server.tool(
+  "delete_rich_menu",
+  "Delete a rich menu from your LINE Official Account.",
+  {
+    richMenuId: z.string().describe("The ID of the rich menu to delete."),
+  },
+  async ({ richMenuId }) => {
+    try {
+      const response = await messagingApiClient.deleteRichMenu(richMenuId);
+      return createSuccessResponse(response);
+    } catch (error) {
+      return createErrorResponse(
+        `Failed to delete rich menu: ${error.message}`,
+      );
+    }
+  },
+);
+
+server.tool(
+  "set_rich_menu_default",
+  "Set a rich menu as the default rich menu.",
+  {
+    richMenuId: z
+      .string()
+      .describe("The ID of the rich menu to set as default."),
+  },
+  async ({ richMenuId }) => {
+    const response = await messagingApiClient.setDefaultRichMenu(richMenuId);
+    return createSuccessResponse(response);
+  },
+);
+
+server.tool(
+  "cancel_rich_menu_default",
+  "Cancel the default rich menu.",
+  {},
+  async () => {
+    const response = await messagingApiClient.cancelDefaultRichMenu();
+    return createSuccessResponse(response);
+  },
+);
+
 async function main() {
   if (!process.env.CHANNEL_ACCESS_TOKEN) {
     console.error("Please set CHANNEL_ACCESS_TOKEN");
