@@ -19,7 +19,6 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import * as line from "@line/bot-sdk";
-import { z } from "zod";
 import { LINE_BOT_MCP_SERVER_VERSION, USER_AGENT } from "./version.js";
 import {
   generateRichMenuImage,
@@ -27,10 +26,21 @@ import {
   initializeTempleteNumber,
   richmenuBounds,
 } from "./utils/generateRichMenuImage.js";
+import { z } from "zod";
 import fs from "fs";
 
 const NO_USER_ID_ERROR =
   "Error: Specify the userId or set the DESTINATION_USER_ID in the environment variables of this MCP Server.";
+import CancelRichMenuDefault from "./tools/cancelRichMenuDefault.js";
+import PushTextMessage from "./tools/pushTextMessage.js";
+import PushFlexMessage from "./tools/pushFlexMessage.js";
+import BroadcastTextMessage from "./tools/broadcastTextMessage.js";
+import BroadcastFlexMessage from "./tools/broadcastFlexMessage.js";
+import GetProfile from "./tools/getProfile.js";
+import GetMessageQuota from "./tools/getMessageQuota.js";
+import GetRichMenuList from "./tools/getRichMenuList.js";
+import DeleteRichMenu from "./tools/deleteRichMenu.js";
+import SetRichMenuDefault from "./tools/setRichMenuDefault.js";
 
 const server = new McpServer({
   name: "line-bot",
@@ -137,135 +147,17 @@ const actionSchema = z.union([
   uriActionSchema,
   // 必要に応じて他のAction型も追加
 ]);
-server.tool(
-  "push_text_message",
-  "Push a simple text message to a user via LINE. Use this for sending plain text messages without formatting.",
-  {
-    userId: userIdSchema,
-    message: textMessageSchema,
-  },
-  async ({ userId, message }) => {
-    if (!userId) {
-      return createErrorResponse(NO_USER_ID_ERROR);
-    }
 
-    try {
-      const response = await messagingApiClient.pushMessage({
-        to: userId,
-        messages: [message as unknown as line.messagingApi.Message],
-      });
-      return createSuccessResponse(response);
-    } catch (error) {
-      return createErrorResponse(`Failed to push message: ${error.message}`);
-    }
-  },
-);
-
-server.tool(
-  "push_flex_message",
-  "Push a highly customizable flex message to a user via LINE. Supports both bubble (single container) and carousel " +
-    "(multiple swipeable bubbles) layouts.",
-  {
-    userId: userIdSchema,
-    message: flexMessageSchema,
-  },
-  async ({ userId, message }) => {
-    if (!userId) {
-      return createErrorResponse(NO_USER_ID_ERROR);
-    }
-
-    try {
-      const response = await messagingApiClient.pushMessage({
-        to: userId,
-        messages: [message as unknown as line.messagingApi.Message],
-      });
-      return createSuccessResponse(response);
-    } catch (error) {
-      return createErrorResponse(
-        `Failed to push flex message: ${error.message}`,
-      );
-    }
-  },
-);
-
-server.tool(
-  "broadcast_text_message",
-  "Broadcast a simple text message via LINE to all users who have followed your LINE Official Account. Use this for sending " +
-    "plain text messages without formatting. Please be aware that this message will be sent to all users.",
-  {
-    message: textMessageSchema,
-  },
-  async ({ message }) => {
-    try {
-      const response = await messagingApiClient.broadcast({
-        messages: [message as unknown as line.messagingApi.Message],
-      });
-      return createSuccessResponse(response);
-    } catch (error) {
-      return createErrorResponse(
-        `Failed to broadcast message: ${error.message}`,
-      );
-    }
-  },
-);
-
-server.tool(
-  "broadcast_flex_message",
-  "Broadcast a highly customizable flex message via LINE to all users who have added your LINE Official Account. " +
-    "Supports both bubble (single container) and carousel (multiple swipeable bubbles) layouts. Please be aware that " +
-    "this message will be sent to all users.",
-  {
-    message: flexMessageSchema,
-  },
-  async ({ message }) => {
-    try {
-      const response = await messagingApiClient.broadcast({
-        messages: [message as unknown as line.messagingApi.Message],
-      });
-      return createSuccessResponse(response);
-    } catch (error) {
-      return createErrorResponse(
-        `Failed to broadcast message: ${error.message}`,
-      );
-    }
-  },
-);
-
-server.tool(
-  "get_profile",
-  "Get detailed profile information of a LINE user including display name, profile picture URL, status message and language.",
-  {
-    userId: userIdSchema,
-  },
-  async ({ userId }) => {
-    if (!userId) {
-      return createErrorResponse(NO_USER_ID_ERROR);
-    }
-
-    try {
-      const response = await messagingApiClient.getProfile(userId);
-      return createSuccessResponse(response);
-    } catch (error) {
-      return createErrorResponse(`Failed to get profile: ${error.message}`);
-    }
-  },
-);
-
-server.tool(
-  "get_message_quota",
-  "Get the message quota and consumption of the LINE Official Account. This shows the monthly message limit and current usage.",
-  {},
-  async () => {
-    const messageQuotaResponse = await messagingApiClient.getMessageQuota();
-    const messageQuotaConsumptionResponse =
-      await messagingApiClient.getMessageQuotaConsumption();
-    const response = {
-      limited: messageQuotaResponse.value,
-      totalUsage: messageQuotaConsumptionResponse.totalUsage,
-    };
-    return createSuccessResponse(response);
-  },
-);
+new PushTextMessage(messagingApiClient, destinationId).register(server);
+new PushFlexMessage(messagingApiClient, destinationId).register(server);
+new BroadcastTextMessage(messagingApiClient).register(server);
+new BroadcastFlexMessage(messagingApiClient).register(server);
+new GetProfile(messagingApiClient, destinationId).register(server);
+new GetMessageQuota(messagingApiClient).register(server);
+new GetRichMenuList(messagingApiClient).register(server);
+new DeleteRichMenu(messagingApiClient).register(server);
+new SetRichMenuDefault(messagingApiClient).register(server);
+new CancelRichMenuDefault(messagingApiClient).register(server);
 
 server.tool(
   "create_rich_menu",
