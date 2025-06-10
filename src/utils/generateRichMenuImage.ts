@@ -70,12 +70,12 @@ export async function generateRichMenuImage(
 
 export const validateRichMenuImage = (
   templeteNumber: number,
-  texts: string[],
+  len: number,
 ): string | null => {
   if (templeteNumber < 1 || templeteNumber > 7) {
     return "Invalid templete number";
   }
-  if (texts.length < 1 || texts.length > 6) {
+  if (len < 1 || len > 6) {
     return "Invalid texts length";
   }
   return null;
@@ -97,4 +97,81 @@ export const initializeTempleteNumber = (
       templeteNumberMap[items as keyof typeof templeteNumberMap] || 1;
   }
   return templeteNumber;
+};
+
+export const richmenuBounds = (templeteNumber: number) => {
+  const boundsMap: {
+    [key: number]: { x: number; y: number; width: number; height: number }[];
+  } = {
+    1: [0, 1, 2]
+      .map(i =>
+        [0, 1].map(j => ({
+          x: 533 * i,
+          y: 450 * j,
+          width: 533,
+          height: 450,
+        })),
+      )
+      .flat(),
+    2: [0, 1]
+      .map(i =>
+        [0, 1].map(j => ({
+          x: 800 * i,
+          y: 450 * j,
+          width: 800,
+          height: 450,
+        })),
+      )
+      .flat(),
+    3: [
+      {
+        x: 0,
+        y: 0,
+        width: 1600,
+        height: 450,
+      },
+      ...[0, 1, 2].map(i => ({
+        x: 533 * i,
+        y: 450,
+        width: 533,
+        height: 450,
+      })),
+    ],
+    4: [
+      {
+        x: 0,
+        y: 0,
+        width: 800,
+        height: 900,
+      },
+      ...[0, 1].map(i => ({
+        x: 800 * i,
+        y: 450,
+        width: 800,
+        height: 450,
+      })),
+    ],
+    5: [0, 1].map(i => ({
+      x: 0,
+      y: 800 * i,
+      width: 1600,
+      height: 800,
+    })),
+    6: [0, 1].map(i => ({
+      x: 450 * i,
+      y: 0,
+      width: 450,
+      height: 900,
+    })),
+    7: [
+      {
+        x: 0,
+        y: 0,
+        width: 1600,
+        height: 900,
+      },
+    ],
+  };
+
+  return boundsMap[templeteNumber];
 };

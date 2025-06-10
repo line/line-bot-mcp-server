@@ -25,7 +25,9 @@ import {
   generateRichMenuImage,
   validateRichMenuImage,
   initializeTempleteNumber,
+  richmenuBounds,
 } from "./utils/generateRichMenuImage.js";
+import fs from "fs";
 
 const NO_USER_ID_ERROR =
   "Error: Specify the userId or set the DESTINATION_USER_ID in the environment variables of this MCP Server.";
@@ -39,6 +41,13 @@ const channelAccessToken = process.env.CHANNEL_ACCESS_TOKEN || "";
 const destinationId = process.env.DESTINATION_USER_ID || "";
 
 const messagingApiClient = new line.messagingApi.MessagingApiClient({
+  channelAccessToken: channelAccessToken,
+  defaultHeaders: {
+    "User-Agent": USER_AGENT,
+  },
+});
+
+const lineBlobClient = new line.messagingApi.MessagingApiBlobClient({
   channelAccessToken: channelAccessToken,
   defaultHeaders: {
     "User-Agent": USER_AGENT,
@@ -103,7 +112,31 @@ const flexMessageSchema = z.object({
         "the 'contents' property.",
     ),
 });
+// 代表的なAction型
+const messageActionSchema = z.object({
+  type: z.literal("message"),
+  label: z.string(),
+  text: z.string(),
+});
+const postbackActionSchema = z.object({
+  type: z.literal("postback"),
+  label: z.string(),
+  data: z.string(),
+  displayText: z.string().optional(),
+});
+const uriActionSchema = z.object({
+  type: z.literal("uri"),
+  label: z.string(),
+  uri: z.string(),
+});
 
+// すべてのAction型をunion
+const actionSchema = z.union([
+  messageActionSchema,
+  postbackActionSchema,
+  uriActionSchema,
+  // 必要に応じて他のAction型も追加
+]);
 server.tool(
   "push_text_message",
   "Push a simple text message to a user via LINE. Use this for sending plain text messages without formatting.",
@@ -235,41 +268,76 @@ server.tool(
 );
 
 server.tool(
-  'create_rich_menu',
-  'Create a rich menu associated with your LINE Official Account.',
+  "create_rich_menu",
+  "Create a rich menu associated with your LINE Official Account.",
   {
     chatBarText: z.string().describe("The ID of the rich menu to create."),
     templateNumber: z.number().describe("The number of the template."),
-    actions: z.array(z.object({
-      type: z.string().describe("The type of the action.")
-    })),
+    actions: z.array(actionSchema),
   },
   async ({ chatBarText, templateNumber, actions }) => {
+    let createRichMenuResponse: any = null;
+    let setImageResponse: any = null;
     try {
-      const templeteNumber = initializeTempleteNumber(templateNumber, actions.length);
-      const areas: Array<line.messagingApi.RichMenuArea> = actions.map((action) => ({
-        bounds: {
-          x: 0,
-          y: 0,
-          width: 1600,
-          height: 900,
+      const error = validateRichMenuImage(templateNumber, actions.length);
+      if (error) {
+        return createErrorResponse(error);
+      }
+
+      // initialize templete number
+      templateNumber = initializeTempleteNumber(templateNumber, actions.length);
+
+      // create rich menu
+      const bounds = richmenuBounds(templateNumber);
+      const areas: Array<line.messagingApi.RichMenuArea> = actions.map(
+        (action, index) => {
+          // action.typeが'message'の場合、textプロパティがなければlabelで補完
+          let areaAction = { ...action };
+          if (areaAction.type === "message" && !areaAction.text) {
+            areaAction.text = areaAction.label || "";
+          }
+          return {
+            bounds: bounds[index],
+            action: areaAction as line.messagingApi.Action,
+          };
         },
-        action: action as line.messagingApi.Action,
-      }));
-      const response = await messagingApiClient.createRichMenu({
+      );
+      createRichMenuResponse = await messagingApiClient.createRichMenu({
+        name: chatBarText,
         chatBarText: chatBarText,
+        selected: false,
         size: {
           width: 1600,
           height: 900,
         },
         areas: areas,
       });
-      return createSuccessResponse(response);
+      const richMenuId = createRichMenuResponse.richMenuId;
+
+      // upload rich menu image
+      const richMenuImagePath = await generateRichMenuImage(
+        templateNumber,
+        actions.map(action => action.label || ""),
+      );
+      const imageBuffer = fs.readFileSync(richMenuImagePath);
+      const imageType = "image/png";
+      const imageBlob = new Blob([imageBuffer], { type: imageType });
+
+      setImageResponse = await lineBlobClient.setRichMenuImage(
+        richMenuId,
+        imageBlob,
+      );
+
+      return createSuccessResponse(setImageResponse);
     } catch (error) {
-      return createErrorResponse(`Failed to create rich menu: ${error.message}`);
+      return createErrorResponse(
+        `create richmenu: ${JSON.stringify(error, null, 2)}\n` +
+          `createRichMenuResponse: ${JSON.stringify(createRichMenuResponse, null, 2)}\n` +
+          `setImageResponse: ${JSON.stringify(setImageResponse, null, 2)}`,
+      );
     }
   },
-)
+);
 
 server.tool(
   "generate_rich_menu_image",
@@ -288,7 +356,7 @@ server.tool(
   async ({ templeteNumber, texts }) => {
     try {
       templeteNumber = initializeTempleteNumber(templeteNumber, texts.length);
-      const error = validateRichMenuImage(templeteNumber, texts);
+      const error = validateRichMenuImage(templeteNumber, texts.length);
       if (error) {
         return createErrorResponse(error);
       }
