@@ -235,6 +235,43 @@ server.tool(
 );
 
 server.tool(
+  'create_rich_menu',
+  'Create a rich menu associated with your LINE Official Account.',
+  {
+    chatBarText: z.string().describe("The ID of the rich menu to create."),
+    templateNumber: z.number().describe("The number of the template."),
+    actions: z.array(z.object({
+      type: z.string().describe("The type of the action.")
+    })),
+  },
+  async ({ chatBarText, templateNumber, actions }) => {
+    try {
+      const templeteNumber = initializeTempleteNumber(templateNumber, actions.length);
+      const areas: Array<line.messagingApi.RichMenuArea> = actions.map((action) => ({
+        bounds: {
+          x: 0,
+          y: 0,
+          width: 1600,
+          height: 900,
+        },
+        action: action as line.messagingApi.Action,
+      }));
+      const response = await messagingApiClient.createRichMenu({
+        chatBarText: chatBarText,
+        size: {
+          width: 1600,
+          height: 900,
+        },
+        areas: areas,
+      });
+      return createSuccessResponse(response);
+    } catch (error) {
+      return createErrorResponse(`Failed to create rich menu: ${error.message}`);
+    }
+  },
+)
+
+server.tool(
   "generate_rich_menu_image",
   "Generate a rich menu image based on the user's request.",
   {
@@ -250,7 +287,7 @@ server.tool(
   },
   async ({ templeteNumber, texts }) => {
     try {
-      templeteNumber = initializeTempleteNumber(templeteNumber, texts);
+      templeteNumber = initializeTempleteNumber(templeteNumber, texts.length);
       const error = validateRichMenuImage(templeteNumber, texts);
       if (error) {
         return createErrorResponse(error);

@@ -83,7 +83,7 @@ export const validateRichMenuImage = (
 
 export const initializeTempleteNumber = (
   templeteNumber: number,
-  texts: string[],
+  items: number,
 ): number => {
   if (!templeteNumber) {
     const templeteNumberMap = {
@@ -94,7 +94,7 @@ export const initializeTempleteNumber = (
       4: 2,
     } as const;
     templeteNumber =
-      templeteNumberMap[texts.length as keyof typeof templeteNumberMap] || 1;
+      templeteNumberMap[items as keyof typeof templeteNumberMap] || 1;
   }
   return templeteNumber;
 };
