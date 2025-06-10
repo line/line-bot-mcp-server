@@ -27,8 +27,8 @@ The project structure is as follows:
 
 ### Add a new Tool
 
-To add a new Tool, you can create a new directory under `src/tools/` and
-implement the Tool in that directory. The Tool should extend `AbstractTool`
+To add a new Tool, you can create a new file under `src/tools/` and
+implement the Tool in that file. The Tool should extend `AbstractTool`
 and should be registered in `src/index.ts`.
 
 ### Run all CI tasks in your local
