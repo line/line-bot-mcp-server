@@ -72,7 +72,7 @@ export default class CreateRichMenu extends AbstractTool {
             selected: false,
             size: {
               width: 1600,
-              height: 900,
+              height: 910,
             },
             areas: areas,
           });
@@ -96,6 +96,16 @@ export default class CreateRichMenu extends AbstractTool {
             richMenuId,
             setImageResponse,
             richMenuImagePath,
+            params: {
+              name: chatBarText,
+              chatBarText: chatBarText,
+              selected: false,
+              size: {
+                width: 1600,
+                height: 910,
+              },
+              areas: areas,
+            },
           });
         } catch (error) {
           return createErrorResponse(
