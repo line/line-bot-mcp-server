@@ -1,9 +1,113 @@
+import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
+import { messagingApi } from "@line/bot-sdk";
+import {
+  createErrorResponse,
+  createSuccessResponse,
+} from "../common/response.js";
+import { AbstractTool } from "./AbstractTool.js";
+import { z } from "zod";
 import { Marp } from "@marp-team/marp-core";
 import puppeteer from "puppeteer";
 import { promises as fs } from "fs";
 import path from "path";
 import os from "os";
 import { fileURLToPath } from "url";
+import { actionSchema } from "../common/schema/actionSchema.js";
+export default class CreateRichMenu extends AbstractTool {
+  private client: messagingApi.MessagingApiClient;
+  private lineBlobClient: messagingApi.MessagingApiBlobClient;
+
+  constructor(
+    client: messagingApi.MessagingApiClient,
+    lineBlobClient: messagingApi.MessagingApiBlobClient,
+  ) {
+    super();
+    this.client = client;
+    this.lineBlobClient = lineBlobClient;
+  }
+
+  register(server: McpServer) {
+    server.tool(
+      "create_rich_menu",
+      "Create a rich menu associated with your LINE Official Account.",
+      {
+        chatBarText: z.string().describe("The ID of the rich menu to create."),
+        templateNumber: z.number().describe("The number of the template."),
+        actions: z.array(actionSchema),
+      },
+      async ({ chatBarText, templateNumber, actions }) => {
+        let createRichMenuResponse: any = null;
+        let setImageResponse: any = null;
+        try {
+          const error = validateRichMenuImage(templateNumber, actions.length);
+          if (error) {
+            return createErrorResponse(error);
+          }
+
+          // initialize templete number
+          templateNumber = initializeTempleteNumber(
+            templateNumber,
+            actions.length,
+          );
+
+          // create rich menu
+          const bounds = richmenuBounds(templateNumber);
+          const areas: Array<messagingApi.RichMenuArea> = actions.map(
+            (action, index) => {
+              // action.typeが'message'の場合、textプロパティがなければlabelで補完
+              let areaAction = { ...action };
+              if (areaAction.type === "message" && !areaAction.text) {
+                areaAction.text = areaAction.label || "";
+              }
+              return {
+                bounds: bounds[index],
+                action: areaAction as messagingApi.Action,
+              };
+            },
+          );
+
+          createRichMenuResponse = await this.client.createRichMenu({
+            name: chatBarText,
+            chatBarText: chatBarText,
+            selected: false,
+            size: {
+              width: 1600,
+              height: 900,
+            },
+            areas: areas,
+          });
+          const richMenuId = createRichMenuResponse.richMenuId;
+
+          // upload rich menu image
+          const richMenuImagePath = await generateRichMenuImage(
+            templateNumber,
+            actions.map(action => action.label || ""),
+          );
+          const imageBuffer = await fs.readFile(richMenuImagePath);
+          const imageType = "image/png";
+          const imageBlob = new Blob([imageBuffer], { type: imageType });
+
+          setImageResponse = await this.lineBlobClient.setRichMenuImage(
+            richMenuId,
+            imageBlob,
+          );
+
+          return createSuccessResponse({
+            richMenuId,
+            setImageResponse,
+            richMenuImagePath,
+          });
+        } catch (error) {
+          return createErrorResponse(
+            `create richmenu: ${JSON.stringify(error, null, 2)}\n` +
+              `createRichMenuResponse: ${JSON.stringify(createRichMenuResponse, null, 2)}\n` +
+              `setImageResponse: ${JSON.stringify(setImageResponse, null, 2)}`,
+          );
+        }
+      },
+    );
+  }
+}
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
