@@ -60,12 +60,13 @@ export default class CreateRichMenu extends AbstractTool {
           );
           const createRichMenuParams = {
             name: chatBarText,
-            chatBarText: chatBarText,
-            selected: false,
+            chatBarText,
+            selected: true,
             size: {
               width: RICHMENU_WIDTH,
               height: RICHMENU_HEIGHT,
             },
+            areas,
           };
           createRichMenuResponse =
             await this.client.createRichMenu(createRichMenuParams);
@@ -217,12 +218,12 @@ const richmenuBounds = (templeteNo: number) => {
         {
           x: 0,
           y: 0,
-          width: RICHMENU_WIDTH / 3 * 2,
+          width: (RICHMENU_WIDTH / 3) * 2,
           height: RICHMENU_HEIGHT,
         },
         ...[0, 1].map(i => ({
           x: 800 * i,
-          y: RICHMENU_WIDTH / 3 * 2,
+          y: (RICHMENU_WIDTH / 3) * 2,
           width: 800,
           height: RICHMENU_HEIGHT / 2,
         })),
