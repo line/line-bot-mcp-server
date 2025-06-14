@@ -15,6 +15,9 @@ import { fileURLToPath } from "url";
 import { actionSchema } from "../common/schema/actionSchema.js";
 import { promises as fsp } from "fs";
 
+const RICHMENU_HEIGHT = 910;
+const RICHMENU_WIDTH = 1600;
+
 export default class CreateRichMenu extends AbstractTool {
   private client: messagingApi.MessagingApiClient;
   private lineBlobClient: messagingApi.MessagingApiBlobClient;
@@ -60,8 +63,8 @@ export default class CreateRichMenu extends AbstractTool {
             chatBarText: chatBarText,
             selected: false,
             size: {
-              width: 1600,
-              height: 910,
+              width: RICHMENU_WIDTH,
+              height: RICHMENU_HEIGHT,
             },
           };
           createRichMenuResponse =
@@ -153,13 +156,13 @@ async function generateRichMenuImage(
   // 4. Use puppeteer to convert HTML to PNG
   const browser = await puppeteer.launch();
   const page = await browser.newPage();
-  await page.setViewport({ width: 1600, height: 910 });
+  await page.setViewport({ width: RICHMENU_WIDTH, height: RICHMENU_HEIGHT });
   await page.goto(`file://${tempHtmlPath}`, {
     waitUntil: "networkidle0",
   });
   await page.screenshot({
     path: richMenuImagePath as `${string}.png`,
-    clip: { x: 0, y: 0, width: 1600, height: 910 },
+    clip: { x: 0, y: 0, width: RICHMENU_WIDTH, height: RICHMENU_HEIGHT },
   });
   await browser.close();
 
@@ -198,40 +201,40 @@ const richmenuBounds = (templeteNo: number) => {
         {
           x: 0,
           y: 0,
-          width: 1600,
-          height: 910,
+          width: RICHMENU_WIDTH,
+          height: RICHMENU_HEIGHT,
         },
       ],
       // templete-02
       [0, 1].map(i => ({
-        x: 455 * i,
+        x: (RICHMENU_HEIGHT / 2) * i,
         y: 0,
-        width: 455,
-        height: 910,
+        width: RICHMENU_HEIGHT / 2,
+        height: RICHMENU_HEIGHT,
       })),
       // templete-03
       [
         {
           x: 0,
           y: 0,
-          width: 800,
-          height: 910,
+          width: RICHMENU_WIDTH / 3 * 2,
+          height: RICHMENU_HEIGHT,
         },
         ...[0, 1].map(i => ({
           x: 800 * i,
-          y: 455,
+          y: RICHMENU_WIDTH / 3 * 2,
           width: 800,
-          height: 455,
+          height: RICHMENU_HEIGHT / 2,
         })),
       ],
       // templete-04
       [0, 1]
         .map(i =>
           [0, 1].map(j => ({
-            x: 800 * i,
-            y: 455 * j,
-            width: 800,
-            height: 455,
+            x: (RICHMENU_HEIGHT / 2) * i,
+            y: (RICHMENU_HEIGHT / 2) * j,
+            width: RICHMENU_HEIGHT / 2,
+            height: RICHMENU_HEIGHT / 2,
           })),
         )
         .flat(),
@@ -240,30 +243,30 @@ const richmenuBounds = (templeteNo: number) => {
         {
           x: 0,
           y: 0,
-          width: 1066,
-          height: 910,
+          width: (RICHMENU_WIDTH / 3) * 2,
+          height: RICHMENU_HEIGHT,
         },
         {
-          x: 1066,
+          x: (RICHMENU_WIDTH / 3) * 2,
           y: 0,
-          width: 533,
-          height: 910,
+          width: RICHMENU_WIDTH / 3,
+          height: RICHMENU_HEIGHT,
         },
         ...[0, 1, 2].map(i => ({
-          x: 533 * i,
-          y: 455,
-          width: 533,
-          height: 455,
+          x: (RICHMENU_WIDTH / 3) * i,
+          y: RICHMENU_HEIGHT / 2,
+          width: RICHMENU_WIDTH / 3,
+          height: RICHMENU_HEIGHT / 2,
         })),
       ],
       // templete-06
       [0, 1]
         .map(i =>
           [0, 1, 2].map(j => ({
-            x: 533 * j,
-            y: 455 * i,
-            width: 533,
-            height: 455,
+            x: (RICHMENU_WIDTH / 3) * j,
+            y: (RICHMENU_HEIGHT / 2) * i,
+            width: RICHMENU_WIDTH / 3,
+            height: RICHMENU_HEIGHT / 2,
           })),
         )
         .flat(),
