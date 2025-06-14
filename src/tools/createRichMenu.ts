@@ -208,9 +208,9 @@ const richmenuBounds = (templeteNo: number) => {
       ],
       // templete-02
       [0, 1].map(i => ({
-        x: (RICHMENU_HEIGHT / 2) * i,
+        x: (RICHMENU_WIDTH / 2) * i,
         y: 0,
-        width: RICHMENU_HEIGHT / 2,
+        width: RICHMENU_WIDTH / 2,
         height: RICHMENU_HEIGHT,
       })),
       // templete-03
@@ -222,9 +222,9 @@ const richmenuBounds = (templeteNo: number) => {
           height: RICHMENU_HEIGHT,
         },
         ...[0, 1].map(i => ({
-          x: 800 * i,
-          y: (RICHMENU_WIDTH / 3) * 2,
-          width: 800,
+          x: (RICHMENU_WIDTH / 3) * 2,
+          y: (RICHMENU_HEIGHT / 3) * i,
+          width: RICHMENU_WIDTH / 3,
           height: RICHMENU_HEIGHT / 2,
         })),
       ],
@@ -232,9 +232,9 @@ const richmenuBounds = (templeteNo: number) => {
       [0, 1]
         .map(i =>
           [0, 1].map(j => ({
-            x: (RICHMENU_HEIGHT / 2) * i,
+            x: (RICHMENU_WIDTH / 2) * i,
             y: (RICHMENU_HEIGHT / 2) * j,
-            width: RICHMENU_HEIGHT / 2,
+            width: RICHMENU_WIDTH / 2,
             height: RICHMENU_HEIGHT / 2,
           })),
         )
@@ -245,13 +245,13 @@ const richmenuBounds = (templeteNo: number) => {
           x: 0,
           y: 0,
           width: (RICHMENU_WIDTH / 3) * 2,
-          height: RICHMENU_HEIGHT,
+          height: RICHMENU_HEIGHT / 2,
         },
         {
           x: (RICHMENU_WIDTH / 3) * 2,
           y: 0,
           width: RICHMENU_WIDTH / 3,
-          height: RICHMENU_HEIGHT,
+          height: RICHMENU_HEIGHT / 2,
         },
         ...[0, 1, 2].map(i => ({
           x: (RICHMENU_WIDTH / 3) * i,

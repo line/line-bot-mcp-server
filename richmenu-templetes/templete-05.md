@@ -66,6 +66,9 @@ section > :last-child {
     <h3>item01</h3>
   </div>
   <div class="column-item column-item-01">
+    <h3>item02</h3>
+  </div>
+  <div class="column-item column-item-02">
     <h3>item03</h3>
   </div>
   <div class="column-item column-item-02">
@@ -73,8 +76,5 @@ section > :last-child {
   </div>
   <div class="column-item column-item-02">
     <h3>item05</h3>
-  </div>
-  <div class="column-item column-item-02">
-    <h3>item06</h3>
   </div>
 </div>
