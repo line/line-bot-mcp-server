@@ -30,7 +30,7 @@ import GetMessageQuota from "./tools/getMessageQuota.js";
 import GetRichMenuList from "./tools/getRichMenuList.js";
 import DeleteRichMenu from "./tools/deleteRichMenu.js";
 import SetRichMenuDefault from "./tools/setRichMenuDefault.js";
-import CreateRichMenu from "./tools/createRichmMenu.js";
+import CreateRichMenu from "./tools/createRichMenu.js";
 import DownloadRichMenuImage from "./tools/downloadRichMenuImage.js";
 
 const server = new McpServer({
