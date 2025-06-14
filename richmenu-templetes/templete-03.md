@@ -18,56 +18,64 @@ section > :last-child {
   margin-bottom: 0 !important;
 }
 
-.columns-container {
+.flex-container {
   display: flex;
-  flex-wrap: wrap;
   width: 100%;
+  height: 400px;   gap: 10px;
   height: 100%;
 }
 
-.column-item {
+.flex-left {
+  flex: 2;
+  background: white;
   display: flex;
-  flex-direction: column;
   justify-content: center;
   align-items: center;
-  background-color: white;
-  box-sizing: border-box;
-  overflow: hidden;
+  font-size: 2rem;
+  border: 1px solid #ccc;
+  margin: 10px 0px 10px 10px;
 }
 
-.column-item-01 {
-  margin: 10px 0px 0px 10px;
-  height: calc((100% - 30px) / 2);
-  width: calc((100% - 20px));
-}
-.column-item-02 {
-  margin: 0px 0px 0px 10px;
-  height: calc((100% - 30px) / 2);
-  width: calc((100% - 40px) / 3);
+.flex-right {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  height: 100%;
 }
 
-.column-item h3 {
-  font-weight: bold;
-  width: 100%;
-  text-align: center;
-  font-size: clamp(16px, 6vw, 50px);
-  white-space: normal;
-  word-break: break-all;
+.flex-right-top-item {
+  flex: 1;
+  background: white;
+  margin: 10px 10px 0px 0px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 2rem;
+  border: 1px solid #ccc;
 }
 
+.flex-right-bottom-item {
+  flex: 1;
+  background: white;
+  margin: 0px 10px 10px 0px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 2rem;
+  border: 1px solid #ccc;
+}
 </style>
-
-<div class="columns-container">
-  <div class="column-item column-item-01">
+<div class="flex-container">
+  <div class="flex-left">
     <h3>item01</h3>
   </div>
-  <div class="column-item column-item-02">
-    <h3>item02</h3>
-  </div>
-  <div class="column-item column-item-02">
-    <h3>item03</h3>
-  </div>
-  <div class="column-item column-item-02">
-    <h3>item04</h3>
+  <div class="flex-right">
+    <div class="flex-right-top-item">
+      <h3>item02</h3>
+    </div>
+    <div class="flex-right-bottom-item">
+      <h3>item03</h3>
+    </div>
   </div>
 </div>

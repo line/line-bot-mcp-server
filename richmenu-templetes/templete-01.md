@@ -3,53 +3,36 @@ marp: true
 size: 16:9
 ---
 
-
 <style>
 section {
   padding: 0 !important;
   background-color: orange;
   height: 100% !important;
 }
-
-/*
-   スライド内の最初の要素が持つ上マージンや、
-   最後の要素が持つ下マージンも消したい場合に追加すると、
-   より端までコンテンツが配置されます。
-*/
 section > :first-child {
   margin-top: 0 !important;
 }
 section > :last-child {
   margin-bottom: 0 !important;
 }
-
-/* 横並びレイアウトのためのコンテナ */
 .columns-container {
   display: flex;
-  flex-wrap: wrap; /* 折り返しを有効に */
+  flex-wrap: wrap;
   width: 100%;
   height: 100%;
 }
 
-/* 横並びにする各item0*/
 .column-item {
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  margin: 10px;
   background-color: white;
   box-sizing: border-box;
-  height: calc((100% - 30px) / 2);
-  width: calc((100% - 40px) / 3);
+  height: calc((100% - 20px));
+  width: calc((100% - 20px));
   overflow: hidden;
-}
-
-.column-item-01 {
-  margin: 10px 0px 0px 10px;
-}
-
-.column-item-02 {
-  margin: 0px 0px 0px 10px;
 }
 
 .column-item h3 {
@@ -60,26 +43,10 @@ section > :last-child {
   white-space: normal;
   word-break: break-all;
 }
-
 </style>
 
 <div class="columns-container">
-  <div class="column-item column-item-01">
+  <div class="column-item">
     <h3>item01</h3>
-  </div>
-  <div class="column-item column-item-01">
-    <h3>item02</h3>
-  </div>
-  <div class="column-item column-item-01">
-    <h3>item03</h3>
-  </div>
-  <div class="column-item column-item-02">
-    <h3>item04</h3>
-  </div>
-  <div class="column-item column-item-02">
-    <h3>item05</h3>
-  </div>
-  <div class="column-item column-item-02">
-    <h3>item06</h3>
   </div>
 </div>

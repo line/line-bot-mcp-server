@@ -30,24 +30,18 @@ section > :last-child {
   justify-content: center;
   align-items: center;
   background-color: white;
+  margin: 10px 0px 10px 10px;
   box-sizing: border-box;
-  height: calc((100% - 30px) / 2);
+  height: calc((100% - 20px));
   width: calc((100% - 30px) / 2);
   overflow: hidden;
-}
-
-.column-item-01 {
-  margin: 10px 0px 0px 10px;
-}
-.column-item-02 {
-  margin: 0px 0px 0px 10px;
 }
 
 .column-item h3 {
   font-weight: bold;
   width: 100%;
   text-align: center;
-  margin: 5px;
+  margin: 0;
   font-size: clamp(16px, 6vw, 50px);
   white-space: normal;
   word-break: break-all;
@@ -56,16 +50,10 @@ section > :last-child {
 </style>
 
 <div class="columns-container">
-  <div class="column-item column-item-01">
+  <div class="column-item">
     <h3>item01</h3>
   </div>
-  <div class="column-item column-item-01">
+  <div class="column-item">
     <h3>item02</h3>
-  </div>
-  <div class="column-item column-item-02">
-    <h3>item03</h3>
-  </div>
-  <div class="column-item column-item-02">
-    <h3>item04</h3>
   </div>
 </div>
