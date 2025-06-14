@@ -3,28 +3,20 @@ marp: true
 size: 16:9
 ---
 
-
 <style>
 section {
   padding: 0 !important;
   background-color: orange;
   height: 100% !important;
-}
-
-section > :first-child {
   margin-top: 0 !important;
-}
-section > :last-child {
   margin-bottom: 0 !important;
 }
-
 .columns-container {
   display: flex;
   flex-wrap: wrap;
   width: 100%;
   height: 100%;
 }
-
 .column-item {
   display: flex;
   flex-direction: column;
@@ -32,19 +24,8 @@ section > :last-child {
   align-items: center;
   background-color: white;
   box-sizing: border-box;
-  height: calc((100% - 30px) / 2);
-  width: calc((100% - 40px) / 3);
   overflow: hidden;
 }
-
-.column-item-01 {
-  margin: 10px 0px 0px 10px;
-}
-
-.column-item-02 {
-  margin: 0px 0px 0px 10px;
-}
-
 .column-item h3 {
   font-weight: bold;
   width: 100%;
@@ -53,26 +34,35 @@ section > :last-child {
   white-space: normal;
   word-break: break-all;
 }
-
+.column-item-06 {
+  height: calc((100% - 30px) / 2);
+  width: calc((100% - 40px) / 3);
+}
+.column-item-06-01 {
+  margin: 10px 0px 0px 10px;
+}
+.column-item-06-02 {
+  margin: 0px 0px 0px 10px;
+}
 </style>
 
 <div class="columns-container">
-  <div class="column-item column-item-01">
+  <div class="column-item column-item-06 column-item column-item-06-01">
     <h3>item01</h3>
   </div>
-  <div class="column-item column-item-01">
+  <div class="column-item column-item-06 column-item column-item-06-01">
     <h3>item02</h3>
   </div>
-  <div class="column-item column-item-01">
+  <div class="column-item column-item-06 column-item column-item-06-01">
     <h3>item03</h3>
   </div>
-  <div class="column-item column-item-02">
+  <div class="column-item column-item-06 column-item column-item-06-02">
     <h3>item04</h3>
   </div>
-  <div class="column-item column-item-02">
+  <div class="column-item column-item-06 column-item column-item-06-02">
     <h3>item05</h3>
   </div>
-  <div class="column-item column-item-02">
+  <div class="column-item column-item-06 column-item column-item-06-02">
     <h3>item06</h3>
   </div>
 </div>

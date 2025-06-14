@@ -8,11 +8,7 @@ section {
   padding: 0 !important;
   background-color: orange;
   height: 100% !important;
-}
-section > :first-child {
   margin-top: 0 !important;
-}
-section > :last-child {
   margin-bottom: 0 !important;
 }
 .columns-container {
@@ -21,20 +17,15 @@ section > :last-child {
   width: 100%;
   height: 100%;
 }
-
 .column-item {
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  margin: 10px;
   background-color: white;
   box-sizing: border-box;
-  height: calc((100% - 20px));
-  width: calc((100% - 20px));
   overflow: hidden;
 }
-
 .column-item h3 {
   font-weight: bold;
   width: 100%;
@@ -43,10 +34,15 @@ section > :last-child {
   white-space: normal;
   word-break: break-all;
 }
+.column-item-01 {
+  margin: 10px;
+  height: calc((100% - 20px));
+  width: calc((100% - 20px));
+}
 </style>
 
 <div class="columns-container">
-  <div class="column-item">
+  <div class="column-item column-item-01">
     <h3>item01</h3>
   </div>
 </div>
