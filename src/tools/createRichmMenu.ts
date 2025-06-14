@@ -8,7 +8,7 @@ import { AbstractTool } from "./AbstractTool.js";
 import { z } from "zod";
 import { Marp } from "@marp-team/marp-core";
 import puppeteer from "puppeteer";
-import { promises as fs } from "fs";
+import fs from "fs";
 import path from "path";
 import os from "os";
 import { fileURLToPath } from "url";
@@ -66,6 +66,7 @@ export default class CreateRichMenu extends AbstractTool {
             },
           );
 
+          // create rich menu
           createRichMenuResponse = await this.client.createRichMenu({
             name: chatBarText,
             chatBarText: chatBarText,
@@ -78,23 +79,30 @@ export default class CreateRichMenu extends AbstractTool {
           });
           const richMenuId = createRichMenuResponse.richMenuId;
 
-          // upload rich menu image
+          // generate rich menu image
           const richMenuImagePath = await generateRichMenuImage(
             templateNumber,
             actions.map(action => action.label || ""),
           );
-          const imageBuffer = await fs.readFile(richMenuImagePath);
+
+          // upload rich menu image
+          const imageBuffer = fs.readFileSync(richMenuImagePath);
           const imageType = "image/png";
           const imageBlob = new Blob([imageBuffer], { type: imageType });
-
-          setImageResponse = await this.lineBlobClient.setRichMenuImage(
+          const setImageResponse = await this.lineBlobClient.setRichMenuImage(
             richMenuId,
             imageBlob,
+          );
+
+          // set default rich menu
+          const setDefaultResponse = await this.client.setDefaultRichMenu(
+            richMenuId,
           );
 
           return createSuccessResponse({
             richMenuId,
             setImageResponse,
+            setDefaultResponse,
             richMenuImagePath,
             params: {
               name: chatBarText,
