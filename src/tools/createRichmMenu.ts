@@ -34,26 +34,20 @@ export default class CreateRichMenu extends AbstractTool {
       "Create a rich menu associated with your LINE Official Account.",
       {
         chatBarText: z.string().describe("The ID of the rich menu to create."),
-        templateNumber: z.number().describe("The number of the template."),
         actions: z.array(actionSchema),
       },
-      async ({ chatBarText, templateNumber, actions }) => {
+      async ({ chatBarText, actions }) => {
         let createRichMenuResponse: any = null;
         let setImageResponse: any = null;
+        const templeteNo = actions.length;
         try {
-          const error = validateRichMenuImage(templateNumber, actions.length);
+          const error = validateRichMenuImage(templeteNo);
           if (error) {
             return createErrorResponse(error);
           }
 
-          // initialize templete number
-          templateNumber = initializeTempleteNumber(
-            templateNumber,
-            actions.length,
-          );
-
           // create rich menu
-          const bounds = richmenuBounds(templateNumber);
+          const bounds = richmenuBounds(templeteNo);
           const areas: Array<messagingApi.RichMenuArea> = actions.map(
             (action, index) => {
               // action.typeが'message'の場合、textプロパティがなければlabelで補完
@@ -83,7 +77,7 @@ export default class CreateRichMenu extends AbstractTool {
 
           // generate rich menu image
           const richMenuImagePath = await generateRichMenuImage(
-            templateNumber,
+            templeteNo,
             actions.map(action => action.label || ""),
           );
 
@@ -133,19 +127,19 @@ const __dirname = path.dirname(__filename);
 
 // Function to generate a rich menu image from a Markdown template
 export async function generateRichMenuImage(
-  templeteNumber: number,
+  templeteNo: number,
   texts: string[],
 ): Promise<string> {
   const richMenuImagePath = path.join(
     os.tmpdir(),
-    `slide-0${templeteNumber}-${Date.now()}.png`,
+    `slide-0${templeteNo}-${Date.now()}.png`,
   );
   const serverPath =
     process.env.SERVER_PATH || path.resolve(__dirname, "..", "..");
   // 1. Read the Markdown template
   const srcPath = path.join(
     serverPath,
-    `richmenu-templetes/templete-0${templeteNumber}.md`,
+    `richmenu-templetes/templete-0${templeteNo}.md`,
   );
   let content = await fsp.readFile(srcPath, "utf8");
   for (let index = 0; index < texts.length; index++) {
@@ -175,7 +169,7 @@ export async function generateRichMenuImage(
   // 4. Use puppeteer to convert HTML to PNG
   const browser = await puppeteer.launch();
   const page = await browser.newPage();
-  await page.setViewport({ width: 1600, height: 900 });
+  await page.setViewport({ width: 1600, height: 910 });
   await page.goto(`file://${tempHtmlPath}`, {
     waitUntil: "networkidle0",
   });
@@ -192,37 +186,15 @@ export async function generateRichMenuImage(
 }
 
 export const validateRichMenuImage = (
-  templeteNumber: number,
   len: number,
 ): string | null => {
-  if (templeteNumber < 1 || templeteNumber > 7) {
-    return "Invalid templete number";
-  }
   if (len < 1 || len > 6) {
     return "Invalid texts length";
   }
   return null;
 };
 
-export const initializeTempleteNumber = (
-  templeteNumber: number,
-  items: number,
-): number => {
-  if (!templeteNumber) {
-    const templeteNumberMap = {
-      // text length: templete number
-      1: 7,
-      2: 6,
-      3: 4,
-      4: 2,
-    } as const;
-    templeteNumber =
-      templeteNumberMap[items as keyof typeof templeteNumberMap] || 1;
-  }
-  return templeteNumber;
-};
-
-export const richmenuBounds = (templeteNumber: number) => {
+export const richmenuBounds = (templeteNo: number) => {
   const boundsMap: {
     [key: number]: { x: number; y: number; width: number; height: number }[];
   } = {
@@ -230,9 +202,9 @@ export const richmenuBounds = (templeteNumber: number) => {
       .map(i =>
         [0, 1].map(j => ({
           x: 533 * i,
-          y: 450 * j,
+          y: 455 * j,
           width: 533,
-          height: 450,
+          height: 455,
         })),
       )
       .flat(),
@@ -240,9 +212,9 @@ export const richmenuBounds = (templeteNumber: number) => {
       .map(i =>
         [0, 1].map(j => ({
           x: 800 * i,
-          y: 450 * j,
+          y: 455 * j,
           width: 800,
-          height: 450,
+          height: 455,
         })),
       )
       .flat(),
@@ -251,13 +223,13 @@ export const richmenuBounds = (templeteNumber: number) => {
         x: 0,
         y: 0,
         width: 1600,
-        height: 450,
+        height: 455,
       },
       ...[0, 1, 2].map(i => ({
         x: 533 * i,
-        y: 450,
+        y: 455,
         width: 533,
-        height: 450,
+        height: 455,
       })),
     ],
     4: [
@@ -265,13 +237,13 @@ export const richmenuBounds = (templeteNumber: number) => {
         x: 0,
         y: 0,
         width: 800,
-        height: 900,
+        height: 910,
       },
       ...[0, 1].map(i => ({
         x: 800 * i,
-        y: 450,
+        y: 455,
         width: 800,
-        height: 450,
+        height: 455,
       })),
     ],
     5: [0, 1].map(i => ({
@@ -281,20 +253,20 @@ export const richmenuBounds = (templeteNumber: number) => {
       height: 800,
     })),
     6: [0, 1].map(i => ({
-      x: 450 * i,
+      x: 455 * i,
       y: 0,
-      width: 450,
-      height: 900,
+      width: 455,
+      height: 910,
     })),
     7: [
       {
         x: 0,
         y: 0,
         width: 1600,
-        height: 900,
+        height: 910,
       },
     ],
   };
 
-  return boundsMap[templeteNumber];
+  return boundsMap[templeteNo];
 };
