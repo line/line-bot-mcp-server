@@ -185,88 +185,105 @@ export async function generateRichMenuImage(
   return richMenuImagePath;
 }
 
-export const validateRichMenuImage = (
-  len: number,
-): string | null => {
+const validateRichMenuImage = (len: number): string | null => {
   if (len < 1 || len > 6) {
     return "Invalid texts length";
   }
   return null;
 };
 
-export const richmenuBounds = (templeteNo: number) => {
-  const boundsMap: {
-    [key: number]: { x: number; y: number; width: number; height: number }[];
-  } = {
-    1: [0, 1, 2]
-      .map(i =>
-        [0, 1].map(j => ({
-          x: 533 * i,
-          y: 455 * j,
-          width: 533,
-          height: 455,
-        })),
-      )
-      .flat(),
-    2: [0, 1]
-      .map(i =>
-        [0, 1].map(j => ({
+const richmenuAreas = (
+  templeteNo: number,
+  actions: messagingApi.Action[],
+): messagingApi.RichMenuArea[] => {
+  const bounds = richmenuBounds(templeteNo);
+  return actions.map((action, index) => {
+    return {
+      bounds: bounds[index],
+      action: action as messagingApi.Action,
+    };
+  });
+};
+
+const richmenuBounds = (templeteNo: number) => {
+  const boundsMap: { x: number; y: number; width: number; height: number }[][] =
+    [
+      [],
+      // templete-01
+      [
+        {
+          x: 0,
+          y: 0,
+          width: 1600,
+          height: 910,
+        },
+      ],
+      // templete-02
+      [0, 1].map(i => ({
+        x: 455 * i,
+        y: 0,
+        width: 455,
+        height: 910,
+      })),
+      // templete-03
+      [
+        {
+          x: 0,
+          y: 0,
+          width: 800,
+          height: 910,
+        },
+        ...[0, 1].map(i => ({
           x: 800 * i,
-          y: 455 * j,
+          y: 455,
           width: 800,
           height: 455,
         })),
-      )
-      .flat(),
-    3: [
-      {
-        x: 0,
-        y: 0,
-        width: 1600,
-        height: 455,
-      },
-      ...[0, 1, 2].map(i => ({
-        x: 533 * i,
-        y: 455,
-        width: 533,
-        height: 455,
-      })),
-    ],
-    4: [
-      {
-        x: 0,
-        y: 0,
-        width: 800,
-        height: 910,
-      },
-      ...[0, 1].map(i => ({
-        x: 800 * i,
-        y: 455,
-        width: 800,
-        height: 455,
-      })),
-    ],
-    5: [0, 1].map(i => ({
-      x: 0,
-      y: 800 * i,
-      width: 1600,
-      height: 800,
-    })),
-    6: [0, 1].map(i => ({
-      x: 455 * i,
-      y: 0,
-      width: 455,
-      height: 910,
-    })),
-    7: [
-      {
-        x: 0,
-        y: 0,
-        width: 1600,
-        height: 910,
-      },
-    ],
-  };
+      ],
+      // templete-04
+      [0, 1]
+        .map(i =>
+          [0, 1].map(j => ({
+            x: 800 * i,
+            y: 455 * j,
+            width: 800,
+            height: 455,
+          })),
+        )
+        .flat(),
+      // templete-05
+      [
+        {
+          x: 0,
+          y: 0,
+          width: 1066,
+          height: 910,
+        },
+        {
+          x: 1066,
+          y: 0,
+          width: 533,
+          height: 910,
+        },
+        ...[0, 1, 2].map(i => ({
+          x: 533 * i,
+          y: 455,
+          width: 533,
+          height: 455,
+        })),
+      ],
+      // templete-06
+      [0, 1]
+        .map(i =>
+          [0, 1, 2].map(j => ({
+            x: 533 * j,
+            y: 455 * i,
+            width: 533,
+            height: 455,
+          })),
+        )
+        .flat(),
+    ];
 
   return boundsMap[templeteNo];
 };
