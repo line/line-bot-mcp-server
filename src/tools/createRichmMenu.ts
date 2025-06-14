@@ -13,6 +13,8 @@ import path from "path";
 import os from "os";
 import { fileURLToPath } from "url";
 import { actionSchema } from "../common/schema/actionSchema.js";
+import { promises as fsp } from "fs";
+
 export default class CreateRichMenu extends AbstractTool {
   private client: messagingApi.MessagingApiClient;
   private lineBlobClient: messagingApi.MessagingApiBlobClient;
@@ -95,9 +97,8 @@ export default class CreateRichMenu extends AbstractTool {
           );
 
           // set default rich menu
-          const setDefaultResponse = await this.client.setDefaultRichMenu(
-            richMenuId,
-          );
+          const setDefaultResponse =
+            await this.client.setDefaultRichMenu(richMenuId);
 
           return createSuccessResponse({
             richMenuId,
@@ -146,7 +147,7 @@ export async function generateRichMenuImage(
     serverPath,
     `richmenu-templetes/templete-0${templeteNumber}.md`,
   );
-  let content = await fs.readFile(srcPath, "utf8");
+  let content = await fsp.readFile(srcPath, "utf8");
   for (let index = 0; index < texts.length; index++) {
     const pattern = new RegExp(`<h3>item0${index + 1}</h3>`, "g");
     content = content.replace(pattern, `<h3>${texts[index]}</h3>`);
@@ -169,7 +170,7 @@ export async function generateRichMenuImage(
     os.tmpdir(),
     `temp_marp_slide_${Date.now()}.html`,
   );
-  await fs.writeFile(tempHtmlPath, htmlContent);
+  await fsp.writeFile(tempHtmlPath, htmlContent, "utf8");
 
   // 4. Use puppeteer to convert HTML to PNG
   const browser = await puppeteer.launch();
@@ -185,7 +186,7 @@ export async function generateRichMenuImage(
   await browser.close();
 
   // 5. Delete the temporary HTML file
-  await fs.unlink(tempHtmlPath);
+  await fsp.unlink(tempHtmlPath);
 
   return richMenuImagePath;
 }
