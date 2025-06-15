@@ -2,7 +2,6 @@
 marp: true
 size: 16:9
 ---
-
 <style>
 section {
   padding: 0 !important;
@@ -30,7 +29,7 @@ section {
   font-weight: bold;
   width: 100%;
   text-align: center;
-  font-size: clamp(16px, 6vw, 50px);
+  font-size: 100px;
   white-space: normal;
   word-break: break-all;
 }
@@ -40,7 +39,6 @@ section {
   width: calc((100% - 20px));
 }
 </style>
-
 <div class="columns-container">
   <div class="column-item column-item-01">
     <h3>item01</h3>

@@ -1,5 +1,11 @@
 import { z } from "zod";
 
+// references:
+// * document:
+//   https://developers.line.biz/ja/docs/messaging-api/actions/
+// * line-bot-sdk-nodejs:
+//   https://github.com/line/line-bot-sdk-nodejs/blob/master/lib/messaging-api/model/action.ts
+
 // 1. Postback action
 const postbackActionSchema = z.object({
   type: z.literal("postback"),

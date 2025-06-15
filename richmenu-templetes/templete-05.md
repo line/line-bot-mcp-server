@@ -2,7 +2,6 @@
 marp: true
 size: 16:9
 ---
-
 <style>
 section {
   padding: 0 !important;
@@ -30,7 +29,7 @@ section {
   font-weight: bold;
   width: 100%;
   text-align: center;
-  font-size: clamp(16px, 6vw, 50px);
+  font-size: 50px;
   white-space: normal;
   word-break: break-all;
 }
@@ -38,32 +37,31 @@ section {
   height: calc((100% - 30px) / 2);
   width: calc((100% - 40px) / 3);
 }
-.column-item-05-01 {
-  margin: 10px 0px 0px 10px;
-}
-.column-item-05-wide-01 {
+.column-item-05-top-wide {
   width: calc((100% - 40px) / 3 * 2 + 10px);
   margin: 10px 0px 0px 10px;
 }
-.column-item-05-02 {
+.column-item-05-top-small {
+  margin: 10px 0px 0px 10px;
+}
+.column-item-05-bottom {
   margin: 0px 0px 0px 10px;
 }
 </style>
-
 <div class="columns-container">
-  <div class="column-item column-item-05 column-item column-item-05-wide-01">
+  <div class="column-item column-item-05 column-item column-item-05-top-wide">
     <h3>item01</h3>
   </div>
-  <div class="column-item column-item-05 column-item column-item-05-01">
+  <div class="column-item column-item-05 column-item column-item-05-top-small">
     <h3>item02</h3>
   </div>
-  <div class="column-item column-item-05 column-item column-item-05-02">
+  <div class="column-item column-item-05 column-item column-item-05-bottom">
     <h3>item03</h3>
   </div>
-  <div class="column-item column-item-05 column-item column-item-05-02">
+  <div class="column-item column-item-05 column-item column-item-05-bottom">
     <h3>item04</h3>
   </div>
-  <div class="column-item column-item-05 column-item column-item-05-02">
+  <div class="column-item column-item-05 column-item column-item-05-bottom">
     <h3>item05</h3>
   </div>
 </div>

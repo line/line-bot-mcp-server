@@ -42,18 +42,24 @@ export default class CreateRichMenu extends AbstractTool {
           .describe("The actions of the rich menu."),
       },
       async ({ chatBarText, actions }) => {
+        // Flow:
+        // 1. Validate the rich menu image
+        // 2. Create a rich menu
+        // 3. Generate a rich menu image
+        // 4. Upload the rich menu image
+        // 5. Set the rich menu as the default rich menu
         let createRichMenuResponse: any = null;
         let setImageResponse: any = null;
         let setDefaultResponse: any = null;
-        const templeteNo = actions.length;
         const lineActions = actions as messagingApi.Action[];
+        const templeteNo = lineActions.length;
         try {
-          const error = validateRichMenuImage(templeteNo);
-          if (error) {
-            return createErrorResponse(error);
+          // 1. Validate the rich menu image
+          if (templeteNo < 1 || templeteNo > 6) {
+            return createErrorResponse("Invalid texts length");
           }
 
-          // create rich menu
+          // 2. Create a rich menu
           const areas: Array<messagingApi.RichMenuArea> = richmenuAreas(
             templeteNo,
             lineActions,
@@ -72,13 +78,13 @@ export default class CreateRichMenu extends AbstractTool {
             await this.client.createRichMenu(createRichMenuParams);
           const richMenuId = createRichMenuResponse.richMenuId;
 
-          // generate rich menu image
+          // 3. Generate a rich menu image
           const richMenuImagePath = await generateRichMenuImage(
             templeteNo,
             lineActions,
           );
 
-          // upload rich menu image
+          // 4. Upload the rich menu image
           const imageBuffer = fs.readFileSync(richMenuImagePath);
           const imageType = "image/png";
           const imageBlob = new Blob([imageBuffer], { type: imageType });
@@ -87,7 +93,7 @@ export default class CreateRichMenu extends AbstractTool {
             imageBlob,
           );
 
-          // set default rich menu
+          // 5. Set the rich menu as the default rich menu
           setDefaultResponse = await this.client.setDefaultRichMenu(richMenuId);
 
           return createSuccessResponse({
@@ -100,9 +106,12 @@ export default class CreateRichMenu extends AbstractTool {
           });
         } catch (error) {
           return createErrorResponse(
-            `createRichMenuResponse: ${JSON.stringify(createRichMenuResponse, null, 2)}\n` +
-              `setImageResponse: ${JSON.stringify(setImageResponse, null, 2)}\n` +
-              `setDefaultResponse: ${JSON.stringify(setDefaultResponse, null, 2)}\n`,
+            JSON.stringify({
+              error,
+              createRichMenuResponse,
+              setImageResponse,
+              setDefaultResponse,
+            }),
           );
         }
       },
@@ -118,6 +127,12 @@ async function generateRichMenuImage(
   templeteNo: number,
   actions: messagingApi.Action[],
 ): Promise<string> {
+  // Flow:
+  // 1. Read the Markdown template
+  // 2. Convert Markdown to HTML using Marp
+  // 3. Save the HTML as a temporary file
+  // 4. Use puppeteer to convert HTML to PNG
+  // 5. Delete the temporary HTML file
   const richMenuImagePath = path.join(
     os.tmpdir(),
     `templete-0${templeteNo}-${Date.now()}.png`,
@@ -173,13 +188,6 @@ async function generateRichMenuImage(
   return richMenuImagePath;
 }
 
-const validateRichMenuImage = (len: number): string | null => {
-  if (len < 1 || len > 6) {
-    return "Invalid texts length";
-  }
-  return null;
-};
-
 const richmenuAreas = (
   templeteNo: number,
   actions: messagingApi.Action[],
@@ -188,7 +196,7 @@ const richmenuAreas = (
   return actions.map((action, index) => {
     return {
       bounds: bounds[index],
-      action: action as messagingApi.Action,
+      action: action,
     };
   });
 };

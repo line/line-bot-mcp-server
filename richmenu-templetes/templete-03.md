@@ -29,42 +29,45 @@ section {
   font-weight: bold;
   width: 100%;
   text-align: center;
-  font-size: clamp(16px, 6vw, 50px);
   white-space: normal;
   word-break: break-all;
 }
-.column-item-03-01 {
-  flex: 2;
-  margin: 10px 0px 10px 10px;
-}
-
-.column-item-right {
-  flex: 1;
+.column-item-left {
   display: flex;
+  flex: 2;
+  font-size: 70px;
+}
+.column-item-right {
+  display: flex;
+  flex: 1;
   flex-direction: column;
   height: 100%;
+  font-size: 50px;
 }
-
-.column-item-03-02 {
+.column-item-03-right {
+  flex: 1;
+  margin: 10px 0px 10px 10px;
+}
+.column-item-03-left-top {
   flex: 1;
   margin: 10px 10px 10px 10px;
 }
-
-.column-item-03-03 {
+.column-item-03-left-bottom {
   flex: 1;
   margin: 0px 10px 10px 10px;
 }
-
 </style>
 <div class="columns-container">
-  <div class="column-item column-item-03-01">
-    <h3>item01</h3>
+  <div class="column-item-left">
+    <div class="column-item column-item-03-right">
+      <h3>item01</h3>
+    </div>
   </div>
   <div class="column-item-right">
-    <div class="column-item column-item-03-02">
+    <div class="column-item column-item-03-left-top">
       <h3>item02</h3>
     </div>
-    <div class="column-item column-item-03-03">
+    <div class="column-item column-item-03-left-bottom">
       <h3>item03</h3>
     </div>
   </div>

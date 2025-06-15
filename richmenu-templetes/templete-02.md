@@ -29,7 +29,7 @@ section {
   font-weight: bold;
   width: 100%;
   text-align: center;
-  font-size: clamp(16px, 6vw, 50px);
+  font-size: 70px;
   white-space: normal;
   word-break: break-all;
 }
@@ -39,7 +39,6 @@ section {
   width: calc((100% - 30px) / 2);
 }
 </style>
-
 <div class="columns-container">
   <div class="column-item column-item-02">
     <h3>item01</h3>

@@ -29,7 +29,7 @@ section {
   font-weight: bold;
   width: 100%;
   text-align: center;
-  font-size: clamp(16px, 6vw, 50px);
+  font-size: 50px;
   white-space: normal;
   word-break: break-all;
 }
@@ -37,25 +37,24 @@ section {
   height: calc((100% - 30px) / 2);
   width: calc((100% - 30px) / 2);
 }
-.column-item-04-01 {
+.column-item-04-top {
   margin: 10px 0px 0px 10px;
 }
-.column-item-04-02 {
+.column-item-04-bottom {
   margin: 0px 0px 0px 10px;
 }
 </style>
-
 <div class="columns-container">
-  <div class="column-item column-item-04 column-item-04-01">
+  <div class="column-item column-item-04 column-item-04-top">
     <h3>item01</h3>
   </div>
-  <div class="column-item column-item-04 column-item-04-01">
+  <div class="column-item column-item-04 column-item-04-top">
     <h3>item02</h3>
   </div>
-  <div class="column-item column-item-04 column-item-04-02">
+  <div class="column-item column-item-04 column-item-04-bottom">
     <h3>item03</h3>
   </div>
-  <div class="column-item column-item-04 column-item-04-02">
+  <div class="column-item column-item-04 column-item-04-bottom">
     <h3>item04</h3>
   </div>
 </div>
