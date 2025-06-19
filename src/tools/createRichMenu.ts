@@ -97,6 +97,7 @@ export default class CreateRichMenu extends AbstractTool {
           setDefaultResponse = await this.client.setDefaultRichMenu(richMenuId);
 
           return createSuccessResponse({
+            message: "Rich menu created successfully and set as default.",
             richMenuId,
             createRichMenuParams,
             createRichMenuResponse,
