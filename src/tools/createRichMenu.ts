@@ -7,7 +7,7 @@ import {
 import { AbstractTool } from "./AbstractTool.js";
 import { z } from "zod";
 import { Marp } from "@marp-team/marp-core";
-import puppeteer from "puppeteer-core";
+import puppeteer from "puppeteer";
 import fs from "fs";
 import path from "path";
 import os from "os";
