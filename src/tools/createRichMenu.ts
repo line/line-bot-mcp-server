@@ -39,18 +39,32 @@ export default class CreateRichMenu extends AbstractTool {
         chatBarText: z.string().describe("The ID of the rich menu to create."),
         actions: z
           .array(actionSchema)
-          .describe("The actions of the rich menu."),
+          .describe(
+            "The actions array for the rich menu. Accepts 1-6 items." +
+            "Each action defines a button's behavior in the rich menu layout." +
+            "The buttons will be automatically arranged in a grid."
+          ),
+        richMenuAliasId: z
+          .string()
+          .describe(
+            "The alias of the rich menu." +
+            "This is required when creating a rich menu that can be switched to from another rich menu using the richmenuswitch action type." +
+            "The alias serves as a unique identifier for the target rich menu",
+          )
+          .optional(),
       },
-      async ({ chatBarText, actions }) => {
+      async ({ chatBarText, actions, richMenuAliasId }) => {
         // Flow:
         // 1. Validate the rich menu image
         // 2. Create a rich menu
         // 3. Generate a rich menu image
         // 4. Upload the rich menu image
         // 5. Set the rich menu as the default rich menu
+        // 6. Set the rich menu alias
         let createRichMenuResponse: any = null;
         let setImageResponse: any = null;
         let setDefaultResponse: any = null;
+        let richMenuAliasResponse: any = null;
         const lineActions = actions as messagingApi.Action[];
         const templeteNo = lineActions.length;
         try {
@@ -96,14 +110,25 @@ export default class CreateRichMenu extends AbstractTool {
           // 5. Set the rich menu as the default rich menu
           setDefaultResponse = await this.client.setDefaultRichMenu(richMenuId);
 
+          // 6. Set the rich menu alias
+          if (richMenuAliasId) {
+            await this.client.deleteRichMenuAlias(richMenuAliasId);
+            richMenuAliasResponse = await this.client.createRichMenuAlias({
+              richMenuId,
+              richMenuAliasId,
+            });
+          }
+
           return createSuccessResponse({
             message: "Rich menu created successfully and set as default.",
             richMenuId,
+            richMenuAliasId,
             createRichMenuParams,
             createRichMenuResponse,
             setImageResponse,
             setDefaultResponse,
             richMenuImagePath,
+            richMenuAliasResponse,
           });
         } catch (error) {
           return createErrorResponse(
@@ -112,6 +137,7 @@ export default class CreateRichMenu extends AbstractTool {
               createRichMenuResponse,
               setImageResponse,
               setDefaultResponse,
+              richMenuAliasResponse,
             }),
           );
         }
