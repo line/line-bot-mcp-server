@@ -34,11 +34,15 @@ export default class CreateRichMenu extends AbstractTool {
   register(server: McpServer) {
     server.tool(
       "create_rich_menu",
-      "Create a rich menu associated with your LINE Official Account.",
+      "Create a rich menu based on the given actions." +
+      "Generate and upload a rich menu image based on the given action." +
+      "This rich menu will be registered as the default rich menu.",
       {
-        chatBarText: z.string().describe("The ID of the rich menu to create."),
+        chatBarText: z.string().describe("Text displayed in the chat bar and this is also used as name of the rich menu to create."),
         actions: z
           .array(actionSchema)
+          .min(1)
+          .max(6)
           .describe(
             "The actions array for the rich menu. Accepts 1-6 items." +
             "Each action defines a button's behavior in the rich menu layout." +
@@ -66,16 +70,16 @@ export default class CreateRichMenu extends AbstractTool {
         let setDefaultResponse: any = null;
         let richMenuAliasResponse: any = null;
         const lineActions = actions as messagingApi.Action[];
-        const templeteNo = lineActions.length;
+        const templateNo = lineActions.length;
         try {
           // 1. Validate the rich menu image
-          if (templeteNo < 1 || templeteNo > 6) {
+          if (templateNo < 1 || templateNo > 6) {
             return createErrorResponse("Invalid texts length");
           }
 
           // 2. Create a rich menu
           const areas: Array<messagingApi.RichMenuArea> = richmenuAreas(
-            templeteNo,
+            templateNo,
             lineActions,
           );
           const createRichMenuParams = {
@@ -94,7 +98,7 @@ export default class CreateRichMenu extends AbstractTool {
 
           // 3. Generate a rich menu image
           const richMenuImagePath = await generateRichMenuImage(
-            templeteNo,
+            templateNo,
             lineActions,
           );
 
@@ -151,7 +155,7 @@ const __dirname = path.dirname(__filename);
 
 // Function to generate a rich menu image from a Markdown template
 async function generateRichMenuImage(
-  templeteNo: number,
+  templateNo: number,
   actions: messagingApi.Action[],
 ): Promise<string> {
   // Flow:
@@ -162,14 +166,14 @@ async function generateRichMenuImage(
   // 5. Delete the temporary HTML file
   const richMenuImagePath = path.join(
     os.tmpdir(),
-    `templete-0${templeteNo}-${Date.now()}.png`,
+    `templete-0${templateNo}-${Date.now()}.png`,
   );
   const serverPath =
     process.env.SERVER_PATH || path.resolve(__dirname, "..", "..");
   // 1. Read the Markdown template
   const srcPath = path.join(
     serverPath,
-    `richmenu-templetes/templete-0${templeteNo}.md`,
+    `richmenu-templetes/templete-0${templateNo}.md`,
   );
   let content = await fsp.readFile(srcPath, "utf8");
   for (let index = 0; index < actions.length; index++) {
@@ -216,10 +220,10 @@ async function generateRichMenuImage(
 }
 
 const richmenuAreas = (
-  templeteNo: number,
+  templateNo: number,
   actions: messagingApi.Action[],
 ): messagingApi.RichMenuArea[] => {
-  const bounds = richmenuBounds(templeteNo);
+  const bounds = richmenuBounds(templateNo);
   return actions.map((action, index) => {
     return {
       bounds: bounds[index],
@@ -228,7 +232,7 @@ const richmenuAreas = (
   });
 };
 
-const richmenuBounds = (templeteNo: number) => {
+const richmenuBounds = (templateNo: number) => {
   const boundsMap: { x: number; y: number; width: number; height: number }[][] =
     [
       [],
@@ -308,5 +312,5 @@ const richmenuBounds = (templeteNo: number) => {
         .flat(),
     ];
 
-  return boundsMap[templeteNo];
+  return boundsMap[templateNo];
 };
