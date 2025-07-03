@@ -35,25 +35,29 @@ export default class CreateRichMenu extends AbstractTool {
     server.tool(
       "create_rich_menu",
       "Create a rich menu based on the given actions." +
-      "Generate and upload a rich menu image based on the given action." +
-      "This rich menu will be registered as the default rich menu.",
+        "Generate and upload a rich menu image based on the given action." +
+        "This rich menu will be registered as the default rich menu.",
       {
-        chatBarText: z.string().describe("Text displayed in the chat bar and this is also used as name of the rich menu to create."),
+        chatBarText: z
+          .string()
+          .describe(
+            "Text displayed in the chat bar and this is also used as name of the rich menu to create.",
+          ),
         actions: z
           .array(actionSchema)
           .min(1)
           .max(6)
           .describe(
             "The actions array for the rich menu. Accepts 1-6 items." +
-            "Each action defines a button's behavior in the rich menu layout." +
-            "The buttons will be automatically arranged in a grid."
+              "Each action defines a button's behavior in the rich menu layout." +
+              "The buttons will be automatically arranged in a grid.",
           ),
         richMenuAliasId: z
           .string()
           .describe(
             "The alias of the rich menu." +
-            "This is required when creating a rich menu that can be switched to from another rich menu using the richmenuswitch action type." +
-            "The alias serves as a unique identifier for the target rich menu",
+              "This is required when creating a rich menu that can be switched to from another rich menu using the richmenuswitch action type." +
+              "The alias serves as a unique identifier for the target rich menu",
           )
           .optional(),
       },
