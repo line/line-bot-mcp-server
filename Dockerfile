@@ -19,6 +19,7 @@ RUN addgroup -S appgroup && adduser -S appuser -G appgroup
 COPY --from=builder /app/dist /app/dist
 COPY --from=builder /app/package.json /app/package.json
 COPY --from=builder /app/package-lock.json /app/package-lock.json
+COPY --from=builder /app/richmenu-templates /app/richmenu-templates
 
 ENV NODE_ENV=production
 
@@ -30,6 +31,10 @@ RUN chown -R appuser:appgroup /app
 
 # Install *only* the production dependencies
 RUN npm ci --ignore-scripts --omit-dev
+
+RUN apk add --no-cache chromium nss freetype harfbuzz ca-certificates ttf-freefont
+
+ENV PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium-browser
 
 # Now, switch to running as our non-root user for the actual app process
 USER appuser
