@@ -35,12 +35,11 @@
   "bugs": "https://github.com/line/line-bot-mcp-server/issues",
   "dependencies": {
     "@line/bot-sdk": "^9.8.0",
-    "@modelcontextprotocol/sdk": "^1.8.0",
-    "axios": "^1.9.0",
+    "@modelcontextprotocol/sdk": "^1.13.0",
     "zod": "^3.24.2"
   },
   "devDependencies": {
-    "@types/node": "^22",
+    "@types/node": "^20.11.25",
     "prettier": "3.5.3",
     "shx": "^0.4.0",
     "tsx": "^4.19.3",

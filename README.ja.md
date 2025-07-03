@@ -17,7 +17,7 @@ LINE公式アカウントとAI Agentを接続するために、LINE Messaging AP
      - `user_id` (string?): メッセージ受信者のユーザーID。デフォルトはDESTINATION_USER_ID。`user_id`または`DESTINATION_USER_ID`のどちらか一方は必ず設定する必要があります。
      - `message.text` (string): ユーザーに送信するテキスト。
 2. **push_flex_message**
-   - LINEでユーザーに高度にカスタマイズ可能なフレックスメッセージを送信する。
+   - LINEでユーザーに高度にカスタマイズ可能��フレックスメッセージを送信する。
    - **入力:**
      - `user_id` (string?): メッセージ受信者のユーザーID。デフォルトはDESTINATION_USER_ID。`user_id`または`DESTINATION_USER_ID`のどちらか一方は必ず設定する必要があります。
      - `message.altText` (string): フレックスメッセージが表示できない場合に表示される代替テキスト。
@@ -30,29 +30,22 @@ LINE公式アカウントとAI Agentを接続するために、LINE Messaging AP
 4. **broadcast_flex_message**
    - LINE公式アカウントと友だちになっているすべてのユーザーに、LINEで高度にカスタマイズ可能なフレックスメッセージを送信する。
    - **入力:**
-     - `message.altText` (string): フレックスメッセージが表示できない場合に表示される代替テキスト。
+     - `message.altText` (string): フレックス��ッセージが表示できない場合に表示される代替テキスト。
      - `message.content` (any): フレックスメッセージの内容。メッセージのレイアウトとコンポーネントを定義するJSONオブジェクト。
      - `message.contents.type` (enum): コンテナのタイプ。'bubble'は単一コンテナ、'carousel'は複数のスワイプ可能なバブルを示す。
 5. **get_profile**
    - LINEユーザーの詳細なプロフィール情報を取得する。表示名、プロフィール画像URL、ステータスメッセージ、言語を取得できる。
    - **入力:**
-      - `user_id` (string?): プロフィールを取得したいユーザーのユーザーID。デフォルトはDESTINATION_USER_ID。`user_id`または`DESTINATION_USER_ID`のどちらか一方は必ず設定する必要があります。=======
+      - `user_id` (string?): プロフィールを取得したいユーザーのユーザーID。デフォルトはDESTINATION_USER_ID。`user_id`または`DESTINATION_USER_ID`のどちらか一方は必ず設定する必要があります。
 6. **get_message_quota**
    - LINE公式アカウントのメッセージ容量と消費量を取得します。月間メッセージ制限と現在の使用量が表示されます。
    - **入力:**
      - なし
 7. **get_follower_ids**
-   - LINE公式アカウントを友だち追加したユーザーのユーザーID一覧を取得します。
+   - LINE公式アカウントを友だち追加したユーザーのリストを取得します。この機能は、認証済みまたはプレミアムアカウントでのみ利用できます。注: このAPIは、友だちのユーザーIDを降順では返しません。代わりに、ユーザーがボットを友だち追加したときの昇順でユーザーIDのリストを返します。
    - **入力:**
-     - `start` (string?): ページネーション用の継続トークン。省略時は先頭から取得します。
-     - `limit` (number?): 取得するユーザーIDの最大数（1～1000）。デフォルトは300。
-   - **出力:**
-     - `userIds` (配列): ユーザーIDのリスト。
-     - `next` (string?): 次ページ取得用トークン。存在する場合はこの値で再度リクエストしてください。
-     - `total` (number?): ユーザーIDの総数（取得できる場合）。
-   - **注意:**
-     - 認証済みまたはプレミアムアカウントのみ利用可能です。
-     - 一部ユーザーIDはプライバシーやユーザー操作により取得できない場合があります（詳細は[こちら](https://developers.line.biz/ja/reference/messaging-api/#get-follower-ids-obtainable-ids)を参照してください）。
+     - `limit` (number?): 1回のリクエストで取得するユーザーIDの最大数。最大値: 1000。デフォルト: 300。
+     - `start` (string?): レスポンスで返されたJSONオブジェクトのnextプロパティにある継続トークンの値。次のユーザーIDの配列を取得するためにこのパラメータを含めます。
 
 ## インストール (npxを使用)
 

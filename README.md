@@ -40,21 +40,14 @@
    - **Inputs:**
      - `user_id` (string?): The ID of the user whose profile you want to retrieve. Defaults to DESTINATION_USER_ID.
 6. **get_message_quota**
-   - Get the message quota and consumption of the LINE Official Account. This shows the monthly message limit and current usage.
-   - **Inputs:**
-     - None
+  - Get the message quota and consumption of the LINE Official Account. This shows the monthly message limit and current usage.
+  - **Inputs:**
+    - None
 7. **get_follower_ids**
-   - Gets the list of User IDs of users who have added your LINE Official Account as a friend.
-   - **Inputs:**
-     - `start` (string?): Continuation token for pagination. If omitted, fetches from the beginning.
-     - `limit` (number?): Maximum number of user IDs to retrieve (1-1000). Default is 300.
-   - **Returns:**
-     - `userIds` (array): List of user IDs.
-     - `next` (string?): Token for the next page. If present, repeat the request with this value to get more user IDs.
-     - `total` (number?): Total number of user IDs (if available).
-   - **Notes:**
-     - Only available for verified or premium accounts.
-     - Some user IDs may not be included due to privacy or user actions (see [documents](https://developers.line.biz/en/reference/messaging-api/#get-follower-ids-obtainable-ids) for details).
+  - Get a list of users who have added your LINE Official Account as a friend. This feature is available only for verified or premium accounts. Note: This API doesn't return friend user IDs in descending order. Instead, it returns a list of user IDs in ascending order of when the user added the bot as a friend.
+  - **Inputs:**
+    - `limit` (number?): The maximum number of user IDs to retrieve in a single request. Max value: 1000. Default: 300.
+    - `start` (string?): Value of the continuation token found in the next property of the JSON object returned in the response. Include this parameter to get the next array of user IDs.
 
 ## Installation (Using npx)
 

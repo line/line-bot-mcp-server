@@ -16,249 +16,39 @@
  * under the License.
  */
 
-import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
-import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
-import * as line from "@line/bot-sdk";
-import { z } from "zod";
-import { LINE_BOT_MCP_SERVER_VERSION, USER_AGENT } from "./version.js";
-
-const NO_USER_ID_ERROR =
-  "Error: Specify the userId or set the DESTINATION_USER_ID in the environment variables of this MCP Server.";
+const { McpServer } = require('@modelcontextprotocol/sdk/server');
+const { StdioServerTransport } = require('@modelcontextprotocol/sdk/transport/stdio');
+import * as line from '@line/bot-sdk';
+import pkg from '../package.json' with { type: 'json' };
+import { GetFollowerIdsTool } from './tools/getFollowerIds.js';
+import { GetProfileTool } from './tools/getProfile.js';
+import { GetMessageQuotaTool } from './tools/getMessageQuota.js';
+import { PushTextMessageTool } from './tools/pushTextMessage.js';
+import { PushFlexMessageTool } from './tools/pushFlexMessage.js';
+import { BroadcastTextMessageTool } from './tools/broadcastTextMessage.js';
+import { BroadcastFlexMessageTool } from './tools/broadcastFlexMessage.js';
 
 const server = new McpServer({
-  name: "line-bot",
-  version: LINE_BOT_MCP_SERVER_VERSION,
+  name: 'line-bot',
+  version: pkg.version,
 });
 
-const channelAccessToken = process.env.CHANNEL_ACCESS_TOKEN || "";
-const destinationId = process.env.DESTINATION_USER_ID || "";
+const channelAccessToken = process.env.CHANNEL_ACCESS_TOKEN || '';
 
-const messagingApiClient = new line.messagingApi.MessagingApiClient({
+const client = new line.messagingApi.MessagingApiClient({
   channelAccessToken: channelAccessToken,
   defaultHeaders: {
-    "User-Agent": USER_AGENT,
+    'User-Agent': `${pkg.name}/${pkg.version}`,
   },
 });
 
-function createErrorResponse(message: string) {
-  return {
-    isError: true,
-    content: [
-      {
-        type: "text" as const,
-        text: message,
-      },
-    ],
-  };
-}
-
-function createSuccessResponse(response: object) {
-  return {
-    content: [
-      {
-        type: "text" as const,
-        text: JSON.stringify(response),
-      },
-    ],
-  };
-}
-
-const userIdSchema = z
-  .string()
-  .default(destinationId)
-  .describe(
-    "The user ID to receive a message. Defaults to DESTINATION_USER_ID.",
-  );
-
-const textMessageSchema = z.object({
-  type: z.literal("text").default("text"),
-  text: z
-    .string()
-    .max(5000)
-    .describe("The plain text content to send to the user."),
-});
-
-const flexMessageSchema = z.object({
-  type: z.literal("flex").default("flex"),
-  altText: z
-    .string()
-    .describe("Alternative text shown when flex message cannot be displayed."),
-  contents: z
-    .object({
-      type: z
-        .enum(["bubble", "carousel"])
-        .describe(
-          "Type of the container. 'bubble' for single container, 'carousel' for multiple swipeable bubbles.",
-        ),
-    })
-    .passthrough()
-    .describe(
-      "Flexible container structure following LINE Flex Message format. For 'bubble' type, can include header, " +
-      "hero, body, footer, and styles sections. For 'carousel' type, includes an array of bubble containers in " +
-      "the 'contents' property.",
-    ),
-});
-
-server.tool(
-  "push_text_message",
-  "Push a simple text message to a user via LINE. Use this for sending plain text messages without formatting.",
-  {
-    userId: userIdSchema,
-    message: textMessageSchema,
-  },
-  async ({ userId, message }) => {
-    if (!userId) {
-      return createErrorResponse(NO_USER_ID_ERROR);
-    }
-
-    try {
-      const response = await messagingApiClient.pushMessage({
-        to: userId,
-        messages: [message as unknown as line.messagingApi.Message],
-      });
-      return createSuccessResponse(response);
-    } catch (error) {
-      return createErrorResponse(`Failed to push message: ${error.message}`);
-    }
-  },
-);
-
-server.tool(
-  "push_flex_message",
-  "Push a highly customizable flex message to a user via LINE. Supports both bubble (single container) and carousel " +
-  "(multiple swipeable bubbles) layouts.",
-  {
-    userId: userIdSchema,
-    message: flexMessageSchema,
-  },
-  async ({ userId, message }) => {
-    if (!userId) {
-      return createErrorResponse(NO_USER_ID_ERROR);
-    }
-
-    try {
-      const response = await messagingApiClient.pushMessage({
-        to: userId,
-        messages: [message as unknown as line.messagingApi.Message],
-      });
-      return createSuccessResponse(response);
-    } catch (error) {
-      return createErrorResponse(
-        `Failed to push flex message: ${error.message}`,
-      );
-    }
-  },
-);
-
-server.tool(
-  "broadcast_text_message",
-  "Broadcast a simple text message via LINE to all users who have followed your LINE Official Account. Use this for sending " +
-  "plain text messages without formatting. Please be aware that this message will be sent to all users.",
-  {
-    message: textMessageSchema,
-  },
-  async ({ message }) => {
-    try {
-      const response = await messagingApiClient.broadcast({
-        messages: [message as unknown as line.messagingApi.Message],
-      });
-      return createSuccessResponse(response);
-    } catch (error) {
-      return createErrorResponse(
-        `Failed to broadcast message: ${error.message}`,
-      );
-    }
-  },
-);
-
-server.tool(
-  "broadcast_flex_message",
-  "Broadcast a highly customizable flex message via LINE to all users who have added your LINE Official Account. " +
-  "Supports both bubble (single container) and carousel (multiple swipeable bubbles) layouts. Please be aware that " +
-  "this message will be sent to all users.",
-  {
-    message: flexMessageSchema,
-  },
-  async ({ message }) => {
-    try {
-      const response = await messagingApiClient.broadcast({
-        messages: [message as unknown as line.messagingApi.Message],
-      });
-      return createSuccessResponse(response);
-    } catch (error) {
-      return createErrorResponse(
-        `Failed to broadcast message: ${error.message}`,
-      );
-    }
-  },
-);
-
-server.tool(
-  "get_profile",
-  "Get detailed profile information of a LINE user including display name, profile picture URL, status message and language.",
-  {
-    userId: userIdSchema,
-  },
-  async ({ userId }) => {
-    if (!userId) {
-      return createErrorResponse(NO_USER_ID_ERROR);
-    }
-
-    try {
-      const response = await messagingApiClient.getProfile(userId);
-      return createSuccessResponse(response);
-    } catch (error) {
-      return createErrorResponse(`Failed to get profile: ${error.message}`);
-    }
-  },
-);
-
-server.tool(
-  "get_message_quota",
-  "Get the message quota and consumption of the LINE Official Account. This shows the monthly message limit and current usage.",
-  {},
-  async () => {
-    const messageQuotaResponse = await messagingApiClient.getMessageQuota();
-    const messageQuotaConsumptionResponse =
-      await messagingApiClient.getMessageQuotaConsumption();
-    const response = {
-      limited: messageQuotaResponse.value,
-      totalUsage: messageQuotaConsumptionResponse.totalUsage,
-    };
-    return createSuccessResponse(response);
-  },
-);
-
-server.tool(
-  "get_follower_ids",
-  "Gets the list of User IDs of users who have added your LINE Official Account as a friend.",
-  {
-    start: z
-      .string()
-      .optional()
-      .describe(
-        "Value of the continuation token found in the next property of the JSON object returned in the response. Include this parameter to get the next array of user IDs. If omitted, fetches from the beginning.",
-      ),
-    limit: z
-      .int()
-      .min(1)
-      .max(1000)
-      .default(300)
-      .describe(
-        "Maximum number of user IDs to retrieve (1-1000). Default is 300.",
-      ),
-  },
-  async ({ start, limit }: { start?: string; limit?: number }) => {
-    try {
-      const response = messagingApiClient.getFollowers(start, limit);
-      return createSuccessResponse(response);
-    } catch (error) {
-      return createErrorResponse(
-        `Failed to get follower ids: ${error.message}`,
-      );
-    }
-  },
-);
+server.registerTool(new GetProfileTool(client));
+server.registerTool(new GetMessageQuotaTool(client));
+server.registerTool(new PushTextMessageTool(client));
+server.registerTool(new PushFlexMessageTool(client));
+server.registerTool(new BroadcastTextMessageTool(client));
+server.registerTool(new BroadcastFlexMessageTool(client));
+server.registerTool(new GetFollowerIdsTool(client));
 
 async function main() {
   if (!process.env.CHANNEL_ACCESS_TOKEN) {
