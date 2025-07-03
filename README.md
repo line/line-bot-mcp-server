@@ -47,7 +47,7 @@
    - Gets the list of User IDs of users who have added your LINE Official Account as a friend.
    - **Inputs:**
      - `start` (string?): Continuation token for pagination. If omitted, fetches from the beginning.
-     - `limit` (number?): Maximum number of user IDs to retrieve (1-1000). Default is 1000.
+     - `limit` (number?): Maximum number of user IDs to retrieve (1-1000). Default is 300.
    - **Returns:**
      - `userIds` (array): List of user IDs.
      - `next` (string?): Token for the next page. If present, repeat the request with this value to get more user IDs.
