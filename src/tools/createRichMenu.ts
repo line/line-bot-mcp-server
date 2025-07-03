@@ -205,7 +205,10 @@ async function generateRichMenuImage(
   await fsp.writeFile(tempHtmlPath, htmlContent, "utf8");
 
   // 4. Use puppeteer to convert HTML to PNG
-  const browser = await puppeteer.launch();
+  const browser = await puppeteer.launch({
+    args: ["--no-sandbox", "--disable-setuid-sandbox"],
+    executablePath: process.env.PUPPETEER_EXECUTABLE_PATH,
+  });
   const page = await browser.newPage();
   await page.setViewport({ width: RICHMENU_WIDTH, height: RICHMENU_HEIGHT });
   await page.goto(`file://${tempHtmlPath}`, {

@@ -32,6 +32,10 @@ RUN chown -R appuser:appgroup /app
 # Install *only* the production dependencies
 RUN npm ci --ignore-scripts --omit-dev
 
+RUN apk add --no-cache chromium nss freetype harfbuzz ca-certificates ttf-freefont
+
+ENV PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium-browser
+
 # Now, switch to running as our non-root user for the actual app process
 USER appuser
 
