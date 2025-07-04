@@ -30,6 +30,7 @@ import GetMessageQuota from "./tools/getMessageQuota.js";
 import GetRichMenuList from "./tools/getRichMenuList.js";
 import DeleteRichMenu from "./tools/deleteRichMenu.js";
 import SetRichMenuDefault from "./tools/setRichMenuDefault.js";
+import CreateRichMenu from "./tools/createRichMenu.js";
 
 const server = new McpServer({
   name: "line-bot",
@@ -46,6 +47,13 @@ const messagingApiClient = new line.messagingApi.MessagingApiClient({
   },
 });
 
+const lineBlobClient = new line.messagingApi.MessagingApiBlobClient({
+  channelAccessToken: channelAccessToken,
+  defaultHeaders: {
+    "User-Agent": USER_AGENT,
+  },
+});
+
 new PushTextMessage(messagingApiClient, destinationId).register(server);
 new PushFlexMessage(messagingApiClient, destinationId).register(server);
 new BroadcastTextMessage(messagingApiClient).register(server);
@@ -56,6 +64,7 @@ new GetRichMenuList(messagingApiClient).register(server);
 new DeleteRichMenu(messagingApiClient).register(server);
 new SetRichMenuDefault(messagingApiClient).register(server);
 new CancelRichMenuDefault(messagingApiClient).register(server);
+new CreateRichMenu(messagingApiClient, lineBlobClient).register(server);
 
 async function main() {
   if (!process.env.CHANNEL_ACCESS_TOKEN) {
