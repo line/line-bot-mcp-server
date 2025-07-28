@@ -92,7 +92,7 @@
     "destination_user_id": {
       "type": "string",
       "title": "Destination User ID",
-      "description": "Default recipient user ID for LINE messages",
+      "description": "Default recipient user ID for LINE messages. See https://developers.line.biz/en/docs/messaging-api/getting-user-ids/#get-own-user-id",
       "required": false
     }
   }
