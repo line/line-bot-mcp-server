@@ -1,7 +1,7 @@
 {
   "dxt_version": "0.1",
   "name": "line-bot-mcp-server",
-  "display_name": "LINE Bot",
+  "display_name": "LINE Official Account",
   "icon": "assets/icon.png",
   "version": "0.3.0",
   "description": "MCP server that bridges AI agents with LINE Messaging API for automated interactions",
