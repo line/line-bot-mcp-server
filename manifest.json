@@ -7,7 +7,7 @@
   "description": "MCP server that bridges AI agents with LINE Messaging API for automated interactions",
   "long_description": "This extension enables Claude Desktop to interact with LINE Messaging API, providing tools for sending messages, managing rich menus, and retrieving user profiles through LINE Official Accounts.",
   "author": {
-    "name": "LINE Corporation",
+    "name": "LY Corporation",
     "url": "https://line.me"
   },
   "server": {
