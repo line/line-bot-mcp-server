@@ -85,7 +85,7 @@
     "channel_access_token": {
       "type": "string",
       "title": "Channel Access Token",
-      "description": "LINE channel access token for authentication",
+      "description": "LINE channel access token for authentication. See https://developers.line.biz/en/docs/basics/channel-access-token/#long-lived-channel-access-token",
       "required": true,
       "sensitive": true
     },
