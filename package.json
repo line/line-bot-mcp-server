@@ -20,7 +20,7 @@
     "format:check": "npm run prettier -- -l",
     "clean": "rm -rf dist/*",
     "prebuild": "npm run format:check && npm run clean",
-    "release": "npm run build && npm publish --provenance --access public --tag alpha"
+    "release": "npm run build && npm publish --provenance --access public"
   },
   "repository": {
     "type": "git",
