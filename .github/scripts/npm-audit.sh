@@ -26,6 +26,8 @@ done
 if ((${#failed[@]})); then
   echo -e "\n\033[0;31mnpm audit reported vulnerabilities in:\033[0m"
   printf '  - %s\n' "${failed[@]}"
+  echo "You can run 'npm audit fix' in these directories to resolve the issues."
+  echo "If running 'npm audit fix' does not resolve the issues, you may need to manually update dependencies."
   exit 1
 else
   echo "npm audit passed: no vulnerabilities detected"
