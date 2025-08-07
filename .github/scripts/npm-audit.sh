@@ -1,14 +1,19 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-IFS=$'\n'
-locks=($(find . -path '*/node_modules' -prune -o -name package-lock.json -print))
-unset IFS
+dirs=()
+while IFS= read -r path; do
+  dirs+=("$(dirname "$path")")
+done < <(
+  find . \( -path '*/node_modules' -o -path '*/dist' \) -prune -o \
+       \( -name package.json -o -name package-lock.json \) -print
+)
+
+IFS=$'\n' dirs=($(printf '%s\n' "${dirs[@]}" | sort -u)); unset IFS
 
 declare -a failed=()
 
-for lock in "${locks[@]}"; do
-  dir=$(dirname "$lock")
+for dir in "${dirs[@]}"; do
   printf '\n\n\033[1;34m==> %s\033[0m\n' "$dir"
 
   pushd "$dir" >/dev/null
