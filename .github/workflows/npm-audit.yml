@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
   push:
     branches:
-      - 'master'
+      - 'main'
 
 jobs:
   run-npm-audit:
@@ -23,7 +23,7 @@ jobs:
 
       - name: Run npm audit and check diff
         id: audit
-        run: ./scripts/npm-audit.sh
+        run: .github/scripts/npm-audit.sh
         continue-on-error: true
 
       - name: Create or update reminder issue
