@@ -16,7 +16,7 @@ jobs:
       issues: write
     if: github.repository == 'line/line-bot-mcp-server'
     steps:
-      - uses: actions/checkout@8edcb1bdb4e267140fa742c62e395cd74f332709
+      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8
       - uses: actions/setup-node@5e2628c959b9ade56971c0afcebbe5332d44b398
         with:
           node-version: '24'
