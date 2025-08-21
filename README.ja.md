@@ -149,3 +149,35 @@ Claude DesktopやClaudeなどのAI Agentに次の設定を追加してくださ�
   }
 }
 ```
+
+## Inspector を使用したローカル開発
+
+MCP Inspector を使用して、サーバーをローカルでテストおよびデバッグできます。
+
+### 前提条件
+
+1. リポジトリをクローンする：
+```bash
+git clone git@github.com:line/line-bot-mcp-server.git
+cd line-bot-mcp-server
+```
+
+2. 依存関係をインストールする：
+```bash
+npm install
+```
+
+3. プロジェクトをビルドする：
+```bash
+npm run build
+```
+
+### Inspector の実行
+
+プロジェクトをビルドした後、MCP Inspector を起動できます：
+
+```bash
+npx @modelcontextprotocol/inspector node dist/index.js
+```
+
+これにより、MCP Inspector インターフェースが起動し、LINE Bot MCP Server のツールを操作して機能をテストできます。
