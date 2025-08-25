@@ -36,15 +36,15 @@
   "dependencies": {
     "@line/bot-sdk": "^10.0.0",
     "@modelcontextprotocol/sdk": "^1.8.0",
-    "zod": "^3.24.2"
+    "zod": "^4.0.0"
   },
   "devDependencies": {
     "@types/node": "^22",
-    "prettier": "3.5.3",
+    "prettier": "3.6.2",
     "shx": "^0.4.0",
     "tsx": "^4.19.3",
     "typescript": "^5.6.2"
   },
   "license": "Apache-2.0",
-  "packageManager": "pnpm@10.12.1+sha512.f0dda8580f0ee9481c5c79a1d927b9164f2c478e90992ad268bbb2465a736984391d6333d2c327913578b2804af33474ca554ba29c04a8b13060a717675ae3ac"
+  "packageManager": "pnpm@10.15.0+sha512.486ebc259d3e999a4e8691ce03b5cac4a71cbeca39372a9b762cb500cfdf0873e2cb16abe3d951b1ee2cf012503f027b98b6584e4df22524e0c7450d9ec7aa7b"
 }
