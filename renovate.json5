@@ -9,5 +9,8 @@
   platformAutomerge: true,
   labels: [
     "dependency upgrade"
+  ],
+  ignoreDeps: [
+    "zod"
   ]
 }
