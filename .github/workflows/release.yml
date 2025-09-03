@@ -22,6 +22,8 @@ jobs:
         with:
           node-version: 24
           registry-url: 'https://registry.npmjs.org'
+          # Enable this when setup-node v5 is released, and release is broken
+          # package-manager-cache: false
       - run: npm install
       - name: Update version in package.json, package-lock.json
         run: |
