@@ -39,6 +39,8 @@ export default class CreateRichMenu extends AbstractTool {
         chatBarText: z.string().describe("The ID of the rich menu to create."),
         actions: z
           .array(actionSchema)
+          .min(1)
+          .max(6)
           .describe("The actions of the rich menu."),
       },
       async ({ chatBarText, actions }) => {
