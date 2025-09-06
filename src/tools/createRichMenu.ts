@@ -106,9 +106,11 @@ export default class CreateRichMenu extends AbstractTool {
             richMenuImagePath,
           });
         } catch (error) {
+          console.error("Rich menu creation error:", error);
           return createErrorResponse(
             JSON.stringify({
-              error,
+              error: error instanceof Error ? error.message : String(error),
+              stack: error instanceof Error ? error.stack : undefined,
               createRichMenuResponse,
               setImageResponse,
               setDefaultResponse,
@@ -128,6 +130,9 @@ async function generateRichMenuImage(
   templateNo: number,
   actions: messagingApi.Action[],
 ): Promise<string> {
+  console.log(
+    `Generating rich menu image for template ${templateNo} with ${actions.length} actions`,
+  );
   // Flow:
   // 1. Read the Markdown template
   // 2. Convert Markdown to HTML using Marp
@@ -143,9 +148,12 @@ async function generateRichMenuImage(
   // 1. Read the Markdown template
   const srcPath = path.join(
     serverPath,
-    `richmenu-templates/template-0${templateNo}.md`,
+    `richmenu-template/template-0${templateNo}.md`,
   );
+  console.log(`Reading template from: ${srcPath}`);
+  console.log(`Server path: ${serverPath}`);
   let content = await fsp.readFile(srcPath, "utf8");
+  console.log(`Template content length: ${content.length}`);
   for (let index = 0; index < actions.length; index++) {
     const pattern = new RegExp(`<h3>item0${index + 1}</h3>`, "g");
     content = content.replace(pattern, `<h3>${actions[index].label}</h3>`);
@@ -155,11 +163,19 @@ async function generateRichMenuImage(
   const marp = new Marp();
   const { html, css } = marp.render(content);
 
-  // 3. Save the HTML as a temporary file
+  // 3. Save the HTML as a temporary file with Japanese font support
   const htmlContent = `
-    <html>
+    <!doctype html>
+    <html lang="ja">
       <head>
-        <style>${css}</style>
+        <meta charset="UTF-8">
+        <style>
+          ${css}
+          * {
+            font-family: 'IPAexGothic', 'IPAexMincho', 'Noto Sans CJK JP', 'Noto Sans JP', 'Yu Gothic UI', 'Yu Gothic', 'Meiryo UI', 'Meiryo', 'MS UI Gothic', sans-serif !important;
+          }
+          html, body { margin: 0; padding: 0; }
+        </style>
       </head>
       <body>${html}</body>
     </html>
@@ -170,18 +186,54 @@ async function generateRichMenuImage(
   );
   await fsp.writeFile(tempHtmlPath, htmlContent, "utf8");
 
-  // 4. Use puppeteer to convert HTML to PNG
-  const browser = await puppeteer.launch();
+  // 4. Use puppeteer to convert HTML to PNG with Docker-compatible settings
+  console.log(
+    `Launching Puppeteer with executable: ${process.env.PUPPETEER_EXECUTABLE_PATH || "default"}`,
+  );
+  const browser = await puppeteer.launch({
+    headless: true,
+    executablePath: process.env.PUPPETEER_EXECUTABLE_PATH || undefined,
+    args: [
+      "--no-sandbox",
+      "--disable-setuid-sandbox",
+      "--disable-dev-shm-usage",
+      "--disable-gpu",
+      "--disable-web-security",
+      "--disable-features=VizDisplayCompositor",
+      "--no-first-run",
+      "--no-default-browser-check",
+      "--disable-default-apps",
+      "--disable-extensions",
+    ],
+  });
+  console.log("Puppeteer browser launched successfully");
   const page = await browser.newPage();
   await page.setViewport({ width: RICHMENU_WIDTH, height: RICHMENU_HEIGHT });
   await page.goto(`file://${tempHtmlPath}`, {
     waitUntil: "networkidle0",
   });
+
+  // Wait for fonts to load
+  await page.evaluate(() => document.fonts.ready);
+  await new Promise(resolve => setTimeout(resolve, 2000));
+
+  console.log(`Taking screenshot to: ${richMenuImagePath}`);
   await page.screenshot({
     path: richMenuImagePath as `${string}.png`,
     clip: { x: 0, y: 0, width: RICHMENU_WIDTH, height: RICHMENU_HEIGHT },
   });
+  console.log("Screenshot taken successfully");
   await browser.close();
+
+  // Save image to output directory
+  const outputPath = path.join("/tmp", path.basename(richMenuImagePath));
+
+  try {
+    await fsp.copyFile(richMenuImagePath, outputPath);
+    console.log(`Rich menu image saved to: ${outputPath}`);
+  } catch (error) {
+    console.warn(`Failed to save image to output directory: ${error}`);
+  }
 
   // 5. Delete the temporary HTML file
   await fsp.unlink(tempHtmlPath);
