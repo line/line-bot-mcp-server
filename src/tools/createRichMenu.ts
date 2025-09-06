@@ -34,7 +34,7 @@ export default class CreateRichMenu extends AbstractTool {
   register(server: McpServer) {
     server.tool(
       "create_rich_menu",
-      "Create a rich menu associated with your LINE Official Account.",
+      "Create a rich menu based on the given actions. Generate and upload a rich menu image based on the given action. This rich menu will be registered as the default.",
       {
         chatBarText: z.string().describe("The ID of the rich menu to create."),
         actions: z
