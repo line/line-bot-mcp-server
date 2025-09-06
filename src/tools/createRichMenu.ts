@@ -36,7 +36,7 @@ export default class CreateRichMenu extends AbstractTool {
       "create_rich_menu",
       "Create a rich menu based on the given actions. Generate and upload a rich menu image based on the given action. This rich menu will be registered as the default.",
       {
-        chatBarText: z.string().describe("The ID of the rich menu to create."),
+        chatBarText: z.string().describe("Text displayed in the chat bar and this is also used as name of the rich menu to create"),
         actions: z
           .array(actionSchema)
           .min(1)
