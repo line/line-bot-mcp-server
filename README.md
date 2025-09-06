@@ -183,7 +183,9 @@ npm run build
 After building the project, you can start the MCP Inspector:
 
 ```bash
-npx @modelcontextprotocol/inspector node dist/index.js
+npx @modelcontextprotocol/inspector node dist/index.js \
+  -e CHANNEL_ACCESS_TOKEN="YOUR_CHANNEL_ACCESS_TOKEN" \
+  -e DESTINATION_USER_ID="YOUR_DESTINATION_USER_ID"
 ```
 
 This will start the MCP Inspector interface where you can interact with the LINE Bot MCP Server tools and test their functionality.
