@@ -52,16 +52,16 @@ export default class CreateRichMenu extends AbstractTool {
         let setImageResponse: any = null;
         let setDefaultResponse: any = null;
         const lineActions = actions as messagingApi.Action[];
-        const templeteNo = lineActions.length;
+        const templateNo = lineActions.length;
         try {
           // 1. Validate the rich menu image
-          if (templeteNo < 1 || templeteNo > 6) {
+          if (templateNo < 1 || templateNo > 6) {
             return createErrorResponse("Invalid texts length");
           }
 
           // 2. Create a rich menu
           const areas: Array<messagingApi.RichMenuArea> = richmenuAreas(
-            templeteNo,
+            templateNo,
             lineActions,
           );
           const createRichMenuParams = {
@@ -80,7 +80,7 @@ export default class CreateRichMenu extends AbstractTool {
 
           // 3. Generate a rich menu image
           const richMenuImagePath = await generateRichMenuImage(
-            templeteNo,
+            templateNo,
             lineActions,
           );
 
@@ -125,7 +125,7 @@ const __dirname = path.dirname(__filename);
 
 // Function to generate a rich menu image from a Markdown template
 async function generateRichMenuImage(
-  templeteNo: number,
+  templateNo: number,
   actions: messagingApi.Action[],
 ): Promise<string> {
   // Flow:
@@ -136,14 +136,14 @@ async function generateRichMenuImage(
   // 5. Delete the temporary HTML file
   const richMenuImagePath = path.join(
     os.tmpdir(),
-    `templete-0${templeteNo}-${Date.now()}.png`,
+    `template-0${templateNo}-${Date.now()}.png`,
   );
   const serverPath =
     process.env.SERVER_PATH || path.resolve(__dirname, "..", "..");
   // 1. Read the Markdown template
   const srcPath = path.join(
     serverPath,
-    `richmenu-templetes/templete-0${templeteNo}.md`,
+    `richmenu-templates/template-0${templateNo}.md`,
   );
   let content = await fsp.readFile(srcPath, "utf8");
   for (let index = 0; index < actions.length; index++) {
@@ -190,10 +190,10 @@ async function generateRichMenuImage(
 }
 
 const richmenuAreas = (
-  templeteNo: number,
+  templateNo: number,
   actions: messagingApi.Action[],
 ): messagingApi.RichMenuArea[] => {
-  const bounds = richmenuBounds(templeteNo);
+  const bounds = richmenuBounds(templateNo);
   return actions.map((action, index) => {
     return {
       bounds: bounds[index],
@@ -202,11 +202,11 @@ const richmenuAreas = (
   });
 };
 
-const richmenuBounds = (templeteNo: number) => {
+const richmenuBounds = (templateNo: number) => {
   const boundsMap: { x: number; y: number; width: number; height: number }[][] =
     [
       [],
-      // templete-01
+      // template-01
       [
         {
           x: 0,
@@ -215,14 +215,14 @@ const richmenuBounds = (templeteNo: number) => {
           height: RICHMENU_HEIGHT,
         },
       ],
-      // templete-02
+      // template-02
       [0, 1].map(i => ({
         x: (RICHMENU_WIDTH / 2) * i,
         y: 0,
         width: RICHMENU_WIDTH / 2,
         height: RICHMENU_HEIGHT,
       })),
-      // templete-03
+      // template-03
       [
         {
           x: 0,
@@ -237,7 +237,7 @@ const richmenuBounds = (templeteNo: number) => {
           height: RICHMENU_HEIGHT / 2,
         })),
       ],
-      // templete-04
+      // template-04
       [0, 1]
         .map(i =>
           [0, 1].map(j => ({
@@ -248,7 +248,7 @@ const richmenuBounds = (templeteNo: number) => {
           })),
         )
         .flat(),
-      // templete-05
+      // template-05
       [
         {
           x: 0,
@@ -269,7 +269,7 @@ const richmenuBounds = (templeteNo: number) => {
           height: RICHMENU_HEIGHT / 2,
         })),
       ],
-      // templete-06
+      // template-06
       [0, 1]
         .map(i =>
           [0, 1, 2].map(j => ({
@@ -282,5 +282,5 @@ const richmenuBounds = (templeteNo: number) => {
         .flat(),
     ];
 
-  return boundsMap[templeteNo];
+  return boundsMap[templateNo];
 };
