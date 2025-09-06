@@ -1,0 +1,99 @@
+{
+  "dxt_version": "0.1",
+  "name": "line-bot-mcp-server",
+  "display_name": "LINE Official Account",
+  "icon": "assets/icon.png",
+  "version": "0.3.0",
+  "description": "MCP server that bridges AI agents with LINE Messaging API for automated interactions",
+  "long_description": "This extension enables Claude Desktop to interact with LINE Messaging API, providing tools for sending messages, managing rich menus, and retrieving user profiles through LINE Official Accounts.",
+  "author": {
+    "name": "LY Corporation",
+    "url": "https://line.me"
+  },
+  "server": {
+    "type": "node",
+    "entry_point": "dist/index.js",
+    "mcp_config": {
+      "command": "node",
+      "args": ["${__dirname}/dist/index.js"],
+      "env": {
+        "CHANNEL_ACCESS_TOKEN": "${user_config.channel_access_token}",
+        "DESTINATION_USER_ID": "${user_config.destination_user_id}"
+      }
+    }
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/line/line-bot-mcp-server.git"
+  },
+  "homepage": "https://github.com/line/line-bot-mcp-server",
+  "documentation": "https://github.com/line/line-bot-mcp-server#readme",
+  "support": "https://github.com/line/line-bot-mcp-server/issues",
+  "tools": [
+    {
+      "name": "push_text_message",
+      "description": "Send a plain text message to a specific LINE user"
+    },
+    {
+      "name": "push_flex_message",
+      "description": "Send a rich, customizable flex message to a specific LINE user"
+    },
+    {
+      "name": "broadcast_text_message",
+      "description": "Send a plain text message to all followers"
+    },
+    {
+      "name": "broadcast_flex_message",
+      "description": "Send a flex message to all followers"
+    },
+    {
+      "name": "get_profile",
+      "description": "Retrieve LINE user profile information"
+    },
+    {
+      "name": "get_message_quota",
+      "description": "Check monthly message limits and usage"
+    },
+    {
+      "name": "get_rich_menu_list",
+      "description": "List all rich menus for the LINE Official Account"
+    },
+    {
+      "name": "delete_rich_menu",
+      "description": "Remove a specific rich menu"
+    },
+    {
+      "name": "set_rich_menu_default",
+      "description": "Set a default rich menu for all users"
+    },
+    {
+      "name": "cancel_rich_menu_default",
+      "description": "Remove the default rich menu"
+    }
+  ],
+  "keywords": [
+    "line",
+    "messaging",
+    "bot",
+    "mcp",
+    "ai",
+    "automation",
+    "chat"
+  ],
+  "license": "Apache-2.0",
+  "user_config": {
+    "channel_access_token": {
+      "type": "string",
+      "title": "Channel Access Token",
+      "description": "LINE channel access token for authentication. See https://developers.line.biz/en/docs/basics/channel-access-token/#long-lived-channel-access-token",
+      "required": true,
+      "sensitive": true
+    },
+    "destination_user_id": {
+      "type": "string",
+      "title": "Destination User ID",
+      "description": "Default recipient user ID for LINE messages. See https://developers.line.biz/en/docs/messaging-api/getting-user-ids/#get-own-user-id",
+      "required": false
+    }
+  }
+}

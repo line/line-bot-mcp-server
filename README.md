@@ -156,6 +156,38 @@ You can confirm this by following [this instructions](https://developers.line.bi
 }
 ```
 
+## Local Development with Inspector
+
+You can use the MCP Inspector to test and debug the server locally.
+
+### Prerequisites
+
+1. Clone the repository:
+```bash
+git clone git@github.com:line/line-bot-mcp-server.git
+cd line-bot-mcp-server
+```
+
+2. Install dependencies:
+```bash
+npm install
+```
+
+3. Build the project:
+```bash
+npm run build
+```
+
+### Run the Inspector
+
+After building the project, you can start the MCP Inspector:
+
+```bash
+npx @modelcontextprotocol/inspector node dist/index.js
+```
+
+This will start the MCP Inspector interface where you can interact with the LINE Bot MCP Server tools and test their functionality.
+
 ## Versioning
 
 This project respects semantic versioning
