@@ -178,9 +178,21 @@ async function generateRichMenuImage(
         <style>
           ${css}
           * {
-            font-family: 'IPAexGothic', 'IPAexMincho', 'Noto Sans CJK JP', 'Noto Sans JP', 'Yu Gothic UI', 'Yu Gothic', 'Meiryo UI', 'Meiryo', 'MS UI Gothic', sans-serif !important;
+            font-family: 'Noto Sans JP', 'IPAexGothic', 'IPAexMincho', 'Noto Sans CJK JP', sans-serif !important;
+            box-sizing: border-box;
           }
-          html, body { margin: 0; padding: 0; }
+          html, body { 
+            margin: 0; 
+            padding: 0;
+            height: ${RICHMENU_HEIGHT}px;
+            overflow: hidden; 
+          }
+          h3 {
+            font-weight: 500;
+            line-height: 1.4;
+            margin: 0;
+            padding: 0.4em 0;
+          }
         </style>
       </head>
       <body>${html}</body>

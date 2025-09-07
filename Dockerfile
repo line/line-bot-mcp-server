@@ -11,7 +11,7 @@ RUN --mount=type=cache,target=/root/.npm npm run build
 # --- Release Stage ---
 FROM node:22-alpine AS release
 
-# Install necessary tools and Japanese fonts
+# Install necessary tools and base fonts
 RUN apk add --no-cache \
     fontconfig \
     font-noto-cjk \
@@ -21,12 +21,16 @@ RUN apk add --no-cache \
     chromium \
     nss
 
-# Download and install IPAex fonts for better Japanese support
-RUN curl -L "https://moji.or.jp/wp-content/ipafont/IPAexfont/IPAexfont00401.zip" -o font.zip && \
-    unzip font.zip && \
-    mkdir -p /usr/share/fonts/truetype/ipaex && \
-    cp IPAexfont00401/*.ttf /usr/share/fonts/truetype/ipaex/ && \
-    rm -rf IPAexfont00401 font.zip
+# Download and install Japanese fonts from GitHub
+RUN mkdir -p /usr/share/fonts/truetype/google && \
+    # Noto Sans JP from GitHub
+    curl -L "https://github.com/googlefonts/noto-cjk/raw/main/Sans/OTF/Japanese/NotoSansJP-Regular.otf" -o /usr/share/fonts/truetype/google/NotoSansJP-Regular.otf && \
+    curl -L "https://github.com/googlefonts/noto-cjk/raw/main/Sans/OTF/Japanese/NotoSansJP-Bold.otf" -o /usr/share/fonts/truetype/google/NotoSansJP-Bold.otf && \
+    # IPAex Gothic font as fallback
+    curl -L "https://moji.or.jp/wp-content/ipafont/IPAexfont/IPAexfont00401.zip" -o ipaex.zip && \
+    unzip ipaex.zip && \
+    cp IPAexfont00401/*.ttf /usr/share/fonts/truetype/google/ && \
+    rm -rf IPAexfont00401 ipaex.zip
 
 # Update font cache
 RUN fc-cache -f -v
