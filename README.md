@@ -16,14 +16,14 @@
 1. **push_text_message**
    - Push a simple text message to a user via LINE.
    - **Inputs:**
-     - `user_id` (string?): The user ID to receive a message. Defaults to DESTINATION_USER_ID. Either `user_id` or `DESTINATION_USER_ID` must be set.
+     - `userId` (string?): The user ID to receive a message. Defaults to DESTINATION_USER_ID. Either `user_id` or `DESTINATION_USER_ID` must be set.
      - `message.text` (string): The plain text content to send to the user.
 2. **push_flex_message**
    - Push a highly customizable flex message to a user via LINE.
    - **Inputs:**
-     - `user_id` (string?): The user ID to receive a message. Defaults to DESTINATION_USER_ID. Either `user_id` or `DESTINATION_USER_ID` must be set.
+     - `userId` (string?): The user ID to receive a message. Defaults to DESTINATION_USER_ID. Either `user_id` or `DESTINATION_USER_ID` must be set.
      - `message.altText` (string): Alternative text shown when flex message cannot be displayed.
-     - `message.content` (any): The content of the flex message. This is a JSON object that defines the layout and components of the message.
+     - `message.contents` (any): The content of the flex message. This is a JSON object that defines the layout and components of the message.
      - `message.contents.type` (enum): Type of the container. 'bubble' for single container, 'carousel' for multiple swipeable bubbles.
 3. **broadcast_text_message**
    - Broadcast a simple text message via LINE to all users who have followed your LINE Official Account.
@@ -33,12 +33,12 @@
    - Broadcast a highly customizable flex message via LINE to all users who have added your LINE Official Account.
    - **Inputs:**
      - `message.altText` (string): Alternative text shown when flex message cannot be displayed.
-     - `message.content` (any): The content of the flex message. This is a JSON object that defines the layout and components of the message.
+     - `message.contents` (any): The content of the flex message. This is a JSON object that defines the layout and components of the message.
      - `message.contents.type` (enum): Type of the container. 'bubble' for single container, 'carousel' for multiple swipeable bubbles.
 5. **get_profile**
    - Get detailed profile information of a LINE user including display name, profile picture URL, status message and language.
    - **Inputs:**
-     - `user_id` (string?): The ID of the user whose profile you want to retrieve. Defaults to DESTINATION_USER_ID.
+     - `userId` (string?): The ID of the user whose profile you want to retrieve. Defaults to DESTINATION_USER_ID.
 6. **get_message_quota**
    - Get the message quota and consumption of the LINE Official Account. This shows the monthly message limit and current usage.
    - **Inputs:**
