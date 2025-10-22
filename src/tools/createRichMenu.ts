@@ -150,10 +150,7 @@ async function generateRichMenuImage(
     serverPath,
     `richmenu-template/template-0${templateNo}.md`,
   );
-  console.log(`Reading template from: ${srcPath}`);
-  console.log(`Server path: ${serverPath}`);
   let content = await fsp.readFile(srcPath, "utf8");
-  console.log(`Template content length: ${content.length}`);
   for (let index = 0; index < actions.length; index++) {
     const pattern = new RegExp(`<h3>item0${index + 1}</h3>`, "g");
     content = content.replace(pattern, `<h3>${actions[index].label}</h3>`);
@@ -199,9 +196,6 @@ async function generateRichMenuImage(
   await fsp.writeFile(tempHtmlPath, htmlContent, "utf8");
 
   // 4. Use puppeteer to convert HTML to PNG with Docker-compatible settings
-  console.log(
-    `Launching Puppeteer with executable: ${process.env.PUPPETEER_EXECUTABLE_PATH || "default"}`,
-  );
   const browser = await puppeteer.launch({
     headless: true,
     executablePath: process.env.PUPPETEER_EXECUTABLE_PATH || undefined,
@@ -218,7 +212,6 @@ async function generateRichMenuImage(
       "--disable-extensions",
     ],
   });
-  console.log("Puppeteer browser launched successfully");
   const page = await browser.newPage();
   await page.setViewport({ width: RICHMENU_WIDTH, height: RICHMENU_HEIGHT });
   await page.goto(`file://${tempHtmlPath}`, {
@@ -229,12 +222,10 @@ async function generateRichMenuImage(
   await page.evaluate(() => document.fonts.ready);
   await new Promise(resolve => setTimeout(resolve, 2000));
 
-  console.log(`Taking screenshot to: ${richMenuImagePath}`);
   await page.screenshot({
     path: richMenuImagePath as `${string}.png`,
     clip: { x: 0, y: 0, width: RICHMENU_WIDTH, height: RICHMENU_HEIGHT },
   });
-  console.log("Screenshot taken successfully");
   await browser.close();
 
   // Save image to output directory
@@ -242,7 +233,6 @@ async function generateRichMenuImage(
 
   try {
     await fsp.copyFile(richMenuImagePath, outputPath);
-    console.log(`Rich menu image saved to: ${outputPath}`);
   } catch (error) {
     console.warn(`Failed to save image to output directory: ${error}`);
   }  finally {
