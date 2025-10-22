@@ -14,14 +14,14 @@ LINE公式アカウントとAI Agentを接続するために、LINE Messaging AP
 1. **push_text_message**
    - LINEでユーザーにシンプルなテキストメッセージを送信する。
    - **入力:**
-     - `user_id` (string?): メッセージ受信者のユーザーID。デフォルトはDESTINATION_USER_ID。`user_id`または`DESTINATION_USER_ID`のどちらか一方は必ず設定する必要があります。
+     - `userId` (string?): メッセージ受信者のユーザーID。デフォルトはDESTINATION_USER_ID。`user_id`または`DESTINATION_USER_ID`のどちらか一方は必ず設定する必要があります。
      - `message.text` (string): ユーザーに送信するテキスト。
 2. **push_flex_message**
    - LINEでユーザーに高度にカスタマイズ可能なフレックスメッセージを送信する。
    - **入力:**
      - `user_id` (string?): メッセージ受信者のユーザーID。デフォルトはDESTINATION_USER_ID。`user_id`または`DESTINATION_USER_ID`のどちらか一方は必ず設定する必要があります。
      - `message.altText` (string): フレックスメッセージが表示できない場合に表示される代替テキスト。
-     - `message.content` (any): フレックスメッセージの内容。メッセージのレイアウトとコンポーネントを定義するJSONオブジェクト。
+     - `message.contents` (any): フレックスメッセージの内容。メッセージのレイアウトとコンポーネントを定義するJSONオブジェクト。
      - `message.contents.type` (enum): コンテナのタイプ。'bubble'は単一コンテナ、'carousel'は複数のスワイプ可能なバブルを示す。
 3. **broadcast_text_message**
    - LINE公式アカウントと友だちになっているすべてのユーザーに、LINEでシンプルなテキストメッセージを送信する。
@@ -31,12 +31,12 @@ LINE公式アカウントとAI Agentを接続するために、LINE Messaging AP
    - LINE公式アカウントと友だちになっているすべてのユーザーに、LINEで高度にカスタマイズ可能なフレックスメッセージを送信する。
    - **入力:**
      - `message.altText` (string): フレックスメッセージが表示できない場合に表示される代替テキスト。
-     - `message.content` (any): フレックスメッセージの内容。メッセージのレイアウトとコンポーネントを定義するJSONオブジェクト。
+     - `message.contents` (any): フレックスメッセージの内容。メッセージのレイアウトとコンポーネントを定義するJSONオブジェクト。
      - `message.contents.type` (enum): コンテナのタイプ。'bubble'は単一コンテナ、'carousel'は複数のスワイプ可能なバブルを示す。
 5. **get_profile**
    - LINEユーザーの詳細なプロフィール情報を取得する。表示名、プロフィール画像URL、ステータスメッセージ、言語を取得できる。
    - **入力:**
-      - `user_id` (string?): プロフィールを取得したいユーザーのユーザーID。デフォルトはDESTINATION_USER_ID。`user_id`または`DESTINATION_USER_ID`のどちらか一方は必ず設定する必要があります。
+      - `userId` (string?): プロフィールを取得したいユーザーのユーザーID。デフォルトはDESTINATION_USER_ID。`user_id`または`DESTINATION_USER_ID`のどちらか一方は必ず設定する必要があります。
 6. **get_message_quota**
    - LINE公式アカウントのメッセージ容量と消費量を取得します。月間メッセージ制限と現在の使用量が表示されます。
    - **入力:**
@@ -90,7 +90,7 @@ Claude DesktopやClaudeなどのAI Agentに次の設定を追加してくださ�
 環境変数や引数は次のように設定してください:
 
 - `CHANNEL_ACCESS_TOKEN`: (必須) チャネルアクセストークン。これを取得するには、[こちらの手順](https://developers.line.biz/ja/docs/basics/channel-access-token/#long-lived-channel-access-token)に従ってください。
-- `DESTINATION_USER_ID`: (オプション) デフォルトのメッセージ受信者のユーザーID。Toolの入力に`user_id`が含まれていない場合、`DESTINATION_USER_ID`は必ず設定する必要があります。これを確認するには、[こちらの手順](https://developers.line.biz/ja/docs/messaging-api/getting-user-ids/#get-own-user-id)に従ってください。
+- `DESTINATION_USER_ID`: (オプション) デフォルトのメッセージ受信者のユーザーID。Toolの入力に`userId`が含まれていない場合、`DESTINATION_USER_ID`は必ず設定する必要があります。これを確認するには、[こちらの手順](https://developers.line.biz/ja/docs/messaging-api/getting-user-ids/#get-own-user-id)に従ってください。
 
 ```json
 {
@@ -138,7 +138,7 @@ Claude DesktopやClaudeなどのAI Agentに次の設定を追加してくださ�
 
 - `mcpServers.args`: (必須) `line-bot-mcp-server`へのパス。
 - `CHANNEL_ACCESS_TOKEN`: (必須) チャネルアクセストークン。これを取得するには、[こちらの手順](https://developers.line.biz/ja/docs/basics/channel-access-token/#long-lived-channel-access-token)に従ってください。
-- `DESTINATION_USER_ID`: (オプション) デフォルトのメッセージ受信者のユーザーID。Toolの入力に`user_id`が含まれていない場合、`DESTINATION_USER_ID`は必ず設定する必要があります。これを確認するには、[こちらの手順](https://developers.line.biz/ja/docs/messaging-api/getting-user-ids/#get-own-user-id)に従ってください。
+- `DESTINATION_USER_ID`: (オプション) デフォルトのメッセージ受信者のユーザーID。Toolの入力に`userId`が含まれていない場合、`DESTINATION_USER_ID`は必ず設定する必要があります。これを確認するには、[こちらの手順](https://developers.line.biz/ja/docs/messaging-api/getting-user-ids/#get-own-user-id)に従ってください。
 
 ```json
 {
