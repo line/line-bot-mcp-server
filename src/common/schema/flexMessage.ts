@@ -58,17 +58,17 @@ const postbackActionSchema = z.object({
 
 const messageActionSchema = z.object({
   type: z.literal("message").default("message"),
-  label: z.string().default("Send").describe("Button label text"),
+  label: z.string().default("label").describe("Button label text"),
   text: z.string().default("Hello").describe("Message text to send"), // Required, no maxLength limit
 });
 
 const uriActionSchema = z.object({
   type: z.literal("uri").default("uri"),
-  label: z.string().default("Open Link").describe("Button label text"),
+  label: z.string().default("Open Camera").describe("Button label text"),
   uri: z
     .string()
     .url()
-    .default("https://example.com")
+    .default("https://line.me/R/nv/camera/")
     .describe("URL to open (max 2000 characters)"),
   altUri: z
     .object({
@@ -130,7 +130,10 @@ export const flexActionSchema = z.discriminatedUnion("type", [
 
 // Basic style properties
 const flexStylePropsSchema = z.object({
-  backgroundColor: z.string().optional(),
+  backgroundColor: z
+    .string()
+    .optional()
+    .describe("Background color in #RRGGBB format (rgba not supported)"),
   separator: z.boolean().optional(),
   separatorColor: z.string().optional(),
 });
@@ -182,7 +185,9 @@ const flexImageComponentSchema = z.object({
     .string()
     .url()
     .max(2000)
-    .default("https://via.placeholder.com/300x200")
+    .default(
+      "https://developers-resource.landpress.line.me/fx/img/01_2_restaurant.png",
+    )
     .describe("Image URL (max 2000 characters)"), // Required - Maximum 2000 characters
   flex: z.number().int().min(0).optional(), // format: int32
   margin: flexMarginEnum.optional(),
@@ -196,7 +201,10 @@ const flexImageComponentSchema = z.object({
   size: z.string().default("md").optional(), // Default is md
   aspectRatio: z.string().optional(), // {width}:{height} format, range 1-100000
   aspectMode: flexImageAspectModeEnum.optional(),
-  backgroundColor: z.string().optional(),
+  backgroundColor: z
+    .string()
+    .optional()
+    .describe("Background color in #RRGGBB format (rgba not supported)"),
   action: flexActionSchema.optional(),
   animated: z.boolean().default(false).optional(), // Default is false
   scaling: z.boolean().optional(),
@@ -295,7 +303,10 @@ export const flexComponentSchema: z.ZodType<any> = z.lazy(() =>
       offsetBottom: z.string().optional(),
       offsetStart: z.string().optional(),
       offsetEnd: z.string().optional(),
-      backgroundColor: z.string().optional(),
+      backgroundColor: z
+        .string()
+        .optional()
+        .describe("Background color in #RRGGBB format (rgba not supported)"),
       borderColor: z.string().optional(),
       borderWidth: z.string().optional(),
       cornerRadius: z.string().optional(),
@@ -338,7 +349,8 @@ const flexBubbleSchema = z.object({
   type: z.literal("bubble").default("bubble"),
   size: z
     .enum(["nano", "micro", "deca", "hecto", "kilo", "mega", "giga"])
-    .optional(),
+    .optional()
+    .default("mega"),
   direction: z.enum(["ltr", "rtl"]).optional(),
   styles: flexBubbleStyleSchema.optional(),
   header: flexComponentSchema.optional(), // FlexBox
