@@ -181,11 +181,11 @@ async function generateRichMenuImage(
             font-family: 'Noto Sans JP', 'IPAexGothic', 'IPAexMincho', 'Noto Sans CJK JP', sans-serif !important;
             box-sizing: border-box;
           }
-          html, body { 
-            margin: 0; 
+          html, body {
+            margin: 0;
             padding: 0;
             height: ${RICHMENU_HEIGHT}px;
-            overflow: hidden; 
+            overflow: hidden;
           }
           h3 {
             font-weight: 500;
