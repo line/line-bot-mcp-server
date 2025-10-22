@@ -58,16 +58,14 @@ export default class CreateRichMenu extends AbstractTool {
         let setImageResponse: any = null;
         let setDefaultResponse: any = null;
         const lineActions = actions as messagingApi.Action[];
-        const templateNo = lineActions.length;
         try {
           // 1. Validate the rich menu image
-          if (templateNo < 1 || templateNo > 6) {
-            return createErrorResponse("Invalid texts length");
+          if (lineActions.length < 1 || lineActions.length > 6) {
+            return createErrorResponse("Invalid actions length");
           }
 
           // 2. Create a rich menu
           const areas: Array<messagingApi.RichMenuArea> = richmenuAreas(
-            templateNo,
             lineActions,
           );
           const createRichMenuParams = {
@@ -86,7 +84,6 @@ export default class CreateRichMenu extends AbstractTool {
 
           // 3. Generate a rich menu image
           const richMenuImagePath = await generateRichMenuImage(
-            templateNo,
             lineActions,
           );
 
@@ -133,12 +130,9 @@ const __dirname = path.dirname(__filename);
 
 // Function to generate a rich menu image from a Markdown template
 async function generateRichMenuImage(
-  templateNo: number,
   actions: messagingApi.Action[],
 ): Promise<string> {
-  console.log(
-    `Generating rich menu image for template ${templateNo} with ${actions.length} actions`,
-  );
+  const templateNo = actions.length;
   // Flow:
   // 1. Read the Markdown template
   // 2. Convert Markdown to HTML using Marp
@@ -260,10 +254,9 @@ async function generateRichMenuImage(
 }
 
 const richmenuAreas = (
-  templateNo: number,
   actions: messagingApi.Action[],
 ): messagingApi.RichMenuArea[] => {
-  const bounds = richmenuBounds(templateNo);
+  const bounds = richmenuBounds(actions.length);
   return actions.map((action, index) => {
     return {
       bounds: bounds[index],
@@ -272,7 +265,7 @@ const richmenuAreas = (
   });
 };
 
-const richmenuBounds = (templateNo: number) => {
+const richmenuBounds = (actionCount: number) => {
   const boundsMap: { x: number; y: number; width: number; height: number }[][] =
     [
       [],
@@ -352,5 +345,5 @@ const richmenuBounds = (templateNo: number) => {
         .flat(),
     ];
 
-  return boundsMap[templateNo];
+  return boundsMap[actionCount];
 };
