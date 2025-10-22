@@ -251,10 +251,10 @@ async function generateRichMenuImage(
     console.log(`Rich menu image saved to: ${outputPath}`);
   } catch (error) {
     console.warn(`Failed to save image to output directory: ${error}`);
+  }  finally {
+    // 5. Delete the temporary HTML file
+    await fsp.unlink(tempHtmlPath);
   }
-
-  // 5. Delete the temporary HTML file
-  await fsp.unlink(tempHtmlPath);
 
   return richMenuImagePath;
 }
