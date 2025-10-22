@@ -29,7 +29,8 @@ export default class PushFlexMessage extends AbstractTool {
 
     server.tool(
       "push_flex_message",
-      "Push a highly customizable flex message to a user via LINE. All constraints and validation rules are defined in the message schema.",
+      "Push a highly customizable flex message to a user via LINE." +
+        "All constraints and validation rules are defined in the message schema.",
       {
         userId: userIdSchema,
         message: flexMessageSchema,
@@ -46,15 +47,9 @@ export default class PushFlexMessage extends AbstractTool {
           });
           return createSuccessResponse(response);
         } catch (error) {
-          // Enhanced error message with debugging hints
-          let errorMessage = `Failed to push flex message: ${error.message}`;
-
-          if (error.message?.includes("400")) {
-            errorMessage +=
-              "\n\nDEBUG HINT: Check the flex message schema constraints. Common issues: missing required properties, invalid enum values, or exceeding length limits.";
-          }
-
-          return createErrorResponse(errorMessage);
+          return createErrorResponse(
+            `Failed to push flex message: ${error.message}`,
+          );
         }
       },
     );
