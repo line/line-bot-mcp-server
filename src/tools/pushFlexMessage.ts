@@ -29,8 +29,8 @@ export default class PushFlexMessage extends AbstractTool {
 
     server.tool(
       "push_flex_message",
-      "Push a highly customizable flex message to a user via LINE. Supports both bubble (single container) and carousel " +
-        "(multiple swipeable bubbles) layouts.",
+      "Push a highly customizable flex message to a user via LINE." +
+        "All constraints and validation rules are defined in the message schema.",
       {
         userId: userIdSchema,
         message: flexMessageSchema,
