@@ -8,7 +8,7 @@ const spacingSchema = z.enum(["none", "xs", "sm", "md", "lg", "xl", "xxl"]);
 const positionSchema = z.enum(["relative", "absolute"]);
 const alignSchema = z.enum(["start", "end", "center"]);
 const gravitySchema = z.enum(["top", "bottom", "center"]);
-const offsetSchema = z.string().regex(/^\d+(px|%|em|rem)$/, "Format: '10px', '5%', '1em'");
+const offsetSchema = z.string().regex(/^\d+px$/, "Format: '10px', '5%', '1em'");
 const colorSchema = z.string().regex(/^#[0-9A-Fa-f]{6}$/, "Hex format: '#FF0000'");
 const flexWeightSchema = z.number();
 const scalingSchema = z.boolean();
@@ -42,11 +42,11 @@ const textStyleFields = {
 };
 
 const paddingFields = {
-  paddingAll: z.string().regex(/^\d+(px|%|em|rem)$/).optional(),
-  paddingTop: z.string().regex(/^\d+(px|%|em|rem)$/).optional(),
-  paddingBottom: z.string().regex(/^\d+(px|%|em|rem)$/).optional(),
-  paddingStart: z.string().regex(/^\d+(px|%|em|rem)$/).optional(),
-  paddingEnd: z.string().regex(/^\d+(px|%|em|rem)$/).optional(),
+  paddingAll: z.string().regex(/^\d+px$/).optional(),
+  paddingTop: z.string().regex(/^\d+px$/).optional(),
+  paddingBottom: z.string().regex(/^\d+px$/).optional(),
+  paddingStart: z.string().regex(/^\d+px$/).optional(),
+  paddingEnd: z.string().regex(/^\d+px$/).optional(),
 };
 
 const flexActionSchema = z.discriminatedUnion("type", [
@@ -191,11 +191,11 @@ const flexComponentSchema: z.ZodType<any> = z.lazy(() =>
       contents: z.array(flexComponentSchema),
       backgroundColor: colorSchema.optional(),
       borderColor: colorSchema.optional(),
-      borderWidth: z.string().regex(/^\d+(px|%|em|rem)$/).optional(),
-      cornerRadius: z.string().regex(/^\d+(px|%|em|rem)$/).optional(),
+      borderWidth: z.string().regex(/^\d+px$/).optional(),
+      cornerRadius: z.string().regex(/^\d+px$/).optional(),
       spacing: spacingSchema.optional(),
-      width: z.string().regex(/^\d+(px|%|em|rem)$/).optional(),
-      height: z.string().regex(/^\d+(px|%|em|rem)$/).optional(),
+      width: z.string().regex(/^\d+px$/).optional(),
+      height: z.string().regex(/^\d+px$/).optional(),
       justifyContent: z.enum(["flex-start", "center", "flex-end", "space-between", "space-around", "space-evenly"]).optional(),
       alignItems: z.enum(["flex-start", "center", "flex-end"]).optional(),
       background: z.object({
