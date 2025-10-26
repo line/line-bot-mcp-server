@@ -23,6 +23,8 @@ import { LINE_BOT_MCP_SERVER_VERSION, USER_AGENT } from "./version.js";
 import CancelRichMenuDefault from "./tools/cancelRichMenuDefault.js";
 import PushTextMessage from "./tools/pushTextMessage.js";
 import PushFlexMessage from "./tools/pushFlexMessage.js";
+import ReplyFlexMessage from "./tools/replyFlexMessage.js";
+import ReplyTextMessage from "./tools/replyTextMessage.js";
 import BroadcastTextMessage from "./tools/broadcastTextMessage.js";
 import BroadcastFlexMessage from "./tools/broadcastFlexMessage.js";
 import GetProfile from "./tools/getProfile.js";
@@ -48,6 +50,8 @@ const messagingApiClient = new line.messagingApi.MessagingApiClient({
 
 new PushTextMessage(messagingApiClient, destinationId).register(server);
 new PushFlexMessage(messagingApiClient, destinationId).register(server);
+new ReplyTextMessage(messagingApiClient).register(server);
+new ReplyFlexMessage(messagingApiClient).register(server);
 new BroadcastTextMessage(messagingApiClient).register(server);
 new BroadcastFlexMessage(messagingApiClient).register(server);
 new GetProfile(messagingApiClient, destinationId).register(server);
