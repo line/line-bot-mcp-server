@@ -8,7 +8,7 @@ const spacingSchema = z.enum(["none", "xs", "sm", "md", "lg", "xl", "xxl"]);
 const positionSchema = z.enum(["relative", "absolute"]);
 const alignSchema = z.enum(["start", "end", "center"]);
 const gravitySchema = z.enum(["top", "bottom", "center"]);
-const offsetSchema = z.string().regex(/^\d+px$/, "Format: '10px', '5%', '1em'");
+const offsetSchema = z.string().regex(/^\d+px$/, "Format: '10px'");
 const colorSchema = z.string().regex(/^#[0-9A-Fa-f]{6}$/, "Hex format: '#FF0000'");
 const flexWeightSchema = z.number();
 const scalingSchema = z.boolean();
@@ -66,7 +66,10 @@ const flexActionSchema = z.discriminatedUnion("type", [
   z.object({
     type: z.literal("uri"),
     label: z.string(),
-    uri: z.string().url(),
+    uri: z.string().describe(
+      "LINE Custom URI or URI" +
+      "LINE Custom URI document: https://developers.line.biz/ja/docs/messaging-api/using-line-url-scheme/"
+    ),
     altUri: z.object({
       desktop: z.string().url(),
     }).optional(),
@@ -129,7 +132,7 @@ const flexComponentSchema: z.ZodType<any> = z.lazy(() =>
       type: z.literal("text"),
       contents: z.array(flexSpanSchema).optional(),
       adjustMode: z.enum(["shrink-to-fit"]).optional(),
-      wrap: z.boolean().optional(),
+      wrap: z.boolean().optional().default(true),
       lineSpacing: z.enum(["xs", "sm", "md", "lg", "xl", "xxl"]).optional(),
       maxLines: z.number().optional(),
       action: flexActionSchema.optional(),
@@ -149,7 +152,7 @@ const flexComponentSchema: z.ZodType<any> = z.lazy(() =>
     }),
     z.object({
       type: z.literal("image"),
-      url: z.string().url(),
+      url: z.string().url().default('https://developers-resource.landpress.line.me/fx/img/01_1_cafe.png'),
       size: imageSizeSchema.optional(),
       aspectRatio: z.string().regex(/^\d+:\d+$/, "Format: '1:1', '16:9'").optional(),
       aspectMode: z.enum(["cover", "fit"]).optional(),
@@ -163,7 +166,7 @@ const flexComponentSchema: z.ZodType<any> = z.lazy(() =>
     z.object({
       type: z.literal("video"),
       url: z.string().url(),
-      previewUrl: z.string().url(),
+      previewUrl: z.string().url().default('https://developers-resource.landpress.line.me/fx/img/01_1_cafe.png'),
       altContent: flexComponentSchema,
       size: imageSizeSchema.optional(),
       aspectRatio: z.string().regex(/^\d+:\d+$/, "Format: '1:1', '16:9'").optional(),
@@ -200,7 +203,7 @@ const flexComponentSchema: z.ZodType<any> = z.lazy(() =>
       alignItems: z.enum(["flex-start", "center", "flex-end"]).optional(),
       background: z.object({
         type: z.literal("linearGradient"),
-        angle: z.string().regex(/^\d+(deg|rad|turn)$/, "Format: '90deg'"),
+        angle: z.string().regex(/^\d+deg$/, "Format: '90deg'"),
         startColor: colorSchema,
         endColor: colorSchema,
       }).optional(),
@@ -224,7 +227,7 @@ const flexBubbleStylesSchema = z.object({
   footer: sectionStyleSchema.optional(),
 });
 
-const flexBubbleSchema = z.object({
+export const flexBubbleSchema = z.object({
   type: z.literal("bubble"),
   size: z.enum(["nano", "micro", "deca", "hecto", "kilo", "mega", "giga"]).optional(),
   direction: z.enum(["ltr", "rtl"]).optional(),
