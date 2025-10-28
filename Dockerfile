@@ -1,4 +1,4 @@
-FROM node:22.20-alpine AS builder
+FROM node:24.9-alpine AS builder
 
 COPY . /app
 
@@ -9,7 +9,7 @@ RUN --mount=type=cache,target=/root/.npm-production npm ci --ignore-scripts --om
 RUN --mount=type=cache,target=/root/.npm npm run build
 
 # --- Release Stage ---
-FROM node:22-alpine AS release
+FROM node:24-alpine AS release
 
 # Set up a non-root user ('appuser'/'appgroup') to avoid running as root - good security practice!
 # (-S is the Alpine option for a system user/group, suitable here)
