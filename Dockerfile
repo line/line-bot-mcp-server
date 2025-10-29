@@ -1,4 +1,4 @@
-FROM node:24.9-alpine AS builder
+FROM node:24.10-alpine AS builder
 
 COPY . /app
 
