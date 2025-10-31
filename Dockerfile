@@ -1,4 +1,4 @@
-FROM node:22.20-alpine AS builder
+FROM node:24.10-alpine AS builder
 
 COPY . /app
 
@@ -9,7 +9,7 @@ RUN --mount=type=cache,target=/root/.npm-production npm ci --ignore-scripts --om
 RUN --mount=type=cache,target=/root/.npm npm run build
 
 # --- Release Stage ---
-FROM node:22-alpine AS release
+FROM node:24-alpine AS release
 
 # Install necessary tools and base fonts
 RUN apk add --no-cache \
