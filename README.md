@@ -59,6 +59,20 @@
     - Cancel the default rich menu.
     - **Inputs:**
       - None
+11. **create_rich_menu**
+    - Create a rich menu based on the given actions. Generate and upload an image. Set as default.
+    - **Inputs:**
+      - `chatBarText` (string): Text displayed in chat bar, also used as rich menu name.
+      - `actions` (array): The actions of the rich menu. You can specify minimum 1 to maximum 6 actions. Each action can be one of the following types:
+        - `postback`: For sending a postback action
+        - `message`: For sending a text message
+        - `uri`: For opening a URL
+        - `datetimepicker`: For opening a date/time picker
+        - `camera`: For opening the camera
+        - `cameraRoll`: For opening the camera roll
+        - `location`: For sending the current location
+        - `richmenuswitch`: For switching to another rich menu
+        - `clipboard`: For copying text to clipboard
 
 ## Installation (Using npx)
 
