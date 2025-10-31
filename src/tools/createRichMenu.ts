@@ -65,9 +65,8 @@ export default class CreateRichMenu extends AbstractTool {
           }
 
           // 2. Create a rich menu
-          const areas: Array<messagingApi.RichMenuArea> = richmenuAreas(
-            lineActions,
-          );
+          const areas: Array<messagingApi.RichMenuArea> =
+            richmenuAreas(lineActions);
           const createRichMenuParams = {
             name: chatBarText,
             chatBarText,
@@ -83,9 +82,7 @@ export default class CreateRichMenu extends AbstractTool {
           const richMenuId = createRichMenuResponse.richMenuId;
 
           // 3. Generate a rich menu image
-          const richMenuImagePath = await generateRichMenuImage(
-            lineActions,
-          );
+          const richMenuImagePath = await generateRichMenuImage(lineActions);
 
           // 4. Upload the rich menu image
           const imageBuffer = fs.readFileSync(richMenuImagePath);
@@ -235,7 +232,7 @@ async function generateRichMenuImage(
     await fsp.copyFile(richMenuImagePath, outputPath);
   } catch (error) {
     console.warn(`Failed to save image to output directory: ${error}`);
-  }  finally {
+  } finally {
     // 5. Delete the temporary HTML file
     await fsp.unlink(tempHtmlPath);
   }

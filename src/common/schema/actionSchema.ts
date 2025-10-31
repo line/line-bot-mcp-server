@@ -47,12 +47,12 @@ const datetimePickerActionSchema = z.object({
 // 5. Camera action
 const cameraActionSchema = z.object({
   type: z.literal("camera"),
-  label: z.string()
+  label: z.string(),
 });
 // 6. Camera roll action
 const cameraRollActionSchema = z.object({
   type: z.literal("cameraRoll"),
-  label: z.string()
+  label: z.string(),
 });
 // 7. Location action
 const locationActionSchema = z.object({
