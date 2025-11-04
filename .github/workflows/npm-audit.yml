@@ -16,10 +16,12 @@ jobs:
       issues: write
     if: github.repository == 'line/line-bot-mcp-server'
     steps:
-      - uses: actions/checkout@ff7abcd0c3c05ccf6adc123a8cd1fd4fb30fb493
-      - uses: actions/setup-node@5e2628c959b9ade56971c0afcebbe5332d44b398
+      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+      - uses: actions/setup-node@2028fbc5c25fe9cf00d9f06a71cc4710d4507903 # v6.0.0
         with:
           node-version: '24'
+          # Enable this when setup-node v5 is released
+          # package-manager-cache: false
 
       - name: Run npm audit and check diff
         id: audit
@@ -28,7 +30,7 @@ jobs:
 
       - name: Create or update reminder issue
         if: steps.audit.outcome == 'failure'
-        uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7.0.1
+        uses: actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd # v8.0.0
         env:
           TZ: 'Asia/Tokyo'
         with:
