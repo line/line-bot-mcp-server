@@ -13,5 +13,9 @@
   ],
   ignoreDeps: [
     "zod"
-  ]
+  ],
+  // To prevent libraries in optionalDependencies from being removed from the lock file
+  constraints: {
+    npm: "11.6.0"
+  }
 }
