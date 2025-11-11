@@ -116,7 +116,7 @@ const flexActionSchema = z.discriminatedUnion("type", [
   z.object({
     type: z.literal("datetimepicker"),
     label: z.string().min(1).max(20),
-    data: z.string().min(1).max(300),
+    data: z.string().min(1).max(32),
     mode: z.enum(["date", "time", "datetime"]),
     initial: z.string().datetime().optional(),
     max: z.string().datetime().optional(),
