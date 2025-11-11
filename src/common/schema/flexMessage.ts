@@ -155,14 +155,6 @@ const flexSpanSchema = z.object({
 const flexComponentSchema: z.ZodType<any> = z.lazy(() =>
   z.discriminatedUnion("type", [
     z.object({
-      type: z.literal("filler"),
-      flex: flexWeightSchema.optional(),
-    }),
-    z.object({
-      type: z.literal("spacer"),
-      size: spacerSizeSchema.optional(),
-    }),
-    z.object({
       type: z.literal("separator"),
       margin: marginSchema.optional(),
       color: colorSchema.optional(),
