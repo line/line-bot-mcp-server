@@ -118,9 +118,9 @@ const flexActionSchema = z.discriminatedUnion("type", [
     label: z.string().min(1).max(20),
     data: z.string().min(1).max(32),
     mode: z.enum(["date", "time", "datetime"]),
-    initial: z.string().datetime().optional(),
-    max: z.string().datetime().optional(),
-    min: z.string().datetime().optional(),
+    initial: z.string().optional().describe("Format: 2100-12-31, 23:59, 2100-12-31T23:59"),
+    max: z.string().optional().describe("Format: 2100-12-31, 23:59, 2100-12-31T23:59"),
+    min: z.string().optional().describe("Format: 2100-12-31, 23:59, 2100-12-31T23:59"),
   }),
   z.object({
     type: z.literal("camera"),
