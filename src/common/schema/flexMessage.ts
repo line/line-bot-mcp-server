@@ -329,10 +329,10 @@ export const flexBubbleSchema = z.object({
     .enum(["nano", "micro", "deca", "hecto", "kilo", "mega", "giga"])
     .optional(),
   direction: z.enum(["ltr", "rtl"]).optional(),
-  header: flexComponentSchema.optional(),
+  header: flexComponentSchema.optional().describe("Header must be a Box").refine(component => component.type === "box", "Header must be a Box"),
   hero: flexComponentSchema.optional(),
-  body: flexComponentSchema.optional(),
-  footer: flexComponentSchema.optional(),
+  body: flexComponentSchema.optional().describe("Body must be a Box").refine(component => component.type === "box", "Body must be a Box"),
+  footer: flexComponentSchema.optional().describe("Footer must be a Box").refine(component => component.type === "box", "Footer must be a Box"),
   styles: flexBubbleStylesSchema.optional(),
   action: flexActionSchema.optional(),
 });
