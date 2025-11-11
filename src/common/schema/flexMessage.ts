@@ -116,7 +116,7 @@ const flexActionSchema = z.discriminatedUnion("type", [
   z.object({
     type: z.literal("datetimepicker"),
     label: z.string().min(1).max(20),
-    data: z.string().min(1).max(32),
+    data: z.string().min(1).max(300),
     mode: z.enum(["date", "time", "datetime"]),
     initial: z.string().optional().describe("Format: 2100-12-31, 23:59, 2100-12-31T23:59"),
     max: z.string().optional().describe("Format: 2100-12-31, 23:59, 2100-12-31T23:59"),
@@ -137,7 +137,7 @@ const flexActionSchema = z.discriminatedUnion("type", [
   z.object({
     type: z.literal("richmenuswitch"),
     label: z.string().min(1).max(20),
-    richMenuAliasId: z.string().min(1).max(300),
+    richMenuAliasId: z.string().min(1).max(32),
     data: z.string().min(1).max(300),
   }),
   z.object({
