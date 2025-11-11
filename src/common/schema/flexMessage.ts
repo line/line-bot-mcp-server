@@ -118,9 +118,18 @@ const flexActionSchema = z.discriminatedUnion("type", [
     label: z.string().min(1).max(20),
     data: z.string().min(1).max(300),
     mode: z.enum(["date", "time", "datetime"]),
-    initial: z.string().optional().describe("Format: 2100-12-31, 23:59, 2100-12-31T23:59"),
-    max: z.string().optional().describe("Format: 2100-12-31, 23:59, 2100-12-31T23:59"),
-    min: z.string().optional().describe("Format: 2100-12-31, 23:59, 2100-12-31T23:59"),
+    initial: z
+      .string()
+      .optional()
+      .describe("Format: 2100-12-31, 23:59, 2100-12-31T23:59"),
+    max: z
+      .string()
+      .optional()
+      .describe("Format: 2100-12-31, 23:59, 2100-12-31T23:59"),
+    min: z
+      .string()
+      .optional()
+      .describe("Format: 2100-12-31, 23:59, 2100-12-31T23:59"),
   }),
   z.object({
     type: z.literal("camera"),
@@ -329,10 +338,19 @@ export const flexBubbleSchema = z.object({
     .enum(["nano", "micro", "deca", "hecto", "kilo", "mega", "giga"])
     .optional(),
   direction: z.enum(["ltr", "rtl"]).optional(),
-  header: flexComponentSchema.optional().describe("Header must be a Box").refine(component => component.type === "box", "Header must be a Box"),
+  header: flexComponentSchema
+    .optional()
+    .describe("Header must be a Box")
+    .refine(component => component.type === "box", "Header must be a Box"),
   hero: flexComponentSchema.optional(),
-  body: flexComponentSchema.optional().describe("Body must be a Box").refine(component => component.type === "box", "Body must be a Box"),
-  footer: flexComponentSchema.optional().describe("Footer must be a Box").refine(component => component.type === "box", "Footer must be a Box"),
+  body: flexComponentSchema
+    .optional()
+    .describe("Body must be a Box")
+    .refine(component => component.type === "box", "Body must be a Box"),
+  footer: flexComponentSchema
+    .optional()
+    .describe("Footer must be a Box")
+    .refine(component => component.type === "box", "Footer must be a Box"),
   styles: flexBubbleStylesSchema.optional(),
   action: flexActionSchema.optional(),
 });
