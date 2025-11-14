@@ -4,7 +4,7 @@ COPY . /app
 
 WORKDIR /app
 
-RUN --mount=type=cache,target=/root/.npm-production npm ci --ignore-scripts --omit-dev
+RUN --mount=type=cache,target=/root/.npm-production npm ci --ignore-scripts
 
 RUN --mount=type=cache,target=/root/.npm npm run build
 
@@ -57,7 +57,7 @@ WORKDIR /app
 RUN chown -R appuser:appgroup /app
 
 # Install *only* the production dependencies
-RUN npm ci --ignore-scripts --omit-dev
+RUN npm ci --ignore-scripts --omit=dev
 
 # Now, switch to running as our non-root user for the actual app process
 USER appuser
