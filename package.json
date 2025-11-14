@@ -11,7 +11,8 @@
     "line-bot-mcp-server": "./dist/index.js"
   },
   "files": [
-    "dist"
+    "dist",
+    "richmenu-template"
   ],
   "scripts": {
     "build": "tsc && shx chmod +x dist/*.js",
