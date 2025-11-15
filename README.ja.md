@@ -71,6 +71,7 @@ LINE公式アカウントとAI Agentを接続するために、LINE Messaging AP
         - `location`: 現在位置を送信する
         - `richmenuswitch`: 別のリッチメニューに切り替える
         - `clipboard`: テキストをクリップボードにコピーする
+      - `richMenuAliasId` (string?): リッチメニューのエイリアス。`richmenuswitch` アクションタイプを使用して別のリッチメニューから切り替えられるようにリッチメニューを作成する場合に必須です。エイリアスは対象リッチメニューの一意な識別子として機能します。
 
 ## インストール (npxを使用)
 
