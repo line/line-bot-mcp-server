@@ -34,14 +34,12 @@ export default class CreateRichMenu extends AbstractTool {
   register(server: McpServer) {
     server.tool(
       "create_rich_menu",
-      "Create a rich menu based on the given actions." +
-        "Generate and upload a rich menu image based on the given action." +
-        "This rich menu will be registered as the default rich menu.",
+      "Create a rich menu based on the given actions. Generate and upload a rich menu image based on the given action. This rich menu will be registered as the default.",
       {
         chatBarText: z
           .string()
           .describe(
-            "Text displayed in the chat bar and this is also used as name of the rich menu to create.",
+            "Text displayed in the chat bar and this is also used as name of the rich menu to create",
           ),
         actions: z
           .array(actionSchema)
@@ -74,18 +72,15 @@ export default class CreateRichMenu extends AbstractTool {
         let setDefaultResponse: any = null;
         let richMenuAliasResponse: any = null;
         const lineActions = actions as messagingApi.Action[];
-        const templateNo = lineActions.length;
         try {
           // 1. Validate the rich menu image
-          if (templateNo < 1 || templateNo > 6) {
-            return createErrorResponse("Invalid texts length");
+          if (lineActions.length < 1 || lineActions.length > 6) {
+            return createErrorResponse("Invalid actions length");
           }
 
           // 2. Create a rich menu
-          const areas: Array<messagingApi.RichMenuArea> = richmenuAreas(
-            templateNo,
-            lineActions,
-          );
+          const areas: Array<messagingApi.RichMenuArea> =
+            richmenuAreas(lineActions);
           const createRichMenuParams = {
             name: chatBarText,
             chatBarText,
@@ -101,10 +96,7 @@ export default class CreateRichMenu extends AbstractTool {
           const richMenuId = createRichMenuResponse.richMenuId;
 
           // 3. Generate a rich menu image
-          const richMenuImagePath = await generateRichMenuImage(
-            templateNo,
-            lineActions,
-          );
+          const richMenuImagePath = await generateRichMenuImage(lineActions);
 
           // 4. Upload the rich menu image
           const imageBuffer = fs.readFileSync(richMenuImagePath);
@@ -118,7 +110,7 @@ export default class CreateRichMenu extends AbstractTool {
           // 5. Set the rich menu as the default rich menu
           setDefaultResponse = await this.client.setDefaultRichMenu(richMenuId);
 
-          // 6. Set the rich menu alias
+          // 6. Set the rich menu alias          // 6. Set the rich menu alias
           if (richMenuAliasId) {
             await this.client.deleteRichMenuAlias(richMenuAliasId);
             richMenuAliasResponse = await this.client.createRichMenuAlias({
@@ -136,12 +128,13 @@ export default class CreateRichMenu extends AbstractTool {
             setImageResponse,
             setDefaultResponse,
             richMenuImagePath,
-            richMenuAliasResponse,
           });
         } catch (error) {
+          console.error("Rich menu creation error:", error);
           return createErrorResponse(
             JSON.stringify({
-              error,
+              error: error instanceof Error ? error.message : String(error),
+              stack: error instanceof Error ? error.stack : undefined,
               createRichMenuResponse,
               setImageResponse,
               setDefaultResponse,
@@ -159,9 +152,9 @@ const __dirname = path.dirname(__filename);
 
 // Function to generate a rich menu image from a Markdown template
 async function generateRichMenuImage(
-  templateNo: number,
   actions: messagingApi.Action[],
 ): Promise<string> {
+  const templateNo = actions.length;
   // Flow:
   // 1. Read the Markdown template
   // 2. Convert Markdown to HTML using Marp
@@ -177,7 +170,7 @@ async function generateRichMenuImage(
   // 1. Read the Markdown template
   const srcPath = path.join(
     serverPath,
-    `richmenu-templates/template-0${templateNo}.md`,
+    `richmenu-template/template-0${templateNo}.md`,
   );
   let content = await fsp.readFile(srcPath, "utf8");
   for (let index = 0; index < actions.length; index++) {
@@ -189,11 +182,31 @@ async function generateRichMenuImage(
   const marp = new Marp();
   const { html, css } = marp.render(content);
 
-  // 3. Save the HTML as a temporary file
+  // 3. Save the HTML as a temporary file with Japanese font support
   const htmlContent = `
-    <html>
+    <!doctype html>
+    <html lang="ja">
       <head>
-        <style>${css}</style>
+        <meta charset="UTF-8">
+        <style>
+          ${css}
+          * {
+            font-family: 'Noto Sans JP', 'IPAexGothic', 'IPAexMincho', 'Noto Sans CJK JP', sans-serif !important;
+            box-sizing: border-box;
+          }
+          html, body {
+            margin: 0;
+            padding: 0;
+            height: ${RICHMENU_HEIGHT}px;
+            overflow: hidden;
+          }
+          h3 {
+            font-weight: 500;
+            line-height: 1.4;
+            margin: 0;
+            padding: 0.4em 0;
+          }
+        </style>
       </head>
       <body>${html}</body>
     </html>
@@ -204,33 +217,58 @@ async function generateRichMenuImage(
   );
   await fsp.writeFile(tempHtmlPath, htmlContent, "utf8");
 
-  // 4. Use puppeteer to convert HTML to PNG
+  // 4. Use puppeteer to convert HTML to PNG with Docker-compatible settings
   const browser = await puppeteer.launch({
-    args: ["--no-sandbox", "--disable-setuid-sandbox"],
-    executablePath: process.env.PUPPETEER_EXECUTABLE_PATH,
+    headless: true,
+    executablePath: process.env.PUPPETEER_EXECUTABLE_PATH || undefined,
+    args: [
+      "--no-sandbox",
+      "--disable-setuid-sandbox",
+      "--disable-dev-shm-usage",
+      "--disable-gpu",
+      "--disable-web-security",
+      "--disable-features=VizDisplayCompositor",
+      "--no-first-run",
+      "--no-default-browser-check",
+      "--disable-default-apps",
+      "--disable-extensions",
+    ],
   });
   const page = await browser.newPage();
   await page.setViewport({ width: RICHMENU_WIDTH, height: RICHMENU_HEIGHT });
   await page.goto(`file://${tempHtmlPath}`, {
     waitUntil: "networkidle0",
   });
+
+  // Wait for fonts to load
+  await page.evaluate(() => document.fonts.ready);
+  await new Promise(resolve => setTimeout(resolve, 2000));
+
   await page.screenshot({
     path: richMenuImagePath as `${string}.png`,
     clip: { x: 0, y: 0, width: RICHMENU_WIDTH, height: RICHMENU_HEIGHT },
   });
   await browser.close();
 
-  // 5. Delete the temporary HTML file
-  await fsp.unlink(tempHtmlPath);
+  // Save image to output directory
+  const outputPath = path.join("/tmp", path.basename(richMenuImagePath));
+
+  try {
+    await fsp.copyFile(richMenuImagePath, outputPath);
+  } catch (error) {
+    console.warn(`Failed to save image to output directory: ${error}`);
+  } finally {
+    // 5. Delete the temporary HTML file
+    await fsp.unlink(tempHtmlPath);
+  }
 
   return richMenuImagePath;
 }
 
 const richmenuAreas = (
-  templateNo: number,
   actions: messagingApi.Action[],
 ): messagingApi.RichMenuArea[] => {
-  const bounds = richmenuBounds(templateNo);
+  const bounds = richmenuBounds(actions.length);
   return actions.map((action, index) => {
     return {
       bounds: bounds[index],
@@ -239,7 +277,7 @@ const richmenuAreas = (
   });
 };
 
-const richmenuBounds = (templateNo: number) => {
+const richmenuBounds = (actionCount: number) => {
   const boundsMap: { x: number; y: number; width: number; height: number }[][] =
     [
       [],
@@ -319,5 +357,5 @@ const richmenuBounds = (templateNo: number) => {
         .flat(),
     ];
 
-  return boundsMap[templateNo];
+  return boundsMap[actionCount];
 };
