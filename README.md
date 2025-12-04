@@ -73,6 +73,7 @@
         - `location`: For sending the current location
         - `richmenuswitch`: For switching to another rich menu
         - `clipboard`: For copying text to clipboard
+     - `richMenuAliasId` (string?): The alias of the rich menu. This is required when creating a rich menu that can be switched to from another rich menu using the `richmenuswitch` action type. The alias serves as a unique identifier for the target rich menu.
 
 ## Installation (Using npx)
 
