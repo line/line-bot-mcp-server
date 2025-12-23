@@ -35,6 +35,10 @@ export default class PushFlexMessage extends AbstractTool {
         userId: userIdSchema,
         message: flexMessageSchema,
       },
+      {
+        title: "Push Flex Message",
+        destructiveHint: true,
+      },
       async ({ userId, message }) => {
         if (!userId) {
           return createErrorResponse(NO_USER_ID_ERROR);
