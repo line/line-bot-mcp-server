@@ -47,6 +47,10 @@ export default class CreateRichMenu extends AbstractTool {
           .max(6)
           .describe("The actions of the rich menu."),
       },
+      {
+        title: "Create Rich Menu",
+        destructiveHint: true,
+      },
       async ({ chatBarText, actions }) => {
         // Flow:
         // 1. Validate the rich menu image

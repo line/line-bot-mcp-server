@@ -34,6 +34,10 @@ export default class PushTextMessage extends AbstractTool {
         userId: userIdSchema,
         message: textMessageSchema,
       },
+      {
+        title: "Push Text Message",
+        destructiveHint: true,
+      },
       async ({ userId, message }) => {
         if (!userId) {
           return createErrorResponse(NO_USER_ID_ERROR);

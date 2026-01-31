@@ -25,6 +25,10 @@ export default class SetRichMenuDefault extends AbstractTool {
           "The ID of the rich menu to set as default.",
         ),
       },
+      {
+        title: "Set Rich Menu Default",
+        destructiveHint: true,
+      },
       async ({ richMenuId }) => {
         const response = await this.client.setDefaultRichMenu(richMenuId);
         return createSuccessResponse(response);

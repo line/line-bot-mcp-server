@@ -19,6 +19,10 @@ export default class GetRichMenuList extends AbstractTool {
       "get_rich_menu_list",
       "Get the list of rich menus associated with your LINE Official Account.",
       {},
+      {
+        title: "Get Rich Menu List",
+        readOnlyHint: true,
+      },
       async () => {
         try {
           const response = await this.client.getRichMenuList();

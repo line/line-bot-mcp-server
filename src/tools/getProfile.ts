@@ -32,6 +32,10 @@ export default class GetProfile extends AbstractTool {
       {
         userId: userIdSchema,
       },
+      {
+        title: "Get Profile",
+        readOnlyHint: true,
+      },
       async ({ userId }) => {
         if (!userId) {
           return createErrorResponse(NO_USER_ID_ERROR);
