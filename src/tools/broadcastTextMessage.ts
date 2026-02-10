@@ -23,6 +23,10 @@ export default class BroadcastTextMessage extends AbstractTool {
       {
         message: textMessageSchema,
       },
+      {
+        title: "Broadcast Text Message",
+        destructiveHint: true,
+      },
       async ({ message }) => {
         try {
           const response = await this.client.broadcast({

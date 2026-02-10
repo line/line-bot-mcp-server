@@ -28,6 +28,10 @@ export default class DeleteRichMenu extends AbstractTool {
           "The ID of the rich menu to delete.",
         ),
       },
+      {
+        title: "Delete Rich Menu",
+        destructiveHint: true,
+      },
       async ({ richMenuId }) => {
         try {
           const response = await this.client.deleteRichMenu(richMenuId);

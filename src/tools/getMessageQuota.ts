@@ -16,6 +16,10 @@ export default class GetMessageQuota extends AbstractTool {
       "get_message_quota",
       "Get the message quota and consumption of the LINE Official Account. This shows the monthly message limit and current usage.",
       {},
+      {
+        title: "Get Message Quota",
+        readOnlyHint: true,
+      },
       async () => {
         const messageQuotaResponse = await this.client.getMessageQuota();
         const messageQuotaConsumptionResponse =
