@@ -69,6 +69,10 @@
     {
       "name": "cancel_rich_menu_default",
       "description": "Remove the default rich menu"
+    },
+    {
+      "name": "get_follower_ids",
+      "description": "Get a list of user IDs of followers"
     }
   ],
   "keywords": [

@@ -72,6 +72,12 @@ LINE公式アカウントとAI Agentを接続するために、LINE Messaging AP
         - `richmenuswitch`: 別のリッチメニューに切り替える
         - `clipboard`: テキストをクリップボードにコピーする
 
+12. **get_follower_ids**
+    - LINE公式アカウントを友だち追加しているユーザーのユーザーIDリストを取得する。これにより、DESTINATION_USER_IDを手動で準備せずにユーザーIDを取得できる。
+    - **入力:**
+      - `start` (string?): 次のユーザーID配列を取得するための継続トークン。前回のレスポンスの`next`プロパティから取得できる。
+      - `limit` (number?): 1回のリクエストで取得するユーザーIDの最大数。
+
 ## インストール (npxを使用)
 
 要件:
