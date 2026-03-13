@@ -74,6 +74,12 @@
         - `richmenuswitch`: For switching to another rich menu
         - `clipboard`: For copying text to clipboard
 
+12. **get_follower_ids**
+    - Get a list of user IDs of users who have added the LINE Official Account as a friend. This allows you to obtain user IDs for sending messages without manually preparing them.
+    - **Inputs:**
+      - `start` (string?): Continuation token to get the next array of user IDs. Returned in the `next` property of a previous response.
+      - `limit` (number?): The maximum number of user IDs to retrieve in a single request.
+
 ## Installation (Using npx)
 
 requirements:
