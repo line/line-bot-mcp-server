@@ -24,6 +24,10 @@ export default class BroadcastFlexMessage extends AbstractTool {
       {
         message: flexMessageSchema,
       },
+      {
+        title: "Broadcast Flex Message",
+        destructiveHint: true,
+      },
       async ({ message }) => {
         try {
           const response = await this.client.broadcast({
