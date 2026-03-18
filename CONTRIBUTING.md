@@ -32,14 +32,34 @@ implement the Tool in that file. The Tool should extend `AbstractTool`
 and should be registered in `src/index.ts`.
 Please remember to add the description of the tool to both README.md and README.ja.md.
 
+When adding a new tool, you also need to update the following tests:
+
+1. **Add a tool test file** — Create `test/tools/<yourTool>.test.ts`.
+2. **Add mock methods if needed** — If your tool calls a LINE API method
+   not yet listed in `test/helpers/mock-line-clients.ts`, add it there.
+
+### Run tests
+
+Run `npm test` to execute the test suite:
+
+```bash
+npm test
+```
+
+Tests are located in the `test/` directory and use [Vitest](https://vitest.dev/).
+LINE API calls are mocked using dependency injection — each tool class accepts
+a client in its constructor, so tests pass in stub objects created with `vi.fn()`.
+See `test/helpers/mock-line-clients.ts` for the mock factories.
+
 ### Run all CI tasks in your local
 
--`npm run format`: Format source code with [Prettier](https://github.com/prettier/prettier)
--`npm run format:check`: Silently run `format` and report formatting errors
--`npm run build`: Build TypeScript code into JavaScript. The built files will
+- `npm run format`: Format source code with [Prettier](https://github.com/prettier/prettier)
+- `npm run format:check`: Silently run `format` and report formatting errors
+- `npm run build`: Build TypeScript code into JavaScript. The built files will
   be placed in `dist/`.
+- `npm test`: Run the test suite.
 
-We lint and build on CI, but it is always nice to check them before
+We lint, build, and test on CI, but it is always nice to check them before
 uploading a pull request.
 
 ## Contributor license agreement
