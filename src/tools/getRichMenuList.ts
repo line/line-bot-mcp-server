@@ -29,7 +29,7 @@ export default class GetRichMenuList extends AbstractTool {
           return createSuccessResponse(response);
         } catch (error) {
           return createErrorResponse(
-            `Failed to broadcast message: ${error.message}`,
+            `Failed to get rich menu list: ${error.message}`,
           );
         }
       },
