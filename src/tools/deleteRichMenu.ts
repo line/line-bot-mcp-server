@@ -20,17 +20,19 @@ export default class DeleteRichMenu extends AbstractTool {
       .string()
       .describe("The ID of the rich menu to delete.");
 
-    server.tool(
+    server.registerTool(
       "delete_rich_menu",
-      "Delete a rich menu from your LINE Official Account.",
-      {
-        richMenuId: richMenuIdSchema.describe(
-          "The ID of the rich menu to delete.",
-        ),
-      },
       {
         title: "Delete Rich Menu",
-        destructiveHint: true,
+        description: "Delete a rich menu from your LINE Official Account.",
+        inputSchema: {
+          richMenuId: richMenuIdSchema.describe(
+            "The ID of the rich menu to delete.",
+          ),
+        },
+        annotations: {
+          destructiveHint: true,
+        },
       },
       async ({ richMenuId }) => {
         try {

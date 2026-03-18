@@ -16,22 +16,28 @@ export default class GetFollowerIds extends AbstractTool {
   }
 
   register(server: McpServer) {
-    server.tool(
+    server.registerTool(
       "get_follower_ids",
-      "Get a list of user IDs of users who have added the LINE Official Account as a friend. This allows you to obtain user IDs for sending messages without manually preparing them.",
       {
-        start: z
-          .string()
-          .optional()
-          .describe(
-            "Continuation token to get the next array of user IDs. Returned in the 'next' property of a previous response.",
-          ),
-        limit: z
-          .number()
-          .optional()
-          .describe(
-            "The maximum number of user IDs to retrieve in a single request.",
-          ),
+        description:
+          "Get a list of user IDs of users who have added the LINE Official Account as a friend. This allows you to obtain user IDs for sending messages without manually preparing them.",
+        inputSchema: {
+          start: z
+            .string()
+            .optional()
+            .describe(
+              "Continuation token to get the next array of user IDs. Returned in the 'next' property of a previous response.",
+            ),
+          limit: z
+            .number()
+            .optional()
+            .describe(
+              "The maximum number of user IDs to retrieve in a single request.",
+            ),
+        },
+        annotations: {
+          readOnlyHint: true,
+        },
       },
       async ({ start, limit }) => {
         try {

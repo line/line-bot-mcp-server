@@ -26,15 +26,18 @@ export default class GetProfile extends AbstractTool {
         "The user ID to get a profile. Defaults to DESTINATION_USER_ID.",
       );
 
-    server.tool(
+    server.registerTool(
       "get_profile",
-      "Get detailed profile information of a LINE user including display name, profile picture URL, status message and language.",
-      {
-        userId: userIdSchema,
-      },
       {
         title: "Get Profile",
-        readOnlyHint: true,
+        description:
+          "Get detailed profile information of a LINE user including display name, profile picture URL, status message and language.",
+        inputSchema: {
+          userId: userIdSchema,
+        },
+        annotations: {
+          readOnlyHint: true,
+        },
       },
       async ({ userId }) => {
         if (!userId) {
