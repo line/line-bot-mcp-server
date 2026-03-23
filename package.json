@@ -16,7 +16,7 @@
   ],
   "scripts": {
     "build": "tsc && shx chmod +x dist/*.js",
-    "prettier": "prettier \"src/**/*.ts\"",
+    "prettier": "prettier \"src/**/*.ts\" \"test/**/*.ts\"",
     "format": "npm run prettier -- --write",
     "format:check": "npm run prettier -- -l",
     "clean": "rm -rf dist/*",
