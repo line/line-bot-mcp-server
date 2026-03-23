@@ -51,6 +51,11 @@ LINE API calls are mocked using dependency injection — each tool class accepts
 a client in its constructor, so tests pass in stub objects created with `vi.fn()`.
 See `test/helpers/mock-line-clients.ts` for the mock factories.
 
+Especially for bug fixes, please follow this flow for testing and development:
+1. Write a test before making changes to the library and confirm that the test fails.
+2. Modify the code of the library.
+3. Run the test again and confirm that it passes thanks to your changes.
+
 ### Run all CI tasks in your local
 
 - `npm run format`: Format source code with [Prettier](https://github.com/prettier/prettier)
