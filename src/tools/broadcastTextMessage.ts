@@ -16,16 +16,19 @@ export default class BroadcastTextMessage extends AbstractTool {
   }
 
   register(server: McpServer) {
-    server.tool(
+    server.registerTool(
       "broadcast_text_message",
-      "Broadcast a simple text message via LINE to all users who have followed your LINE Official Account. Use this for sending " +
-        "plain text messages without formatting. Please be aware that this message will be sent to all users.",
-      {
-        message: textMessageSchema,
-      },
       {
         title: "Broadcast Text Message",
-        destructiveHint: true,
+        description:
+          "Broadcast a simple text message via LINE to all users who have followed your LINE Official Account. Use this for sending " +
+          "plain text messages without formatting. Please be aware that this message will be sent to all users.",
+        inputSchema: {
+          message: textMessageSchema,
+        },
+        annotations: {
+          destructiveHint: true,
+        },
       },
       async ({ message }) => {
         try {

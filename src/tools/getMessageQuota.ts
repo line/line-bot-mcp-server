@@ -12,13 +12,15 @@ export default class GetMessageQuota extends AbstractTool {
   }
 
   register(server: McpServer) {
-    server.tool(
+    server.registerTool(
       "get_message_quota",
-      "Get the message quota and consumption of the LINE Official Account. This shows the monthly message limit and current usage.",
-      {},
       {
         title: "Get Message Quota",
-        readOnlyHint: true,
+        description:
+          "Get the message quota and consumption of the LINE Official Account. This shows the monthly message limit and current usage.",
+        annotations: {
+          readOnlyHint: true,
+        },
       },
       async () => {
         const messageQuotaResponse = await this.client.getMessageQuota();

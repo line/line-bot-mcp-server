@@ -17,17 +17,19 @@ export default class SetRichMenuDefault extends AbstractTool {
       .string()
       .describe("The ID of the rich menu to set as default.");
 
-    server.tool(
+    server.registerTool(
       "set_rich_menu_default",
-      "Set a rich menu as the default rich menu.",
-      {
-        richMenuId: richMenuIdSchema.describe(
-          "The ID of the rich menu to set as default.",
-        ),
-      },
       {
         title: "Set Rich Menu Default",
-        destructiveHint: true,
+        description: "Set a rich menu as the default rich menu.",
+        inputSchema: {
+          richMenuId: richMenuIdSchema.describe(
+            "The ID of the rich menu to set as default.",
+          ),
+        },
+        annotations: {
+          destructiveHint: true,
+        },
       },
       async ({ richMenuId }) => {
         const response = await this.client.setDefaultRichMenu(richMenuId);
