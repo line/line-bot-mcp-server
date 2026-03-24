@@ -10,6 +10,7 @@ async function updateVersion(newVersion) {
     packageJson: './package.json',
     packageLockJson: './package-lock.json',
     versionTs: './src/version.ts',
+    manifestJson: './manifest.json',
   };
 
   // package.json
@@ -32,6 +33,11 @@ async function updateVersion(newVersion) {
     `const LINE_BOT_MCP_SERVER_VERSION = "${newVersion}";`
   );
   await fs.writeFile(files.versionTs, updatedVersionTsData);
+
+  // manifest.json
+  const manifestJsonData = JSON.parse(await fs.readFile(files.manifestJson, 'utf8'));
+  manifestJsonData.version = newVersion;
+  await fs.writeFile(files.manifestJson, JSON.stringify(manifestJsonData, null, 2) + '\n');
 
   console.log(`Version updated to ${newVersion} in all files.`);
 }
@@ -58,6 +64,12 @@ async function verifyVersion(expectedVersion) {
     throw new Error(`src/version.ts version mismatch: expected ${expectedVersion}`);
   }
 
+  // manifest.json
+  const manifestJsonData = JSON.parse(await fs.readFile('./manifest.json', 'utf8'));
+  if (manifestJsonData.version !== expectedVersion) {
+    throw new Error(`manifest.json version mismatch: expected ${expectedVersion}, found ${manifestJsonData.version}`);
+  }
+
   console.log(`All files have the correct version: ${expectedVersion}`);
 }
 
@@ -71,11 +83,11 @@ async function verifyGitDiff() {
       return acc;
     }, { addedLines: 0, deletedLines: 0 });
 
-    if (addedLines !== 4 || deletedLines !== 4) {
-      throw new Error(`Unexpected number of changed lines: expected 4 added and 4 deleted, found ${addedLines} added and ${deletedLines} deleted`);
+    if (addedLines !== 5 || deletedLines !== 5) {
+      throw new Error(`Unexpected number of changed lines: expected 5 added and 5 deleted, found ${addedLines} added and ${deletedLines} deleted`);
     }
 
-    console.log('Git diff verification passed: 4 lines added and 4 lines deleted.');
+    console.log('Git diff verification passed: 5 lines added and 5 lines deleted.');
 
     // Display the diff with context and color
     const { stdout: diffOutput } = await execAsync('git diff -U5 --color=always');
