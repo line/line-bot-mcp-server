@@ -18,7 +18,6 @@ export default class GetRichMenuList extends AbstractTool {
     server.tool(
       "get_rich_menu_list",
       "Get the list of rich menus associated with your LINE Official Account.",
-      {},
       {
         title: "Get Rich Menu List",
         readOnlyHint: true,

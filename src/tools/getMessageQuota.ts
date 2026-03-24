@@ -15,7 +15,6 @@ export default class GetMessageQuota extends AbstractTool {
     server.tool(
       "get_message_quota",
       "Get the message quota and consumption of the LINE Official Account. This shows the monthly message limit and current usage.",
-      {},
       {
         title: "Get Message Quota",
         readOnlyHint: true,

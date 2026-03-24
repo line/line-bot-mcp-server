@@ -15,7 +15,6 @@ export default class CancelRichMenuDefault extends AbstractTool {
     server.tool(
       "cancel_rich_menu_default",
       "Cancel the default rich menu.",
-      {},
       {
         title: "Cancel Rich Menu Default",
         destructiveHint: true,
