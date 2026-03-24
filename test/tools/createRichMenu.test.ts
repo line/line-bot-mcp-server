@@ -240,6 +240,20 @@ describe("create_rich_menu tool", () => {
         .calls[0][0];
       const actualBounds = callArgs.areas?.map(area => area.bounds);
       expect(actualBounds).toEqual(expectedBounds);
+
+      // Verify no areas overlap
+      for (let i = 0; i < expectedBounds.length; i++) {
+        for (let j = i + 1; j < expectedBounds.length; j++) {
+          const a = expectedBounds[i];
+          const b = expectedBounds[j];
+          const overlaps =
+            a.x < b.x + b.width &&
+            b.x < a.x + a.width &&
+            a.y < b.y + b.height &&
+            b.y < a.y + a.height;
+          expect(overlaps, `areas[${i}] and areas[${j}] overlap`).toBe(false);
+        }
+      }
     },
   );
 
