@@ -15,13 +15,15 @@ export default class GetRichMenuList extends AbstractTool {
   }
 
   register(server: McpServer) {
-    server.tool(
+    server.registerTool(
       "get_rich_menu_list",
-      "Get the list of rich menus associated with your LINE Official Account.",
-      {},
       {
         title: "Get Rich Menu List",
-        readOnlyHint: true,
+        description:
+          "Get the list of rich menus associated with your LINE Official Account.",
+        annotations: {
+          readOnlyHint: true,
+        },
       },
       async () => {
         try {

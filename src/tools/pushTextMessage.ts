@@ -27,16 +27,19 @@ export default class PushTextMessage extends AbstractTool {
         "The user ID to receive a message. Defaults to DESTINATION_USER_ID.",
       );
 
-    server.tool(
+    server.registerTool(
       "push_text_message",
-      "Push a simple text message to a user via LINE. Use this for sending plain text messages without formatting.",
-      {
-        userId: userIdSchema,
-        message: textMessageSchema,
-      },
       {
         title: "Push Text Message",
-        destructiveHint: true,
+        description:
+          "Push a simple text message to a user via LINE. Use this for sending plain text messages without formatting.",
+        inputSchema: {
+          userId: userIdSchema,
+          message: textMessageSchema,
+        },
+        annotations: {
+          destructiveHint: true,
+        },
       },
       async ({ userId, message }) => {
         if (!userId) {

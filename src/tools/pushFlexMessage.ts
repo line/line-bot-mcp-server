@@ -27,17 +27,20 @@ export default class PushFlexMessage extends AbstractTool {
         "The user ID to receive a message. Defaults to DESTINATION_USER_ID.",
       );
 
-    server.tool(
+    server.registerTool(
       "push_flex_message",
-      "Push a highly customizable flex message to a user via LINE. Supports both bubble (single container) and carousel " +
-        "(multiple swipeable bubbles) layouts.",
-      {
-        userId: userIdSchema,
-        message: flexMessageSchema,
-      },
       {
         title: "Push Flex Message",
-        destructiveHint: true,
+        description:
+          "Push a highly customizable flex message to a user via LINE. Supports both bubble (single container) and carousel " +
+          "(multiple swipeable bubbles) layouts.",
+        inputSchema: {
+          userId: userIdSchema,
+          message: flexMessageSchema,
+        },
+        annotations: {
+          destructiveHint: true,
+        },
       },
       async ({ userId, message }) => {
         if (!userId) {

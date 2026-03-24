@@ -16,17 +16,20 @@ export default class BroadcastFlexMessage extends AbstractTool {
   }
 
   register(server: McpServer) {
-    server.tool(
+    server.registerTool(
       "broadcast_flex_message",
-      "Broadcast a highly customizable flex message via LINE to all users who have added your LINE Official Account. " +
-        "Supports both bubble (single container) and carousel (multiple swipeable bubbles) layouts. Please be aware that " +
-        "this message will be sent to all users.",
-      {
-        message: flexMessageSchema,
-      },
       {
         title: "Broadcast Flex Message",
-        destructiveHint: true,
+        description:
+          "Broadcast a highly customizable flex message via LINE to all users who have added your LINE Official Account. " +
+          "Supports both bubble (single container) and carousel (multiple swipeable bubbles) layouts. Please be aware that " +
+          "this message will be sent to all users.",
+        inputSchema: {
+          message: flexMessageSchema,
+        },
+        annotations: {
+          destructiveHint: true,
+        },
       },
       async ({ message }) => {
         try {
