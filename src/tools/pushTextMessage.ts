@@ -52,9 +52,9 @@ export default class PushTextMessage extends AbstractTool {
             messages: [message as unknown as messagingApi.Message],
           });
           return createSuccessResponse(response);
-        } catch (error) {
+        } catch (error: unknown) {
           return createErrorResponse(
-            `Failed to push message: ${error.message}`,
+            `Failed to push message: ${error instanceof Error ? error.message : String(error)}`,
           );
         }
       },

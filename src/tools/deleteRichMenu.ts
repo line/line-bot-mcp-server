@@ -38,9 +38,9 @@ export default class DeleteRichMenu extends AbstractTool {
         try {
           const response = await this.client.deleteRichMenu(richMenuId);
           return createSuccessResponse(response);
-        } catch (error) {
+        } catch (error: unknown) {
           return createErrorResponse(
-            `Failed to delete rich menu: ${error.message}`,
+            `Failed to delete rich menu: ${error instanceof Error ? error.message : String(error)}`,
           );
         }
       },

@@ -47,8 +47,10 @@ export default class GetProfile extends AbstractTool {
         try {
           const response = await this.client.getProfile(userId);
           return createSuccessResponse(response);
-        } catch (error) {
-          return createErrorResponse(`Failed to get profile: ${error.message}`);
+        } catch (error: unknown) {
+          return createErrorResponse(
+            `Failed to get profile: ${error instanceof Error ? error.message : String(error)}`,
+          );
         }
       },
     );

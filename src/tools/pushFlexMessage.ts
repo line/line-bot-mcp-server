@@ -53,9 +53,9 @@ export default class PushFlexMessage extends AbstractTool {
             messages: [message as unknown as messagingApi.Message],
           });
           return createSuccessResponse(response);
-        } catch (error) {
+        } catch (error: unknown) {
           return createErrorResponse(
-            `Failed to push flex message: ${error.message}`,
+            `Failed to push flex message: ${error instanceof Error ? error.message : String(error)}`,
           );
         }
       },

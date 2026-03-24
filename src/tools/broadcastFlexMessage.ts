@@ -37,9 +37,9 @@ export default class BroadcastFlexMessage extends AbstractTool {
             messages: [message as unknown as messagingApi.Message],
           });
           return createSuccessResponse(response);
-        } catch (error) {
+        } catch (error: unknown) {
           return createErrorResponse(
-            `Failed to broadcast message: ${error.message}`,
+            `Failed to broadcast message: ${error instanceof Error ? error.message : String(error)}`,
           );
         }
       },

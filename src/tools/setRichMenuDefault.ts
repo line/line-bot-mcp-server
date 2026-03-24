@@ -40,7 +40,7 @@ export default class SetRichMenuDefault extends AbstractTool {
           return createSuccessResponse(response);
         } catch (error) {
           return createErrorResponse(
-            `Failed to set default rich menu: ${error.message}`,
+            `Failed to set default rich menu: ${error instanceof Error ? error.message : String(error)}`,
           );
         }
       },

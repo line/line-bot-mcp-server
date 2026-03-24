@@ -29,9 +29,9 @@ export default class GetRichMenuList extends AbstractTool {
         try {
           const response = await this.client.getRichMenuList();
           return createSuccessResponse(response);
-        } catch (error) {
+        } catch (error: unknown) {
           return createErrorResponse(
-            `Failed to get rich menu list: ${error.message}`,
+            `Failed to get rich menu list: ${error instanceof Error ? error.message : String(error)}`,
           );
         }
       },
