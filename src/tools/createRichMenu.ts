@@ -32,24 +32,27 @@ export default class CreateRichMenu extends AbstractTool {
   }
 
   register(server: McpServer) {
-    server.tool(
+    server.registerTool(
       "create_rich_menu",
-      "Create a rich menu based on the given actions. Generate and upload a rich menu image based on the given action. This rich menu will be registered as the default.",
-      {
-        chatBarText: z
-          .string()
-          .describe(
-            "Text displayed in the chat bar and this is also used as name of the rich menu to create",
-          ),
-        actions: z
-          .array(actionSchema)
-          .min(1)
-          .max(6)
-          .describe("The actions of the rich menu."),
-      },
       {
         title: "Create Rich Menu",
-        destructiveHint: true,
+        description:
+          "Create a rich menu based on the given actions. Generate and upload a rich menu image based on the given action. This rich menu will be registered as the default.",
+        inputSchema: {
+          chatBarText: z
+            .string()
+            .describe(
+              "Text displayed in the chat bar and this is also used as name of the rich menu to create",
+            ),
+          actions: z
+            .array(actionSchema)
+            .min(1)
+            .max(6)
+            .describe("The actions of the rich menu."),
+        },
+        annotations: {
+          destructiveHint: true,
+        },
       },
       async ({ chatBarText, actions }) => {
         // Flow:

@@ -12,13 +12,14 @@ export default class CancelRichMenuDefault extends AbstractTool {
   }
 
   register(server: McpServer) {
-    server.tool(
+    server.registerTool(
       "cancel_rich_menu_default",
-      "Cancel the default rich menu.",
-      {},
       {
         title: "Cancel Rich Menu Default",
-        destructiveHint: true,
+        description: "Cancel the default rich menu.",
+        annotations: {
+          destructiveHint: true,
+        },
       },
       async () => {
         const response = await this.client.cancelDefaultRichMenu();
