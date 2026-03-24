@@ -30,7 +30,7 @@ export default class CancelRichMenuDefault extends AbstractTool {
           return createSuccessResponse(response);
         } catch (error) {
           return createErrorResponse(
-            `Failed to cancel default rich menu: ${error.message}`,
+            `Failed to cancel default rich menu: ${error instanceof Error ? error.message : String(error)}`,
           );
         }
       },
