@@ -15,7 +15,9 @@
     "entry_point": "dist/index.js",
     "mcp_config": {
       "command": "node",
-      "args": ["${__dirname}/dist/index.js"],
+      "args": [
+        "${__dirname}/dist/index.js"
+      ],
       "env": {
         "CHANNEL_ACCESS_TOKEN": "${user_config.channel_access_token}",
         "DESTINATION_USER_ID": "${user_config.destination_user_id}"
