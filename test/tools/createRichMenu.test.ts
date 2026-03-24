@@ -127,6 +127,122 @@ describe("create_rich_menu tool", () => {
     },
   );
 
+  it.each([
+    {
+      // +-----------+
+      // |           |
+      // |     1     |
+      // |           |
+      // +-----------+
+      templateName: "template-01",
+      actionCount: 1,
+      expectedBounds: [{ x: 0, y: 0, width: 1600, height: 910 }],
+    },
+    {
+      // +-----+-----+
+      // |     |     |
+      // |  1  |  2  |
+      // |     |     |
+      // +-----+-----+
+      templateName: "template-02",
+      actionCount: 2,
+      expectedBounds: [
+        { x: 0, y: 0, width: 800, height: 910 },
+        { x: 800, y: 0, width: 800, height: 910 },
+      ],
+    },
+    {
+      // +-------+---+
+      // |       | 2 |
+      // |   1   +---+
+      // |       | 3 |
+      // +-------+---+
+      templateName: "template-03",
+      actionCount: 3,
+      expectedBounds: [
+        { x: 0, y: 0, width: (1600 / 3) * 2, height: 910 },
+        { x: (1600 / 3) * 2, y: 0, width: 1600 / 3, height: 455 },
+        { x: (1600 / 3) * 2, y: 455, width: 1600 / 3, height: 455 },
+      ],
+    },
+    {
+      // +-----+-----+
+      // |  1  |  3  |
+      // +-----+-----+
+      // |  2  |  4  |
+      // +-----+-----+
+      templateName: "template-04",
+      actionCount: 4,
+      expectedBounds: [
+        { x: 0, y: 0, width: 800, height: 455 },
+        { x: 0, y: 455, width: 800, height: 455 },
+        { x: 800, y: 0, width: 800, height: 455 },
+        { x: 800, y: 455, width: 800, height: 455 },
+      ],
+    },
+    {
+      // +-------+---+
+      // |   1   | 2 |
+      // +---+---+---+
+      // | 3 | 4 | 5 |
+      // +---+---+---+
+      templateName: "template-05",
+      actionCount: 5,
+      expectedBounds: [
+        { x: 0, y: 0, width: (1600 / 3) * 2, height: 455 },
+        { x: (1600 / 3) * 2, y: 0, width: 1600 / 3, height: 455 },
+        { x: 0, y: 455, width: 1600 / 3, height: 455 },
+        { x: 1600 / 3, y: 455, width: 1600 / 3, height: 455 },
+        { x: (1600 / 3) * 2, y: 455, width: 1600 / 3, height: 455 },
+      ],
+    },
+    {
+      // +---+---+---+
+      // | 1 | 2 | 3 |
+      // +---+---+---+
+      // | 4 | 5 | 6 |
+      // +---+---+---+
+      templateName: "template-06",
+      actionCount: 6,
+      expectedBounds: [
+        { x: 0, y: 0, width: 1600 / 3, height: 455 },
+        { x: 1600 / 3, y: 0, width: 1600 / 3, height: 455 },
+        { x: (1600 / 3) * 2, y: 0, width: 1600 / 3, height: 455 },
+        { x: 0, y: 455, width: 1600 / 3, height: 455 },
+        { x: 1600 / 3, y: 455, width: 1600 / 3, height: 455 },
+        { x: (1600 / 3) * 2, y: 455, width: 1600 / 3, height: 455 },
+      ],
+    },
+  ])(
+    "$templateName: creates a rich menu with correct areas for $actionCount actions",
+    { timeout: 10000 },
+    async ({ actionCount, expectedBounds }) => {
+      vi.mocked(mockLineClient.createRichMenu).mockResolvedValue({
+        richMenuId: "richmenu-new-123",
+      } as never);
+      vi.mocked(mockBlobClient.setRichMenuImage).mockResolvedValue({} as never);
+      vi.mocked(mockLineClient.setDefaultRichMenu).mockResolvedValue(
+        {} as never,
+      );
+
+      const actions = Array.from({ length: actionCount }, (_, i) => ({
+        type: "message" as const,
+        label: `Action ${i + 1}`,
+        text: `action${i + 1}`,
+      }));
+
+      await client.callTool({
+        name: "create_rich_menu",
+        arguments: { chatBarText: "My Menu", actions },
+      });
+
+      const callArgs = vi.mocked(mockLineClient.createRichMenu).mock
+        .calls[0][0];
+      const actualBounds = callArgs.areas?.map(area => area.bounds);
+      expect(actualBounds).toEqual(expectedBounds);
+    },
+  );
+
   it(
     "returns an error when createRichMenu API fails",
     { timeout: 10000 },
