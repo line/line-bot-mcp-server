@@ -20,6 +20,20 @@ const SAMPLE_FLEX_MESSAGE = {
   },
 };
 
+// Zod schema applies default values (e.g. wrap: true for text elements)
+const EXPECTED_FLEX_MESSAGE = {
+  type: "flex",
+  altText: "Test flex message",
+  contents: {
+    type: "bubble",
+    body: {
+      type: "box",
+      layout: "vertical",
+      contents: [{ type: "text", text: "Hello", wrap: true }],
+    },
+  },
+};
+
 describe("push_flex_message tool", () => {
   let client: Client;
   let server: McpServer;
@@ -55,11 +69,10 @@ describe("push_flex_message tool", () => {
       },
     });
 
-    expect(mockLineClient.pushMessage).toHaveBeenCalledWith(
-      expect.objectContaining({
-        to: "U_EXPLICIT_USER",
-      }),
-    );
+    expect(mockLineClient.pushMessage).toHaveBeenCalledWith({
+      to: "U_EXPLICIT_USER",
+      messages: [EXPECTED_FLEX_MESSAGE],
+    });
     expect(result.isError).toBeFalsy();
   });
 
@@ -73,9 +86,10 @@ describe("push_flex_message tool", () => {
       },
     });
 
-    expect(mockLineClient.pushMessage).toHaveBeenCalledWith(
-      expect.objectContaining({ to: DESTINATION_ID }),
-    );
+    expect(mockLineClient.pushMessage).toHaveBeenCalledWith({
+      to: DESTINATION_ID,
+      messages: [EXPECTED_FLEX_MESSAGE],
+    });
   });
 
   it("returns an error response when LINE API fails", async () => {

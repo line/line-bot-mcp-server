@@ -65,6 +65,6 @@ describe("get_rich_menu_list tool", () => {
     expect(result.isError).toBe(true);
     const text = (result.content as Array<{ type: string; text: string }>)[0]
       .text;
-    expect(text).toContain("Failed to broadcast message");
+    expect(text).toContain("Failed to get rich menu list");
   });
 });

@@ -18,6 +18,20 @@ const SAMPLE_FLEX_MESSAGE = {
   },
 };
 
+// Zod schema applies default values (e.g. wrap: true for text elements)
+const EXPECTED_FLEX_MESSAGE = {
+  type: "flex",
+  altText: "Test flex message",
+  contents: {
+    type: "bubble",
+    body: {
+      type: "box",
+      layout: "vertical",
+      contents: [{ type: "text", text: "Hello", wrap: true }],
+    },
+  },
+};
+
 describe("broadcast_flex_message tool", () => {
   let client: Client;
   let server: McpServer;
@@ -52,16 +66,9 @@ describe("broadcast_flex_message tool", () => {
       },
     });
 
-    expect(mockLineClient.broadcast).toHaveBeenCalledWith(
-      expect.objectContaining({
-        messages: expect.arrayContaining([
-          expect.objectContaining({
-            type: "flex",
-            altText: "Test flex message",
-          }),
-        ]),
-      }),
-    );
+    expect(mockLineClient.broadcast).toHaveBeenCalledWith({
+      messages: [EXPECTED_FLEX_MESSAGE],
+    });
     expect(result.isError).toBeFalsy();
   });
 
