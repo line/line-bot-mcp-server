@@ -1,6 +1,9 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { messagingApi } from "@line/bot-sdk";
-import { createSuccessResponse } from "../common/response.js";
+import {
+  createErrorResponse,
+  createSuccessResponse,
+} from "../common/response.js";
 import { AbstractTool } from "./AbstractTool.js";
 
 export default class CancelRichMenuDefault extends AbstractTool {
@@ -22,8 +25,14 @@ export default class CancelRichMenuDefault extends AbstractTool {
         },
       },
       async () => {
-        const response = await this.client.cancelDefaultRichMenu();
-        return createSuccessResponse(response);
+        try {
+          const response = await this.client.cancelDefaultRichMenu();
+          return createSuccessResponse(response);
+        } catch (error) {
+          return createErrorResponse(
+            `Failed to cancel default rich menu: ${error.message}`,
+          );
+        }
       },
     );
   }

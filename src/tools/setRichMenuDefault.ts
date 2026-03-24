@@ -1,6 +1,9 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { messagingApi } from "@line/bot-sdk";
-import { createSuccessResponse } from "../common/response.js";
+import {
+  createErrorResponse,
+  createSuccessResponse,
+} from "../common/response.js";
 import { AbstractTool } from "./AbstractTool.js";
 import { z } from "zod";
 
@@ -32,8 +35,14 @@ export default class SetRichMenuDefault extends AbstractTool {
         },
       },
       async ({ richMenuId }) => {
-        const response = await this.client.setDefaultRichMenu(richMenuId);
-        return createSuccessResponse(response);
+        try {
+          const response = await this.client.setDefaultRichMenu(richMenuId);
+          return createSuccessResponse(response);
+        } catch (error) {
+          return createErrorResponse(
+            `Failed to set default rich menu: ${error.message}`,
+          );
+        }
       },
     );
   }
