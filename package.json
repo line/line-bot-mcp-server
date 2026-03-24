@@ -16,12 +16,15 @@
   ],
   "scripts": {
     "build": "tsc && shx chmod +x dist/*.js",
-    "prettier": "prettier \"src/**/*.ts\"",
+    "prettier": "prettier \"src/**/*.ts\" \"test/**/*.ts\"",
     "format": "npm run prettier -- --write",
     "format:check": "npm run prettier -- -l",
     "clean": "rm -rf dist/*",
-    "prebuild": "npm run format:check && npm run clean",
-    "release": "npm run build && npm publish --provenance --access public"
+    "typecheck:test": "tsc --project tsconfig.test.json",
+    "prebuild": "npm run format:check && npm run typecheck:test && npm run clean",
+    "release": "npm run build && npm publish --provenance --access public",
+    "test": "vitest run",
+    "test:watch": "vitest"
   },
   "repository": {
     "type": "git",
@@ -47,7 +50,8 @@
     "prettier": "3.8.1",
     "shx": "^0.4.0",
     "tsx": "^4.19.3",
-    "typescript": "^5.6.2"
+    "typescript": "^5.6.2",
+    "vitest": "^3.2.4"
   },
   "license": "Apache-2.0"
 }
