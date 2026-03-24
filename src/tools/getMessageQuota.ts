@@ -37,7 +37,7 @@ export default class GetMessageQuota extends AbstractTool {
           return createSuccessResponse(response);
         } catch (error) {
           return createErrorResponse(
-            `Failed to get message quota: ${error.message}`,
+            `Failed to get message quota: ${error instanceof Error ? error.message : String(error)}`,
           );
         }
       },

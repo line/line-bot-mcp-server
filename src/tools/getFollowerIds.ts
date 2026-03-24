@@ -43,9 +43,9 @@ export default class GetFollowerIds extends AbstractTool {
         try {
           const response = await this.client.getFollowers(start, limit);
           return createSuccessResponse(response);
-        } catch (error) {
+        } catch (error: unknown) {
           return createErrorResponse(
-            `Failed to get follower IDs: ${error.message}`,
+            `Failed to get follower IDs: ${error instanceof Error ? error.message : String(error)}`,
           );
         }
       },
