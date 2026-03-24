@@ -31,7 +31,7 @@ export default class GetRichMenuList extends AbstractTool {
           return createSuccessResponse(response);
         } catch (error: unknown) {
           return createErrorResponse(
-            `Failed to broadcast message: ${error instanceof Error ? error.message : String(error)}`,
+            `Failed to get rich menu list: ${error instanceof Error ? error.message : String(error)}`,
           );
         }
       },
