@@ -298,8 +298,8 @@ const richmenuBounds = (actionCount: number) => {
       [0, 1]
         .map(i =>
           [0, 1].map(j => ({
-            x: (RICHMENU_WIDTH / 2) * i,
-            y: (RICHMENU_HEIGHT / 2) * j,
+            x: (RICHMENU_WIDTH / 2) * j,
+            y: (RICHMENU_HEIGHT / 2) * i,
             width: RICHMENU_WIDTH / 2,
             height: RICHMENU_HEIGHT / 2,
           })),

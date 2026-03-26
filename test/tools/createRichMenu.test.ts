@@ -167,16 +167,16 @@ describe("create_rich_menu tool", () => {
     },
     {
       // +-----+-----+
-      // |  1  |  3  |
+      // |  1  |  2  |
       // +-----+-----+
-      // |  2  |  4  |
+      // |  3  |  4  |
       // +-----+-----+
       templateName: "template-04",
       actionCount: 4,
       expectedBounds: [
         { x: 0, y: 0, width: 800, height: 455 },
-        { x: 0, y: 455, width: 800, height: 455 },
         { x: 800, y: 0, width: 800, height: 455 },
+        { x: 0, y: 455, width: 800, height: 455 },
         { x: 800, y: 455, width: 800, height: 455 },
       ],
     },
