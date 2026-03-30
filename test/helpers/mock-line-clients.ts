@@ -13,6 +13,7 @@ export function createMockMessagingApiClient() {
     setDefaultRichMenu: vi.fn(),
     cancelDefaultRichMenu: vi.fn(),
     createRichMenu: vi.fn(),
+    getFollowers: vi.fn(),
   } as unknown as messagingApi.MessagingApiClient;
 }
 
