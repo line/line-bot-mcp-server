@@ -80,6 +80,10 @@
       - `start` (string?): Continuation token to get the next array of user IDs. Returned in the `next` property of a previous response.
       - `limit` (number?): The maximum number of user IDs to retrieve in a single request.
 
+## Hosted deployment
+
+A hosted deployment is available on [Fronteir AI](https://fronteir.ai/mcp/line-line-bot-mcp-server).
+
 ## Installation (Using npx)
 
 requirements:
