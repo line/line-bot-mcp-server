@@ -39,10 +39,8 @@ jobs:
         run: npm run build
       - name: Test
         run: npm test
-      - name: Install pnpm  # For publint
-        run: npm install -g pnpm
       - name: publint
-        run: npx publint
+        run: npm run check:publint
 
   docker-build:
     runs-on: ubuntu-latest

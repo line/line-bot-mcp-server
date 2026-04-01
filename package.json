@@ -15,14 +15,14 @@
     "richmenu-template"
   ],
   "scripts": {
-    "build": "tsc && shx chmod +x dist/*.js",
+    "build": "npm run format:check && npm run typecheck:test && npm run clean && tsc && shx chmod +x dist/*.js",
     "prettier": "prettier \"src/**/*.ts\" \"test/**/*.ts\"",
     "format": "npm run prettier -- --write",
     "format:check": "npm run prettier -- -l",
     "clean": "rm -rf dist/*",
     "typecheck:test": "tsc --project tsconfig.test.json",
-    "prebuild": "npm run format:check && npm run typecheck:test && npm run clean",
     "release": "npm run build && npm publish --provenance --access public",
+    "check:publint": "publint",
     "test": "vitest run",
     "test:watch": "vitest"
   },
@@ -48,6 +48,7 @@
   "devDependencies": {
     "@types/node": "^24.9.2",
     "prettier": "3.8.1",
+    "publint": "0.3.18",
     "shx": "^0.4.0",
     "tsx": "^4.19.3",
     "typescript": "^6.0.2",

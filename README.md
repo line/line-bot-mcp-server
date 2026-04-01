@@ -109,6 +109,7 @@ Set the environment variables or arguments as follows:
         "@line/line-bot-mcp-server"
       ],
       "env": {
+        "NPM_CONFIG_IGNORE_SCRIPTS": "true",
         "CHANNEL_ACCESS_TOKEN" : "FILL_HERE",
         "DESTINATION_USER_ID" : "FILL_HERE"
       }
