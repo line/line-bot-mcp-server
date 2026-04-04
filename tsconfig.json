@@ -17,6 +17,7 @@
     "dist",
     ".git",
     "test",
+    "scripts",
     "vitest.config.ts"
   ],
 }

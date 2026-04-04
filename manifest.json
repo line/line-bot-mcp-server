@@ -34,47 +34,51 @@
   "tools": [
     {
       "name": "push_text_message",
-      "description": "Send a plain text message to a specific LINE user"
+      "description": "Push a simple text message to a user via LINE. Use this for sending plain text messages without formatting."
     },
     {
       "name": "push_flex_message",
-      "description": "Send a rich, customizable flex message to a specific LINE user"
+      "description": "Push a highly customizable flex message to a user via LINE. Supports both bubble (single container) and carousel (multiple swipeable bubbles) layouts."
     },
     {
       "name": "broadcast_text_message",
-      "description": "Send a plain text message to all followers"
+      "description": "Broadcast a simple text message via LINE to all users who have followed your LINE Official Account. Use this for sending plain text messages without formatting. Please be aware that this message will be sent to all users."
     },
     {
       "name": "broadcast_flex_message",
-      "description": "Send a flex message to all followers"
+      "description": "Broadcast a highly customizable flex message via LINE to all users who have added your LINE Official Account. Supports both bubble (single container) and carousel (multiple swipeable bubbles) layouts. Please be aware that this message will be sent to all users."
     },
     {
       "name": "get_profile",
-      "description": "Retrieve LINE user profile information"
+      "description": "Get detailed profile information of a LINE user including display name, profile picture URL, status message and language."
     },
     {
       "name": "get_message_quota",
-      "description": "Check monthly message limits and usage"
+      "description": "Get the message quota and consumption of the LINE Official Account. This shows the monthly message limit and current usage."
     },
     {
       "name": "get_rich_menu_list",
-      "description": "List all rich menus for the LINE Official Account"
+      "description": "Get the list of rich menus associated with your LINE Official Account."
     },
     {
       "name": "delete_rich_menu",
-      "description": "Remove a specific rich menu"
+      "description": "Delete a rich menu from your LINE Official Account."
     },
     {
       "name": "set_rich_menu_default",
-      "description": "Set a default rich menu for all users"
+      "description": "Set a rich menu as the default rich menu."
     },
     {
       "name": "cancel_rich_menu_default",
-      "description": "Remove the default rich menu"
+      "description": "Cancel the default rich menu."
+    },
+    {
+      "name": "create_rich_menu",
+      "description": "Create a rich menu based on the given actions. Generate and upload a rich menu image based on the given action. This rich menu will be registered as the default."
     },
     {
       "name": "get_follower_ids",
-      "description": "Get a list of user IDs of followers"
+      "description": "Get a list of user IDs of users who have added the LINE Official Account as a friend. This allows you to obtain user IDs for sending messages without manually preparing them."
     }
   ],
   "keywords": [

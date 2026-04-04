@@ -15,16 +15,19 @@
     "richmenu-template"
   ],
   "scripts": {
-    "build": "npm run format:check && npm run typecheck:test && npm run clean && tsc && shx chmod +x dist/*.js",
-    "prettier": "prettier \"src/**/*.ts\" \"test/**/*.ts\"",
-    "format": "npm run prettier -- --write",
-    "format:check": "npm run prettier -- -l",
+    "generate:tools": "tsx scripts/sync-tool-artifacts.ts",
     "clean": "rm -rf dist/*",
-    "typecheck:test": "tsc --project tsconfig.test.json",
-    "release": "npm run build && npm publish --provenance --access public",
-    "check:publint": "publint",
+    "format": "prettier --write \"**/*.ts\"",
+    "format:check": "prettier -l \"**/*.ts\"",
+    "typecheck": "tsc --project tsconfig.test.json && tsc --project tsconfig.scripts.json",
+    "lint": "npm run format:check && npm run typecheck",
+    "compile": "npm run clean && tsc && shx chmod +x dist/*.js",
+    "build": "npm run generate:tools && npm run lint && npm run compile",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "check:tools": "npm run generate:tools && git diff --exit-code",
+    "check:publint": "publint",
+    "release": "npm run build && npm publish --provenance --access public"
   },
   "repository": {
     "type": "git",

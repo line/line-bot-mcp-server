@@ -1,56 +1,42 @@
-import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
-import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
-import { Client } from "@modelcontextprotocol/sdk/client/index.js";
-import { InMemoryTransport } from "@modelcontextprotocol/sdk/inMemory.js";
-import { createMockMessagingApiClient } from "../helpers/mock-line-clients.js";
-import BroadcastTextMessage from "../../src/tools/broadcastTextMessage.js";
+import { describe, it, expect, afterEach, vi } from "vitest";
+import { createToolHarness } from "../helpers/createToolHarness.js";
+import broadcastTextMessageTool from "../../src/tools/broadcastTextMessage.js";
 
 describe("broadcast_text_message tool", () => {
-  let client: Client;
-  let server: McpServer;
-  let mockLineClient: ReturnType<typeof createMockMessagingApiClient>;
-
-  beforeEach(async () => {
-    mockLineClient = createMockMessagingApiClient();
-    server = new McpServer({ name: "test", version: "0.0.1" });
-    new BroadcastTextMessage(mockLineClient).register(server);
-
-    const [clientTransport, serverTransport] =
-      InMemoryTransport.createLinkedPair();
-    client = new Client({ name: "test-client", version: "0.0.1" });
-    await Promise.all([
-      client.connect(clientTransport),
-      server.connect(serverTransport),
-    ]);
-  });
+  const resources: Array<{ close(): Promise<void> }> = [];
 
   afterEach(async () => {
-    await client?.close();
-    await server?.close();
+    await Promise.all(resources.splice(0).map(resource => resource.close()));
   });
 
   it("calls broadcast with the correct arguments", async () => {
-    vi.mocked(mockLineClient.broadcast).mockResolvedValue({} as never);
+    const h = await createToolHarness(broadcastTextMessageTool);
+    resources.push(h);
 
-    const result = await client.callTool({
+    vi.mocked(h.mocks.messaging.broadcast).mockResolvedValue({} as never);
+
+    const result = await h.client.callTool({
       name: "broadcast_text_message",
       arguments: {
         message: { type: "text", text: "hello everyone" },
       },
     });
 
-    expect(mockLineClient.broadcast).toHaveBeenCalledWith({
+    expect(h.mocks.messaging.broadcast).toHaveBeenCalledWith({
       messages: [{ type: "text", text: "hello everyone" }],
     });
     expect(result.isError).toBeFalsy();
   });
 
   it("returns an error response when LINE API fails", async () => {
-    vi.mocked(mockLineClient.broadcast).mockRejectedValue(
+    const h = await createToolHarness(broadcastTextMessageTool);
+    resources.push(h);
+
+    vi.mocked(h.mocks.messaging.broadcast).mockRejectedValue(
       new Error("API error"),
     );
 
-    const result = await client.callTool({
+    const result = await h.client.callTool({
       name: "broadcast_text_message",
       arguments: {
         message: { type: "text", text: "hello" },

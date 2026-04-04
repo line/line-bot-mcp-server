@@ -1,79 +1,84 @@
-import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
-import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
-import { Client } from "@modelcontextprotocol/sdk/client/index.js";
-import { InMemoryTransport } from "@modelcontextprotocol/sdk/inMemory.js";
-import { createMockMessagingApiClient } from "../helpers/mock-line-clients.js";
-import PushTextMessage from "../../src/tools/pushTextMessage.js";
-
-const DESTINATION_ID = "U_DEFAULT_USER";
+import { describe, it, expect, afterEach, vi } from "vitest";
+import { createToolHarness } from "../helpers/createToolHarness.js";
+import pushTextMessageTool from "../../src/tools/pushTextMessage.js";
 
 describe("push_text_message tool", () => {
-  let client: Client;
-  let server: McpServer;
-  let mockLineClient: ReturnType<typeof createMockMessagingApiClient>;
-
-  beforeEach(async () => {
-    mockLineClient = createMockMessagingApiClient();
-    server = new McpServer({ name: "test", version: "0.0.1" });
-    new PushTextMessage(mockLineClient, DESTINATION_ID).register(server);
-
-    const [clientTransport, serverTransport] =
-      InMemoryTransport.createLinkedPair();
-    client = new Client({ name: "test-client", version: "0.0.1" });
-    await Promise.all([
-      client.connect(clientTransport),
-      server.connect(serverTransport),
-    ]);
-  });
+  const resources: Array<{ close(): Promise<void> }> = [];
 
   afterEach(async () => {
-    await client?.close();
-    await server?.close();
+    await Promise.all(resources.splice(0).map(resource => resource.close()));
   });
 
   it("calls pushMessage with the correct arguments", async () => {
-    vi.mocked(mockLineClient.pushMessage).mockResolvedValue({} as never);
+    const h = await createToolHarness(pushTextMessageTool);
+    resources.push(h);
 
-    const result = await client.callTool({
+    vi.mocked(h.mocks.messaging.pushMessage).mockResolvedValue({} as never);
+
+    const result = await h.client.callTool({
       name: "push_text_message",
       arguments: {
         userId: "U_EXPLICIT_USER",
-        message: { type: "text", text: "hello" },
+        message: {
+          type: "text",
+          text: "hello",
+        },
       },
     });
 
-    expect(mockLineClient.pushMessage).toHaveBeenCalledWith({
+    expect(h.mocks.messaging.pushMessage).toHaveBeenCalledWith({
       to: "U_EXPLICIT_USER",
-      messages: [{ type: "text", text: "hello" }],
+      messages: [
+        {
+          type: "text",
+          text: "hello",
+        },
+      ],
     });
     expect(result.isError).toBeFalsy();
   });
 
-  it("uses default destinationId when userId is omitted", async () => {
-    vi.mocked(mockLineClient.pushMessage).mockResolvedValue({} as never);
+  it("uses default destinationUserId when userId is omitted", async () => {
+    const h = await createToolHarness(pushTextMessageTool, {
+      destinationUserId: "U_DEFAULT_USER",
+    });
+    resources.push(h);
 
-    await client.callTool({
+    vi.mocked(h.mocks.messaging.pushMessage).mockResolvedValue({} as never);
+
+    await h.client.callTool({
       name: "push_text_message",
       arguments: {
-        message: { type: "text", text: "hello" },
+        message: {
+          type: "text",
+          text: "hello",
+        },
       },
     });
 
-    expect(mockLineClient.pushMessage).toHaveBeenCalledWith(
-      expect.objectContaining({ to: DESTINATION_ID }),
+    expect(h.mocks.messaging.pushMessage).toHaveBeenCalledWith(
+      expect.objectContaining({
+        to: "U_DEFAULT_USER",
+      }),
     );
   });
 
   it("returns an error response when LINE API fails", async () => {
-    vi.mocked(mockLineClient.pushMessage).mockRejectedValue(
+    const h = await createToolHarness(pushTextMessageTool);
+    resources.push(h);
+
+    vi.mocked(h.mocks.messaging.pushMessage).mockRejectedValue(
       new Error("API error"),
     );
 
-    const result = await client.callTool({
+    const result = await h.client.callTool({
       name: "push_text_message",
       arguments: {
         userId: "U_USER",
-        message: { type: "text", text: "hello" },
+        message: {
+          type: "text",
+          text: "hello",
+        },
       },
     });
 
@@ -84,18 +89,18 @@ describe("push_text_message tool", () => {
   });
 
   it("returns an error when userId is empty and no default is set", async () => {
-    // Create a new server with empty destinationId
-    const emptyServer = new McpServer({ name: "test", version: "0.0.1" });
-    new PushTextMessage(mockLineClient, "").register(emptyServer);
+    const h = await createToolHarness(pushTextMessageTool, {
+      destinationUserId: "",
+    });
+    resources.push(h);
 
-    const [ct, st] = InMemoryTransport.createLinkedPair();
-    const emptyClient = new Client({ name: "test-client", version: "0.0.1" });
-    await Promise.all([emptyClient.connect(ct), emptyServer.connect(st)]);
-
-    const result = await emptyClient.callTool({
+    const result = await h.client.callTool({
       name: "push_text_message",
       arguments: {
-        message: { type: "text", text: "hello" },
+        message: {
+          type: "text",
+          text: "hello",
+        },
       },
     });
 
@@ -103,8 +108,5 @@ describe("push_text_message tool", () => {
     const text = (result.content as Array<{ type: string; text: string }>)[0]
       .text;
     expect(text).toContain("userId");
-
-    await emptyClient.close();
-    await emptyServer.close();
   });
 });

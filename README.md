@@ -13,72 +13,72 @@
 
 ## Tools
 
+<!-- GENERATED:TOOLS:START -->
 1. **push_text_message**
-   - Push a simple text message to a user via LINE.
+   - Push a simple text message to a user via LINE. Use this for sending plain text messages without formatting.
    - **Inputs:**
      - `userId` (string?): The user ID to receive a message. Defaults to DESTINATION_USER_ID. Either `userId` or `DESTINATION_USER_ID` must be set.
      - `message.text` (string): The plain text content to send to the user.
+
 2. **push_flex_message**
-   - Push a highly customizable flex message to a user via LINE.
+   - Push a highly customizable flex message to a user via LINE. Supports both bubble (single container) and carousel (multiple swipeable bubbles) layouts.
    - **Inputs:**
      - `userId` (string?): The user ID to receive a message. Defaults to DESTINATION_USER_ID. Either `userId` or `DESTINATION_USER_ID` must be set.
-     - `message.altText` (string): Alternative text shown when flex message cannot be displayed.
+     - `message.altText` (string): Alternative text shown when the flex message cannot be displayed.
      - `message.contents` (any): The contents of the flex message. This is a JSON object that defines the layout and components of the message.
-     - `message.contents.type` (enum): Type of the container. 'bubble' for single container, 'carousel' for multiple swipeable bubbles.
+     - `message.contents.type` (enum): Type of the container. `bubble` for a single container, `carousel` for multiple swipeable bubbles.
+
 3. **broadcast_text_message**
-   - Broadcast a simple text message via LINE to all users who have followed your LINE Official Account.
+   - Broadcast a simple text message via LINE to all users who have followed your LINE Official Account. Use this for sending plain text messages without formatting. Please be aware that this message will be sent to all users.
    - **Inputs:**
-     - `message.text` (string): The plain text content to send to the users.
+     - `message.text` (string): The plain text content to send to the user.
+
 4. **broadcast_flex_message**
-   - Broadcast a highly customizable flex message via LINE to all users who have added your LINE Official Account.
+   - Broadcast a highly customizable flex message via LINE to all users who have added your LINE Official Account. Supports both bubble (single container) and carousel (multiple swipeable bubbles) layouts. Please be aware that this message will be sent to all users.
    - **Inputs:**
-     - `message.altText` (string): Alternative text shown when flex message cannot be displayed.
+     - `message.altText` (string): Alternative text shown when the flex message cannot be displayed.
      - `message.contents` (any): The contents of the flex message. This is a JSON object that defines the layout and components of the message.
-     - `message.contents.type` (enum): Type of the container. 'bubble' for single container, 'carousel' for multiple swipeable bubbles.
+     - `message.contents.type` (enum): Type of the container. `bubble` for a single container, `carousel` for multiple swipeable bubbles.
+
 5. **get_profile**
    - Get detailed profile information of a LINE user including display name, profile picture URL, status message and language.
    - **Inputs:**
      - `userId` (string?): The ID of the user whose profile you want to retrieve. Defaults to DESTINATION_USER_ID.
+
 6. **get_message_quota**
    - Get the message quota and consumption of the LINE Official Account. This shows the monthly message limit and current usage.
-   - **Inputs:**
-     - None
+   - **Inputs:** None
+
 7. **get_rich_menu_list**
    - Get the list of rich menus associated with your LINE Official Account.
-   - **Inputs:**
-     - None
+   - **Inputs:** None
+
 8. **delete_rich_menu**
    - Delete a rich menu from your LINE Official Account.
    - **Inputs:**
      - `richMenuId` (string): The ID of the rich menu to delete.
+
 9. **set_rich_menu_default**
-    - Set a rich menu as the default rich menu.
-    - **Inputs:**
-      - `richMenuId` (string): The ID of the rich menu to set as default.
+   - Set a rich menu as the default rich menu.
+   - **Inputs:**
+     - `richMenuId` (string): The ID of the rich menu to set as default.
+
 10. **cancel_rich_menu_default**
     - Cancel the default rich menu.
-    - **Inputs:**
-      - None
+    - **Inputs:** None
+
 11. **create_rich_menu**
-    - Create a rich menu based on the given actions. Generate and upload an image. Set as default.
+    - Create a rich menu based on the given actions. Generate and upload a rich menu image based on the given action. This rich menu will be registered as the default.
     - **Inputs:**
       - `chatBarText` (string): Text displayed in chat bar, also used as rich menu name.
-      - `actions` (array): The actions of the rich menu. You can specify minimum 1 to maximum 6 actions. Each action can be one of the following types:
-        - `postback`: For sending a postback action
-        - `message`: For sending a text message
-        - `uri`: For opening a URL
-        - `datetimepicker`: For opening a date/time picker
-        - `camera`: For opening the camera
-        - `cameraRoll`: For opening the camera roll
-        - `location`: For sending the current location
-        - `richmenuswitch`: For switching to another rich menu
-        - `clipboard`: For copying text to clipboard
+      - `actions` (array): The actions of the rich menu. You can specify minimum 1 to maximum 6 actions.
 
 12. **get_follower_ids**
     - Get a list of user IDs of users who have added the LINE Official Account as a friend. This allows you to obtain user IDs for sending messages without manually preparing them.
     - **Inputs:**
       - `start` (string?): Continuation token to get the next array of user IDs. Returned in the `next` property of a previous response.
       - `limit` (number?): The maximum number of user IDs to retrieve in a single request.
+<!-- GENERATED:TOOLS:END -->
 
 ## Installation (Using npx)
 

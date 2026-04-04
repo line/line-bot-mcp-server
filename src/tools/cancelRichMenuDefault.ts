@@ -1,39 +1,35 @@
-import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
-import { messagingApi } from "@line/bot-sdk";
+import type { messagingApi } from "@line/bot-sdk";
+import { z } from "zod";
 import {
   createErrorResponse,
   createSuccessResponse,
 } from "../common/response.js";
-import { AbstractTool } from "./AbstractTool.js";
+import { defineLineTool } from "../tooling/lineTool.js";
 
-export default class CancelRichMenuDefault extends AbstractTool {
-  private client: messagingApi.MessagingApiClient;
-
-  constructor(client: messagingApi.MessagingApiClient) {
-    super();
-    this.client = client;
-  }
-
-  register(server: McpServer) {
-    server.registerTool(
-      "cancel_rich_menu_default",
-      {
-        title: "Cancel Rich Menu Default",
-        description: "Cancel the default rich menu.",
-        annotations: {
-          destructiveHint: true,
-        },
-      },
-      async () => {
-        try {
-          const response = await this.client.cancelDefaultRichMenu();
-          return createSuccessResponse(response);
-        } catch (error) {
-          return createErrorResponse(
-            `Failed to cancel default rich menu: ${error instanceof Error ? error.message : String(error)}`,
-          );
-        }
-      },
-    );
-  }
-}
+export default defineLineTool({
+  kind: "line-tool",
+  name: "cancel_rich_menu_default",
+  order: 10,
+  title: "Cancel Rich Menu Default",
+  summary: {
+    en: "Cancel the default rich menu.",
+    ja: "デフォルトのリッチメニューを解除する。",
+  },
+  annotations: {
+    destructiveHint: true,
+  },
+  input: () => z.object({}),
+  docs: {
+    fields: [],
+  },
+  run: async ctx => {
+    try {
+      const response = await ctx.clients.messaging.cancelDefaultRichMenu();
+      return createSuccessResponse(response);
+    } catch (error: unknown) {
+      return createErrorResponse(
+        `Failed to cancel default rich menu: ${error instanceof Error ? error.message : String(error)}`,
+      );
+    }
+  },
+});

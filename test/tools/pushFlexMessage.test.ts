@@ -1,11 +1,6 @@
-import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
-import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
-import { Client } from "@modelcontextprotocol/sdk/client/index.js";
-import { InMemoryTransport } from "@modelcontextprotocol/sdk/inMemory.js";
-import { createMockMessagingApiClient } from "../helpers/mock-line-clients.js";
-import PushFlexMessage from "../../src/tools/pushFlexMessage.js";
-
-const DESTINATION_ID = "U_DEFAULT_USER";
+import { describe, it, expect, afterEach, vi } from "vitest";
+import { createToolHarness } from "../helpers/createToolHarness.js";
+import pushFlexMessageTool from "../../src/tools/pushFlexMessage.js";
 
 const SAMPLE_FLEX_MESSAGE = {
   type: "flex",
@@ -35,33 +30,19 @@ const EXPECTED_FLEX_MESSAGE = {
 };
 
 describe("push_flex_message tool", () => {
-  let client: Client;
-  let server: McpServer;
-  let mockLineClient: ReturnType<typeof createMockMessagingApiClient>;
-
-  beforeEach(async () => {
-    mockLineClient = createMockMessagingApiClient();
-    server = new McpServer({ name: "test", version: "0.0.1" });
-    new PushFlexMessage(mockLineClient, DESTINATION_ID).register(server);
-
-    const [clientTransport, serverTransport] =
-      InMemoryTransport.createLinkedPair();
-    client = new Client({ name: "test-client", version: "0.0.1" });
-    await Promise.all([
-      client.connect(clientTransport),
-      server.connect(serverTransport),
-    ]);
-  });
+  const resources: Array<{ close(): Promise<void> }> = [];
 
   afterEach(async () => {
-    await client?.close();
-    await server?.close();
+    await Promise.all(resources.splice(0).map(resource => resource.close()));
   });
 
   it("calls pushMessage with the correct arguments", async () => {
-    vi.mocked(mockLineClient.pushMessage).mockResolvedValue({} as never);
+    const h = await createToolHarness(pushFlexMessageTool);
+    resources.push(h);
 
-    const result = await client.callTool({
+    vi.mocked(h.mocks.messaging.pushMessage).mockResolvedValue({} as never);
+
+    const result = await h.client.callTool({
       name: "push_flex_message",
       arguments: {
         userId: "U_EXPLICIT_USER",
@@ -69,7 +50,7 @@ describe("push_flex_message tool", () => {
       },
     });
 
-    expect(mockLineClient.pushMessage).toHaveBeenCalledWith({
+    expect(h.mocks.messaging.pushMessage).toHaveBeenCalledWith({
       to: "U_EXPLICIT_USER",
       messages: [EXPECTED_FLEX_MESSAGE],
     });
@@ -77,27 +58,33 @@ describe("push_flex_message tool", () => {
   });
 
   it("uses default destinationId when userId is omitted", async () => {
-    vi.mocked(mockLineClient.pushMessage).mockResolvedValue({} as never);
+    const h = await createToolHarness(pushFlexMessageTool);
+    resources.push(h);
 
-    await client.callTool({
+    vi.mocked(h.mocks.messaging.pushMessage).mockResolvedValue({} as never);
+
+    await h.client.callTool({
       name: "push_flex_message",
       arguments: {
         message: SAMPLE_FLEX_MESSAGE,
       },
     });
 
-    expect(mockLineClient.pushMessage).toHaveBeenCalledWith({
-      to: DESTINATION_ID,
+    expect(h.mocks.messaging.pushMessage).toHaveBeenCalledWith({
+      to: "U_DEFAULT_USER",
       messages: [EXPECTED_FLEX_MESSAGE],
     });
   });
 
   it("returns an error response when LINE API fails", async () => {
-    vi.mocked(mockLineClient.pushMessage).mockRejectedValue(
+    const h = await createToolHarness(pushFlexMessageTool);
+    resources.push(h);
+
+    vi.mocked(h.mocks.messaging.pushMessage).mockRejectedValue(
       new Error("API error"),
     );
 
-    const result = await client.callTool({
+    const result = await h.client.callTool({
       name: "push_flex_message",
       arguments: {
         userId: "U_USER",
@@ -112,14 +99,12 @@ describe("push_flex_message tool", () => {
   });
 
   it("returns an error when userId is empty and no default is set", async () => {
-    const emptyServer = new McpServer({ name: "test", version: "0.0.1" });
-    new PushFlexMessage(mockLineClient, "").register(emptyServer);
+    const h = await createToolHarness(pushFlexMessageTool, {
+      destinationUserId: "",
+    });
+    resources.push(h);
 
-    const [ct, st] = InMemoryTransport.createLinkedPair();
-    const emptyClient = new Client({ name: "test-client", version: "0.0.1" });
-    await Promise.all([emptyClient.connect(ct), emptyServer.connect(st)]);
-
-    const result = await emptyClient.callTool({
+    const result = await h.client.callTool({
       name: "push_flex_message",
       arguments: {
         message: SAMPLE_FLEX_MESSAGE,
@@ -130,8 +115,5 @@ describe("push_flex_message tool", () => {
     const text = (result.content as Array<{ type: string; text: string }>)[0]
       .text;
     expect(text).toContain("userId");
-
-    await emptyClient.close();
-    await emptyServer.close();
   });
 });

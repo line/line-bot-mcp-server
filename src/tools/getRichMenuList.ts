@@ -1,40 +1,35 @@
-import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
-import { messagingApi } from "@line/bot-sdk";
+import type { messagingApi } from "@line/bot-sdk";
+import { z } from "zod";
 import {
   createErrorResponse,
   createSuccessResponse,
 } from "../common/response.js";
-import { AbstractTool } from "./AbstractTool.js";
+import { defineLineTool } from "../tooling/lineTool.js";
 
-export default class GetRichMenuList extends AbstractTool {
-  private client: messagingApi.MessagingApiClient;
-
-  constructor(client: messagingApi.MessagingApiClient) {
-    super();
-    this.client = client;
-  }
-
-  register(server: McpServer) {
-    server.registerTool(
-      "get_rich_menu_list",
-      {
-        title: "Get Rich Menu List",
-        description:
-          "Get the list of rich menus associated with your LINE Official Account.",
-        annotations: {
-          readOnlyHint: true,
-        },
-      },
-      async () => {
-        try {
-          const response = await this.client.getRichMenuList();
-          return createSuccessResponse(response);
-        } catch (error: unknown) {
-          return createErrorResponse(
-            `Failed to get rich menu list: ${error instanceof Error ? error.message : String(error)}`,
-          );
-        }
-      },
-    );
-  }
-}
+export default defineLineTool({
+  kind: "line-tool",
+  name: "get_rich_menu_list",
+  order: 7,
+  title: "Get Rich Menu List",
+  summary: {
+    en: "Get the list of rich menus associated with your LINE Official Account.",
+    ja: "LINE公式アカウントに登録されているリッチメニューの一覧を取得する。",
+  },
+  annotations: {
+    readOnlyHint: true,
+  },
+  input: () => z.object({}),
+  docs: {
+    fields: [],
+  },
+  run: async ctx => {
+    try {
+      const response = await ctx.clients.messaging.getRichMenuList();
+      return createSuccessResponse(response);
+    } catch (error: unknown) {
+      return createErrorResponse(
+        `Failed to get rich menu list: ${error instanceof Error ? error.message : String(error)}`,
+      );
+    }
+  },
+});

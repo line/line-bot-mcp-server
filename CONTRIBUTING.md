@@ -21,22 +21,27 @@ Run `npm install` to install all dependencies for development.
 
 The project structure is as follows:
 
-- src: The main code.
-- tools: The tools that can be used in the MCP server.
-- common: The common code like utilities and types.
+- `src/tooling/` — Core types (`LineTool`, `LineToolContext`) and helpers (`defineLineTool`, `registerLineTool`).
+- `src/tools/` — Each tool is a `camelCase.ts` file that default-exports a `defineLineTool({...})` call.
+- `src/generated/` — Auto-generated tool registry (do not edit by hand).
+- `src/common/` — Shared utilities, response helpers, and Zod schemas.
+- `scripts/` — Code generation scripts (`sync-tool-artifacts.ts`).
 
 ### Add a new Tool
 
-To add a new Tool, you can create a new file under `src/tools/` and
-implement the Tool in that file. The Tool should extend `AbstractTool`
-and should be registered in `src/index.ts`.
-Please remember to add the description of the tool to both README.md and README.ja.md.
+To add a new tool:
 
-When adding a new tool, you also need to update the following tests:
+1. Create a new file under `src/tools/` using camelCase naming (e.g. `pushTextMessage.ts`).
+2. Default-export a tool definition using `defineLineTool({...})`.
+3. Add or update tests under `test/tools/`.
+4. If your tool uses a LINE API method not yet mocked in `test/helpers/mock-line-clients.ts`, add the mock there.
+5. Run `npm run generate:tools` to sync:
+   - `src/generated/tool-registry.ts`
+   - `README.md`
+   - `README.ja.md`
+   - `manifest.json`
 
-1. **Add a tool test file** — Create `test/tools/<yourTool>.test.ts`.
-2. **Add mock methods if needed** — If your tool calls a LINE API method
-   not yet listed in `test/helpers/mock-line-clients.ts`, add it there.
+Do not edit the generated registry, README tool sections, or `manifest.json` tool list by hand.
 
 ### Run tests
 
@@ -47,8 +52,8 @@ npm test
 ```
 
 Tests are located in the `test/` directory and use [Vitest](https://vitest.dev/).
-LINE API calls are mocked using dependency injection — each tool class accepts
-a client in its constructor, so tests pass in stub objects created with `vi.fn()`.
+LINE API calls are mocked via `test/helpers/createToolHarness.ts`, which sets up
+a full MCP client–server pair with mock LINE clients injected through `LineToolContext`.
 See `test/helpers/mock-line-clients.ts` for the mock factories.
 
 Especially for bug fixes, please follow this flow for testing and development:
@@ -63,6 +68,7 @@ Especially for bug fixes, please follow this flow for testing and development:
 - `npm run build`: Build TypeScript code into JavaScript. The built files will
   be placed in `dist/`.
 - `npm test`: Run the test suite.
+- `npm run check:tools`: Verify that generated files (`tool-registry.ts`, `README.md`, `README.ja.md`, `manifest.json`) are up to date. If this fails, run `npm run generate:tools` and commit the changes.
 
 We lint, build, and test on CI, but it is always nice to check them before
 uploading a pull request.

@@ -1,157 +1,165 @@
-import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
-import { messagingApi } from "@line/bot-sdk";
+import { messagingApi, type MessageAPIResponseBase } from "@line/bot-sdk";
+import { z } from "zod";
 import {
   createErrorResponse,
   createSuccessResponse,
 } from "../common/response.js";
-import { AbstractTool } from "./AbstractTool.js";
-import { z } from "zod";
+import { actionSchema } from "../common/schema/actionSchema.js";
+import { defineLineTool } from "../tooling/lineTool.js";
 import { Marp } from "@marp-team/marp-core";
 import puppeteer from "puppeteer";
 import fs from "fs";
 import path from "path";
 import os from "os";
-import { fileURLToPath } from "url";
-import { actionSchema } from "../common/schema/actionSchema.js";
 import { promises as fsp } from "fs";
 
 const RICHMENU_HEIGHT = 910;
 const RICHMENU_WIDTH = 1600;
 
-export default class CreateRichMenu extends AbstractTool {
-  private client: messagingApi.MessagingApiClient;
-  private lineBlobClient: messagingApi.MessagingApiBlobClient;
-
-  constructor(
-    client: messagingApi.MessagingApiClient,
-    lineBlobClient: messagingApi.MessagingApiBlobClient,
-  ) {
-    super();
-    this.client = client;
-    this.lineBlobClient = lineBlobClient;
-  }
-
-  register(server: McpServer) {
-    server.registerTool(
-      "create_rich_menu",
+export default defineLineTool({
+  kind: "line-tool",
+  name: "create_rich_menu",
+  order: 11,
+  title: "Create Rich Menu",
+  summary: {
+    en: "Create a rich menu based on the given actions. Generate and upload a rich menu image based on the given action. This rich menu will be registered as the default.",
+    ja: "指定されたアクションに基づいてリッチメニューを作成。画像を生成してアップロード。このリッチメニューはデフォルトとして登録される。",
+  },
+  annotations: {
+    destructiveHint: true,
+  },
+  input: () =>
+    z.object({
+      chatBarText: z
+        .string()
+        .describe(
+          "Text displayed in the chat bar and this is also used as name of the rich menu to create",
+        ),
+      actions: z
+        .array(actionSchema)
+        .min(1)
+        .max(6)
+        .describe("The actions of the rich menu."),
+    }),
+  docs: {
+    fields: [
       {
-        title: "Create Rich Menu",
-        description:
-          "Create a rich menu based on the given actions. Generate and upload a rich menu image based on the given action. This rich menu will be registered as the default.",
-        inputSchema: {
-          chatBarText: z
-            .string()
-            .describe(
-              "Text displayed in the chat bar and this is also used as name of the rich menu to create",
-            ),
-          actions: z
-            .array(actionSchema)
-            .min(1)
-            .max(6)
-            .describe("The actions of the rich menu."),
-        },
-        annotations: {
-          destructiveHint: true,
+        path: "chatBarText",
+        type: "string",
+        description: {
+          en: "Text displayed in chat bar, also used as rich menu name.",
+          ja: "チャットバー表示、リッチメニュー名にされるテキスト。",
         },
       },
-      async ({ chatBarText, actions }) => {
-        // Flow:
-        // 1. Validate the rich menu image
-        // 2. Create a rich menu
-        // 3. Generate a rich menu image
-        // 4. Upload the rich menu image
-        // 5. Set the rich menu as the default rich menu
-        let createRichMenuResponse: any = null;
-        let setImageResponse: any = null;
-        let setDefaultResponse: any = null;
-        const lineActions = actions as messagingApi.Action[];
-        try {
-          // 1. Validate the rich menu image
-          if (lineActions.length < 1 || lineActions.length > 6) {
-            return createErrorResponse("Invalid actions length");
-          }
-
-          // 2. Create a rich menu
-          const areas: Array<messagingApi.RichMenuArea> =
-            richmenuAreas(lineActions);
-          const createRichMenuParams = {
-            name: chatBarText,
-            chatBarText,
-            selected: true,
-            size: {
-              width: RICHMENU_WIDTH,
-              height: RICHMENU_HEIGHT,
-            },
-            areas,
-          };
-          createRichMenuResponse =
-            await this.client.createRichMenu(createRichMenuParams);
-          const richMenuId = createRichMenuResponse.richMenuId;
-
-          // 3. Generate a rich menu image
-          const richMenuImagePath = await generateRichMenuImage(lineActions);
-
-          // 4. Upload the rich menu image
-          const imageBuffer = fs.readFileSync(richMenuImagePath);
-          const imageType = "image/png";
-          const imageBlob = new Blob([imageBuffer], { type: imageType });
-          setImageResponse = await this.lineBlobClient.setRichMenuImage(
-            richMenuId,
-            imageBlob,
-          );
-
-          // 5. Set the rich menu as the default rich menu
-          setDefaultResponse = await this.client.setDefaultRichMenu(richMenuId);
-
-          return createSuccessResponse({
-            message: "Rich menu created successfully and set as default.",
-            richMenuId,
-            createRichMenuParams,
-            createRichMenuResponse,
-            setImageResponse,
-            setDefaultResponse,
-            richMenuImagePath,
-          });
-        } catch (error) {
-          console.error("Rich menu creation error:", error);
-          return createErrorResponse(
-            JSON.stringify({
-              error: error instanceof Error ? error.message : String(error),
-              stack: error instanceof Error ? error.stack : undefined,
-              createRichMenuResponse,
-              setImageResponse,
-              setDefaultResponse,
-            }),
-          );
-        }
+      {
+        path: "actions",
+        type: "array",
+        description: {
+          en: "The actions of the rich menu. You can specify minimum 1 to maximum 6 actions.",
+          ja: "リッチメニューのアクション。最小1つから最大6つのアクションを指定できる。",
+        },
       },
-    );
-  }
-}
+    ],
+  },
+  run: async (ctx, { chatBarText, actions }) => {
+    // Flow:
+    // 1. Validate the rich menu image
+    // 2. Create a rich menu
+    // 3. Generate a rich menu image
+    // 4. Upload the rich menu image
+    // 5. Set the rich menu as the default rich menu
+    let createRichMenuResponse: messagingApi.RichMenuIdResponse | null = null;
+    let setImageResponse: MessageAPIResponseBase | null = null;
+    let setDefaultResponse: MessageAPIResponseBase | null = null;
+    const lineActions = actions as messagingApi.Action[];
+    try {
+      // 1. Validate the rich menu image
+      if (lineActions.length < 1 || lineActions.length > 6) {
+        return createErrorResponse("Invalid actions length");
+      }
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+      // 2. Create a rich menu
+      const areas: Array<messagingApi.RichMenuArea> =
+        richmenuAreas(lineActions);
+      const createRichMenuParams = {
+        name: chatBarText,
+        chatBarText,
+        selected: true,
+        size: {
+          width: RICHMENU_WIDTH,
+          height: RICHMENU_HEIGHT,
+        },
+        areas,
+      };
+      createRichMenuResponse =
+        await ctx.clients.messaging.createRichMenu(createRichMenuParams);
+      const richMenuId = createRichMenuResponse.richMenuId;
+
+      // 3. Generate a rich menu image
+      const richMenuImagePath = await generateRichMenuImage(lineActions, {
+        serverRootDir: ctx.env.serverRootDir,
+        puppeteerExecutablePath: ctx.env.puppeteerExecutablePath,
+      });
+
+      // 4. Upload the rich menu image
+      const imageBuffer = fs.readFileSync(richMenuImagePath);
+      const imageType = "image/png";
+      const imageBlob = new Blob([imageBuffer], { type: imageType });
+      setImageResponse = await ctx.clients.blob.setRichMenuImage(
+        richMenuId,
+        imageBlob,
+      );
+
+      // 5. Set the rich menu as the default rich menu
+      setDefaultResponse =
+        await ctx.clients.messaging.setDefaultRichMenu(richMenuId);
+
+      return createSuccessResponse({
+        message: "Rich menu created successfully and set as default.",
+        richMenuId,
+        createRichMenuParams,
+        createRichMenuResponse,
+        setImageResponse,
+        setDefaultResponse,
+        richMenuImagePath,
+      });
+    } catch (error) {
+      console.error("Rich menu creation error:", error);
+      return createErrorResponse(
+        JSON.stringify({
+          error: error instanceof Error ? error.message : String(error),
+          stack: error instanceof Error ? error.stack : undefined,
+          createRichMenuResponse,
+          setImageResponse,
+          setDefaultResponse,
+        }),
+      );
+    }
+  },
+});
 
 // Function to generate a rich menu image from a Markdown template
 async function generateRichMenuImage(
   actions: messagingApi.Action[],
+  options: {
+    serverRootDir: string;
+    puppeteerExecutablePath?: string;
+  },
 ): Promise<string> {
-  const templateNo = actions.length;
   // Flow:
   // 1. Read the Markdown template
   // 2. Convert Markdown to HTML using Marp
   // 3. Save the HTML as a temporary file
   // 4. Use puppeteer to convert HTML to PNG
   // 5. Delete the temporary HTML file
+  const templateNo = actions.length;
   const richMenuImagePath = path.join(
     os.tmpdir(),
     `template-0${templateNo}-${Date.now()}.png`,
   );
-  const serverPath =
-    process.env.SERVER_PATH || path.resolve(__dirname, "..", "..");
   // 1. Read the Markdown template
   const srcPath = path.join(
-    serverPath,
+    options.serverRootDir,
     `richmenu-template/template-0${templateNo}.md`,
   );
   let content = await fsp.readFile(srcPath, "utf8");
@@ -202,7 +210,7 @@ async function generateRichMenuImage(
   // 4. Use puppeteer to convert HTML to PNG with Docker-compatible settings
   const browser = await puppeteer.launch({
     headless: true,
-    executablePath: process.env.PUPPETEER_EXECUTABLE_PATH || undefined,
+    executablePath: options.puppeteerExecutablePath || undefined,
     args: [
       "--no-sandbox",
       "--disable-setuid-sandbox",

@@ -1,49 +1,50 @@
-import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
-import { messagingApi } from "@line/bot-sdk";
+import type { messagingApi } from "@line/bot-sdk";
+import { z } from "zod";
 import {
   createErrorResponse,
   createSuccessResponse,
 } from "../common/response.js";
-import { AbstractTool } from "./AbstractTool.js";
-import { z } from "zod";
+import { defineLineTool } from "../tooling/lineTool.js";
 
-export default class SetRichMenuDefault extends AbstractTool {
-  private client: messagingApi.MessagingApiClient;
-
-  constructor(client: messagingApi.MessagingApiClient) {
-    super();
-    this.client = client;
-  }
-
-  register(server: McpServer) {
-    const richMenuIdSchema = z
-      .string()
-      .describe("The ID of the rich menu to set as default.");
-
-    server.registerTool(
-      "set_rich_menu_default",
+export default defineLineTool({
+  kind: "line-tool",
+  name: "set_rich_menu_default",
+  order: 9,
+  title: "Set Rich Menu Default",
+  summary: {
+    en: "Set a rich menu as the default rich menu.",
+    ja: "リッチメニューをデフォルトとして設定する。",
+  },
+  annotations: {
+    destructiveHint: true,
+  },
+  input: () =>
+    z.object({
+      richMenuId: z
+        .string()
+        .describe("The ID of the rich menu to set as default."),
+    }),
+  docs: {
+    fields: [
       {
-        title: "Set Rich Menu Default",
-        description: "Set a rich menu as the default rich menu.",
-        inputSchema: {
-          richMenuId: richMenuIdSchema.describe(
-            "The ID of the rich menu to set as default.",
-          ),
-        },
-        annotations: {
-          destructiveHint: true,
+        path: "richMenuId",
+        type: "string",
+        description: {
+          en: "The ID of the rich menu to set as default.",
+          ja: "デフォルトとして設定するリッチメニューのID。",
         },
       },
-      async ({ richMenuId }) => {
-        try {
-          const response = await this.client.setDefaultRichMenu(richMenuId);
-          return createSuccessResponse(response);
-        } catch (error) {
-          return createErrorResponse(
-            `Failed to set default rich menu: ${error instanceof Error ? error.message : String(error)}`,
-          );
-        }
-      },
-    );
-  }
-}
+    ],
+  },
+  run: async (ctx, { richMenuId }) => {
+    try {
+      const response =
+        await ctx.clients.messaging.setDefaultRichMenu(richMenuId);
+      return createSuccessResponse(response);
+    } catch (error: unknown) {
+      return createErrorResponse(
+        `Failed to set default rich menu: ${error instanceof Error ? error.message : String(error)}`,
+      );
+    }
+  },
+});

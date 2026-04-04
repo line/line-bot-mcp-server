@@ -1,52 +1,40 @@
-import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
-import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
-import { Client } from "@modelcontextprotocol/sdk/client/index.js";
-import { InMemoryTransport } from "@modelcontextprotocol/sdk/inMemory.js";
-import { createMockMessagingApiClient } from "../helpers/mock-line-clients.js";
-import DeleteRichMenu from "../../src/tools/deleteRichMenu.js";
+import { describe, it, expect, afterEach, vi } from "vitest";
+import { createToolHarness } from "../helpers/createToolHarness.js";
+import deleteRichMenuTool from "../../src/tools/deleteRichMenu.js";
 
 describe("delete_rich_menu tool", () => {
-  let client: Client;
-  let server: McpServer;
-  let mockLineClient: ReturnType<typeof createMockMessagingApiClient>;
-
-  beforeEach(async () => {
-    mockLineClient = createMockMessagingApiClient();
-    server = new McpServer({ name: "test", version: "0.0.1" });
-    new DeleteRichMenu(mockLineClient).register(server);
-
-    const [clientTransport, serverTransport] =
-      InMemoryTransport.createLinkedPair();
-    client = new Client({ name: "test-client", version: "0.0.1" });
-    await Promise.all([
-      client.connect(clientTransport),
-      server.connect(serverTransport),
-    ]);
-  });
+  const resources: Array<{ close(): Promise<void> }> = [];
 
   afterEach(async () => {
-    await client?.close();
-    await server?.close();
+    await Promise.all(resources.splice(0).map(resource => resource.close()));
   });
 
   it("calls deleteRichMenu with the correct richMenuId", async () => {
-    vi.mocked(mockLineClient.deleteRichMenu).mockResolvedValue({} as never);
+    const h = await createToolHarness(deleteRichMenuTool);
+    resources.push(h);
 
-    const result = await client.callTool({
+    vi.mocked(h.mocks.messaging.deleteRichMenu).mockResolvedValue({} as never);
+
+    const result = await h.client.callTool({
       name: "delete_rich_menu",
       arguments: { richMenuId: "richmenu-123" },
     });
 
-    expect(mockLineClient.deleteRichMenu).toHaveBeenCalledWith("richmenu-123");
+    expect(h.mocks.messaging.deleteRichMenu).toHaveBeenCalledWith(
+      "richmenu-123",
+    );
     expect(result.isError).toBeFalsy();
   });
 
   it("returns an error response when LINE API fails", async () => {
-    vi.mocked(mockLineClient.deleteRichMenu).mockRejectedValue(
+    const h = await createToolHarness(deleteRichMenuTool);
+    resources.push(h);
+
+    vi.mocked(h.mocks.messaging.deleteRichMenu).mockRejectedValue(
       new Error("Not found"),
     );
 
-    const result = await client.callTool({
+    const result = await h.client.callTool({
       name: "delete_rich_menu",
       arguments: { richMenuId: "richmenu-unknown" },
     });

@@ -1,63 +1,57 @@
-import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { messagingApi } from "@line/bot-sdk";
 import { z } from "zod";
 import {
   createErrorResponse,
   createSuccessResponse,
 } from "../common/response.js";
-import { AbstractTool } from "./AbstractTool.js";
 import { NO_USER_ID_ERROR } from "../common/schema/constants.js";
 import { textMessageSchema } from "../common/schema/textMessage.js";
+import {
+  destinationUserIdField,
+  textMessageFields,
+} from "../tooling/docFields.js";
+import { defineLineTool } from "../tooling/lineTool.js";
 
-export default class PushTextMessage extends AbstractTool {
-  private client: messagingApi.MessagingApiClient;
-  private destinationId: string;
+export default defineLineTool({
+  kind: "line-tool",
+  name: "push_text_message",
+  order: 1,
+  title: "Push Text Message",
+  summary: {
+    en: "Push a simple text message to a user via LINE. Use this for sending plain text messages without formatting.",
+    ja: "LINEでユーザーにシンプルなテキストメッセージを送信する。書式設定なしのプレーンテキストメッセージの送信に使用。",
+  },
+  annotations: {
+    destructiveHint: true,
+  },
+  input: ctx =>
+    z.object({
+      userId: z
+        .string()
+        .default(ctx.env.destinationUserId)
+        .describe(
+          "The user ID to receive a message. Defaults to DESTINATION_USER_ID.",
+        ),
+      message: textMessageSchema,
+    }),
+  docs: {
+    fields: [destinationUserIdField, ...textMessageFields("message")],
+  },
+  run: async (ctx, { userId, message }) => {
+    if (!userId) {
+      return createErrorResponse(NO_USER_ID_ERROR);
+    }
 
-  constructor(client: messagingApi.MessagingApiClient, destinationId: string) {
-    super();
-    this.client = client;
-    this.destinationId = destinationId;
-  }
-
-  register(server: McpServer) {
-    const userIdSchema = z
-      .string()
-      .default(this.destinationId)
-      .describe(
-        "The user ID to receive a message. Defaults to DESTINATION_USER_ID.",
+    try {
+      const response = await ctx.clients.messaging.pushMessage({
+        to: userId,
+        messages: [message as unknown as messagingApi.Message],
+      });
+      return createSuccessResponse(response);
+    } catch (error: unknown) {
+      return createErrorResponse(
+        `Failed to push message: ${error instanceof Error ? error.message : String(error)}`,
       );
-
-    server.registerTool(
-      "push_text_message",
-      {
-        title: "Push Text Message",
-        description:
-          "Push a simple text message to a user via LINE. Use this for sending plain text messages without formatting.",
-        inputSchema: {
-          userId: userIdSchema,
-          message: textMessageSchema,
-        },
-        annotations: {
-          destructiveHint: true,
-        },
-      },
-      async ({ userId, message }) => {
-        if (!userId) {
-          return createErrorResponse(NO_USER_ID_ERROR);
-        }
-
-        try {
-          const response = await this.client.pushMessage({
-            to: userId,
-            messages: [message as unknown as messagingApi.Message],
-          });
-          return createSuccessResponse(response);
-        } catch (error: unknown) {
-          return createErrorResponse(
-            `Failed to push message: ${error instanceof Error ? error.message : String(error)}`,
-          );
-        }
-      },
-    );
-  }
-}
+    }
+  },
+});

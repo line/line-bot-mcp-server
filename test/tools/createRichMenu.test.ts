@@ -1,11 +1,5 @@
-import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
-import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
-import { Client } from "@modelcontextprotocol/sdk/client/index.js";
-import { InMemoryTransport } from "@modelcontextprotocol/sdk/inMemory.js";
-import {
-  createMockMessagingApiClient,
-  createMockBlobClient,
-} from "../helpers/mock-line-clients.js";
+import { describe, it, expect, afterEach, vi } from "vitest";
+import { createToolHarness } from "../helpers/createToolHarness.js";
 
 // Mock external dependencies before importing the tool.
 // vi.mock factories are hoisted, so all values must be created inline.
@@ -52,47 +46,31 @@ vi.mock("fs", async importOriginal => {
 });
 
 // Import after mocks are set up
-import CreateRichMenu from "../../src/tools/createRichMenu.js";
+import createRichMenuTool from "../../src/tools/createRichMenu.js";
 
 describe("create_rich_menu tool", () => {
-  let client: Client;
-  let server: McpServer;
-  let mockLineClient: ReturnType<typeof createMockMessagingApiClient>;
-  let mockBlobClient: ReturnType<typeof createMockBlobClient>;
-
-  beforeEach(async () => {
-    mockLineClient = createMockMessagingApiClient();
-    mockBlobClient = createMockBlobClient();
-    server = new McpServer({ name: "test", version: "0.0.1" });
-    new CreateRichMenu(mockLineClient, mockBlobClient).register(server);
-
-    const [clientTransport, serverTransport] =
-      InMemoryTransport.createLinkedPair();
-    client = new Client({ name: "test-client", version: "0.0.1" });
-    await Promise.all([
-      client.connect(clientTransport),
-      server.connect(serverTransport),
-    ]);
-  });
+  const resources: Array<{ close(): Promise<void> }> = [];
 
   afterEach(async () => {
-    await client?.close();
-    await server?.close();
+    await Promise.all(resources.splice(0).map(resource => resource.close()));
   });
 
   it(
     "creates a rich menu, uploads image, and sets as default",
     { timeout: 10000 },
     async () => {
-      vi.mocked(mockLineClient.createRichMenu).mockResolvedValue({
+      const h = await createToolHarness(createRichMenuTool);
+      resources.push(h);
+
+      vi.mocked(h.mocks.messaging.createRichMenu).mockResolvedValue({
         richMenuId: "richmenu-new-123",
       } as never);
-      vi.mocked(mockBlobClient.setRichMenuImage).mockResolvedValue({} as never);
-      vi.mocked(mockLineClient.setDefaultRichMenu).mockResolvedValue(
+      vi.mocked(h.mocks.blob.setRichMenuImage).mockResolvedValue({} as never);
+      vi.mocked(h.mocks.messaging.setDefaultRichMenu).mockResolvedValue(
         {} as never,
       );
 
-      const result = await client.callTool({
+      const result = await h.client.callTool({
         name: "create_rich_menu",
         arguments: {
           chatBarText: "My Menu",
@@ -103,7 +81,7 @@ describe("create_rich_menu tool", () => {
         },
       });
 
-      expect(mockLineClient.createRichMenu).toHaveBeenCalledWith(
+      expect(h.mocks.messaging.createRichMenu).toHaveBeenCalledWith(
         expect.objectContaining({
           name: "My Menu",
           chatBarText: "My Menu",
@@ -111,11 +89,11 @@ describe("create_rich_menu tool", () => {
           size: { width: 1600, height: 910 },
         }),
       );
-      expect(mockBlobClient.setRichMenuImage).toHaveBeenCalledWith(
+      expect(h.mocks.blob.setRichMenuImage).toHaveBeenCalledWith(
         "richmenu-new-123",
         expect.any(Blob),
       );
-      expect(mockLineClient.setDefaultRichMenu).toHaveBeenCalledWith(
+      expect(h.mocks.messaging.setDefaultRichMenu).toHaveBeenCalledWith(
         "richmenu-new-123",
       );
       expect(result.isError).toBeFalsy();
@@ -217,11 +195,14 @@ describe("create_rich_menu tool", () => {
     "$templateName: creates a rich menu with correct areas for $actionCount actions",
     { timeout: 10000 },
     async ({ actionCount, expectedBounds }) => {
-      vi.mocked(mockLineClient.createRichMenu).mockResolvedValue({
+      const h = await createToolHarness(createRichMenuTool);
+      resources.push(h);
+
+      vi.mocked(h.mocks.messaging.createRichMenu).mockResolvedValue({
         richMenuId: "richmenu-new-123",
       } as never);
-      vi.mocked(mockBlobClient.setRichMenuImage).mockResolvedValue({} as never);
-      vi.mocked(mockLineClient.setDefaultRichMenu).mockResolvedValue(
+      vi.mocked(h.mocks.blob.setRichMenuImage).mockResolvedValue({} as never);
+      vi.mocked(h.mocks.messaging.setDefaultRichMenu).mockResolvedValue(
         {} as never,
       );
 
@@ -231,12 +212,12 @@ describe("create_rich_menu tool", () => {
         text: `action${i + 1}`,
       }));
 
-      await client.callTool({
+      await h.client.callTool({
         name: "create_rich_menu",
         arguments: { chatBarText: "My Menu", actions },
       });
 
-      const callArgs = vi.mocked(mockLineClient.createRichMenu).mock
+      const callArgs = vi.mocked(h.mocks.messaging.createRichMenu).mock
         .calls[0][0];
       const actualBounds = callArgs.areas?.map(area => area.bounds);
       expect(actualBounds).toEqual(expectedBounds);
@@ -261,11 +242,14 @@ describe("create_rich_menu tool", () => {
     "returns an error when createRichMenu API fails",
     { timeout: 10000 },
     async () => {
-      vi.mocked(mockLineClient.createRichMenu).mockRejectedValue(
+      const h = await createToolHarness(createRichMenuTool);
+      resources.push(h);
+
+      vi.mocked(h.mocks.messaging.createRichMenu).mockRejectedValue(
         new Error("API error"),
       );
 
-      const result = await client.callTool({
+      const result = await h.client.callTool({
         name: "create_rich_menu",
         arguments: {
           chatBarText: "My Menu",

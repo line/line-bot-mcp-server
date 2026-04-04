@@ -1,76 +1,65 @@
-import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
-import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
-import { Client } from "@modelcontextprotocol/sdk/client/index.js";
-import { InMemoryTransport } from "@modelcontextprotocol/sdk/inMemory.js";
-import { createMockMessagingApiClient } from "../helpers/mock-line-clients.js";
-import GetProfile from "../../src/tools/getProfile.js";
-
-const DESTINATION_ID = "U_DEFAULT_USER";
+import { describe, it, expect, afterEach, vi } from "vitest";
+import { createToolHarness } from "../helpers/createToolHarness.js";
+import getProfileTool from "../../src/tools/getProfile.js";
 
 describe("get_profile tool", () => {
-  let client: Client;
-  let server: McpServer;
-  let mockLineClient: ReturnType<typeof createMockMessagingApiClient>;
-
-  beforeEach(async () => {
-    mockLineClient = createMockMessagingApiClient();
-    server = new McpServer({ name: "test", version: "0.0.1" });
-    new GetProfile(mockLineClient, DESTINATION_ID).register(server);
-
-    const [clientTransport, serverTransport] =
-      InMemoryTransport.createLinkedPair();
-    client = new Client({ name: "test-client", version: "0.0.1" });
-    await Promise.all([
-      client.connect(clientTransport),
-      server.connect(serverTransport),
-    ]);
-  });
+  const resources: Array<{ close(): Promise<void> }> = [];
 
   afterEach(async () => {
-    await client?.close();
-    await server?.close();
+    await Promise.all(resources.splice(0).map(resource => resource.close()));
   });
 
   it("calls getProfile with the correct userId", async () => {
+    const h = await createToolHarness(getProfileTool);
+    resources.push(h);
+
     const profileData = {
       displayName: "Test User",
       userId: "U_EXPLICIT_USER",
       pictureUrl: "https://example.com/pic.jpg",
       statusMessage: "Hello",
     };
-    vi.mocked(mockLineClient.getProfile).mockResolvedValue(
+    vi.mocked(h.mocks.messaging.getProfile).mockResolvedValue(
       profileData as never,
     );
 
-    const result = await client.callTool({
+    const result = await h.client.callTool({
       name: "get_profile",
       arguments: { userId: "U_EXPLICIT_USER" },
     });
 
-    expect(mockLineClient.getProfile).toHaveBeenCalledWith("U_EXPLICIT_USER");
+    expect(h.mocks.messaging.getProfile).toHaveBeenCalledWith(
+      "U_EXPLICIT_USER",
+    );
     expect(result.isError).toBeFalsy();
     const text = (result.content as Array<{ type: string; text: string }>)[0]
       .text;
     expect(JSON.parse(text)).toEqual(profileData);
   });
 
-  it("uses default destinationId when userId is omitted", async () => {
-    vi.mocked(mockLineClient.getProfile).mockResolvedValue({} as never);
+  it("uses default destinationUserId when userId is omitted", async () => {
+    const h = await createToolHarness(getProfileTool);
+    resources.push(h);
 
-    await client.callTool({
+    vi.mocked(h.mocks.messaging.getProfile).mockResolvedValue({} as never);
+
+    await h.client.callTool({
       name: "get_profile",
       arguments: {},
     });
 
-    expect(mockLineClient.getProfile).toHaveBeenCalledWith(DESTINATION_ID);
+    expect(h.mocks.messaging.getProfile).toHaveBeenCalledWith("U_DEFAULT_USER");
   });
 
   it("returns an error response when LINE API fails", async () => {
-    vi.mocked(mockLineClient.getProfile).mockRejectedValue(
+    const h = await createToolHarness(getProfileTool);
+    resources.push(h);
+
+    vi.mocked(h.mocks.messaging.getProfile).mockRejectedValue(
       new Error("Not found"),
     );
 
-    const result = await client.callTool({
+    const result = await h.client.callTool({
       name: "get_profile",
       arguments: { userId: "U_UNKNOWN" },
     });
@@ -82,14 +71,12 @@ describe("get_profile tool", () => {
   });
 
   it("returns an error when userId is empty and no default is set", async () => {
-    const emptyServer = new McpServer({ name: "test", version: "0.0.1" });
-    new GetProfile(mockLineClient, "").register(emptyServer);
+    const h = await createToolHarness(getProfileTool, {
+      destinationUserId: "",
+    });
+    resources.push(h);
 
-    const [ct, st] = InMemoryTransport.createLinkedPair();
-    const emptyClient = new Client({ name: "test-client", version: "0.0.1" });
-    await Promise.all([emptyClient.connect(ct), emptyServer.connect(st)]);
-
-    const result = await emptyClient.callTool({
+    const result = await h.client.callTool({
       name: "get_profile",
       arguments: {},
     });
@@ -98,8 +85,5 @@ describe("get_profile tool", () => {
     const text = (result.content as Array<{ type: string; text: string }>)[0]
       .text;
     expect(text).toContain("userId");
-
-    await emptyClient.close();
-    await emptyServer.close();
   });
 });

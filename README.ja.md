@@ -1,3 +1,5 @@
+[English README](README.md)
+
 # LINE Bot MCP Server
 
 [![npmjs](https://badge.fury.io/js/%40line%2Fline-bot-mcp-server.svg)](https://www.npmjs.com/package/@line/line-bot-mcp-server)
@@ -11,72 +13,72 @@ LINE公式アカウントとAI Agentを接続するために、LINE Messaging AP
 
 ## Tools
 
+<!-- GENERATED:TOOLS:START -->
 1. **push_text_message**
-   - LINEでユーザーにシンプルなテキストメッセージを送信する。
+   - LINEでユーザーにシンプルなテキストメッセージを送信する。書式設定なしのプレーンテキストメッセージの送信に使用。
    - **入力:**
-     - `userId` (string?): メッセージ受信者のユーザーID。デフォルトはDESTINATION_USER_ID。`user_id`または`DESTINATION_USER_ID`のどちらか一方は必ず設定する必要があります。
+     - `userId` (string?): メッセージ受信者のユーザーID。デフォルトは DESTINATION_USER_ID。`userId` または `DESTINATION_USER_ID` のどちらか一方が必要です。
      - `message.text` (string): ユーザーに送信するテキスト。
+
 2. **push_flex_message**
-   - LINEでユーザーに高度にカスタマイズ可能なフレックスメッセージを送信する。
+   - LINEでユーザーに高度にカスタマイズ可能なフレックスメッセージを送信する。バブル（単一コンテナ）とカルーセル（複数のスワイプ可能なバブル）レイアウトに対応。
    - **入力:**
-     - `user_id` (string?): メッセージ受信者のユーザーID。デフォルトはDESTINATION_USER_ID。`user_id`または`DESTINATION_USER_ID`のどちらか一方は必ず設定する必要があります。
+     - `userId` (string?): メッセージ受信者のユーザーID。デフォルトは DESTINATION_USER_ID。`userId` または `DESTINATION_USER_ID` のどちらか一方が必要です。
      - `message.altText` (string): フレックスメッセージが表示できない場合に表示される代替テキスト。
-     - `message.contents` (any): フレックスメッセージの内容。メッセージのレイアウトとコンポーネントを定義するJSONオブジェクト。
-     - `message.contents.type` (enum): コンテナのタイプ。'bubble'は単一コンテナ、'carousel'は複数のスワイプ可能なバブルを示す。
+     - `message.contents` (any): フレックスメッセージの内容。メッセージのレイアウトとコンポーネントを定義する JSON オブジェクト。
+     - `message.contents.type` (enum): コンテナのタイプ。`bubble` は単一コンテナ、`carousel` は複数のスワイプ可能なバブル。
+
 3. **broadcast_text_message**
-   - LINE公式アカウントと友だちになっているすべてのユーザーに、LINEでシンプルなテキストメッセージを送信する。
+   - LINE公式アカウントと友だちになっているすべてのユーザーに、LINEでシンプルなテキストメッセージを送信する。書式設定なしのプレーンテキストメッセージの送信に使用。このメッセージはすべてのユーザーに送信されます。
    - **入力:**
      - `message.text` (string): ユーザーに送信するテキスト。
+
 4. **broadcast_flex_message**
-   - LINE公式アカウントと友だちになっているすべてのユーザーに、LINEで高度にカスタマイズ可能なフレックスメッセージを送信する。
+   - LINE公式アカウントと友だちになっているすべてのユーザーに、LINEで高度にカスタマイズ可能なフレックスメッセージを送信する。バブル（単一コンテナ）とカルーセル（複数のスワイプ可能なバブル）レイアウトに対応。このメッセージはすべてのユーザーに送信されます。
    - **入力:**
      - `message.altText` (string): フレックスメッセージが表示できない場合に表示される代替テキスト。
-     - `message.contents` (any): フレックスメッセージの内容。メッセージのレイアウトとコンポーネントを定義するJSONオブジェクト。
-     - `message.contents.type` (enum): コンテナのタイプ。'bubble'は単一コンテナ、'carousel'は複数のスワイプ可能なバブルを示す。
+     - `message.contents` (any): フレックスメッセージの内容。メッセージのレイアウトとコンポーネントを定義する JSON オブジェクト。
+     - `message.contents.type` (enum): コンテナのタイプ。`bubble` は単一コンテナ、`carousel` は複数のスワイプ可能なバブル。
+
 5. **get_profile**
    - LINEユーザーの詳細なプロフィール情報を取得する。表示名、プロフィール画像URL、ステータスメッセージ、言語を取得できる。
    - **入力:**
-      - `userId` (string?): プロフィールを取得したいユーザーのユーザーID。デフォルトはDESTINATION_USER_ID。`user_id`または`DESTINATION_USER_ID`のどちらか一方は必ず設定する必要があります。
+     - `userId` (string?): プロフィールを取得したいユーザーのユーザーID。デフォルトは DESTINATION_USER_ID。
+
 6. **get_message_quota**
    - LINE公式アカウントのメッセージ容量と消費量を取得します。月間メッセージ制限と現在の使用量が表示されます。
-   - **入力:**
-     - なし
+   - **入力:** なし
+
 7. **get_rich_menu_list**
    - LINE公式アカウントに登録されているリッチメニューの一覧を取得する。
-   - **入力:**
-     - なし
+   - **入力:** なし
+
 8. **delete_rich_menu**
    - LINE公式アカウントからリッチメニューを削除する。
    - **入力:**
      - `richMenuId` (string): 削除するリッチメニューのID。
+
 9. **set_rich_menu_default**
-    - リッチメニューをデフォルトとして設定する。
-    - **入力:**
-      - `richMenuId` (string): デフォルトとして設定するリッチメニューのID。
+   - リッチメニューをデフォルトとして設定する。
+   - **入力:**
+     - `richMenuId` (string): デフォルトとして設定するリッチメニューのID。
+
 10. **cancel_rich_menu_default**
     - デフォルトのリッチメニューを解除する。
-    - **入力:**
-      - なし
+    - **入力:** なし
+
 11. **create_rich_menu**
-    - 指定されたアクションに基づいてリッチメニューを作成。画像を生成してアップロード。デフォルトとして設定する。
+    - 指定されたアクションに基づいてリッチメニューを作成。画像を生成してアップロード。このリッチメニューはデフォルトとして登録される。
     - **入力:**
       - `chatBarText` (string): チャットバー表示、リッチメニュー名にされるテキスト。
-      - `actions` (array): リッチメニューのアクション。最小1つから最大6つのアクションを指定できる。各アクションは以下のいずれかのタイプを指定できる：
-        - `postback`: ポストバックアクションを送信する
-        - `message`: テキストメッセージを送信する
-        - `uri`: URLを開く
-        - `datetimepicker`: 日付/時間選択ツールを開く
-        - `camera`: カメラを開く
-        - `cameraRoll`: カメラロールを開く
-        - `location`: 現在位置を送信する
-        - `richmenuswitch`: 別のリッチメニューに切り替える
-        - `clipboard`: テキストをクリップボードにコピーする
+      - `actions` (array): リッチメニューのアクション。最小1つから最大6つのアクションを指定できる。
 
 12. **get_follower_ids**
-    - LINE公式アカウントを友だち追加しているユーザーのユーザーIDリストを取得する。これにより、DESTINATION_USER_IDを手動で準備せずにユーザーIDを取得できる。
+    - LINE公式アカウントを友だち追加しているユーザーのユーザーIDリストを取得する。ユーザーIDを手動で準備せずにメッセージ送信用のIDを取得できる。
     - **入力:**
       - `start` (string?): 次のユーザーID配列を取得するための継続トークン。前回のレスポンスの`next`プロパティから取得できる。
       - `limit` (number?): 1回のリクエストで取得するユーザーIDの最大数。
+<!-- GENERATED:TOOLS:END -->
 
 ## インストール (npxを使用)
 
@@ -204,3 +206,13 @@ npx @modelcontextprotocol/inspector node dist/index.js \
 ```
 
 これにより、MCP Inspector インターフェースが起動し、LINE Bot MCP Server のツールを操作して機能をテストできます。
+
+## バージョニング
+
+このプロジェクトはセマンティックバージョニングに従います。
+
+http://semver.org/ を参照してください。
+
+## コントリビュート
+
+コントリビュートする前に [CONTRIBUTING](./CONTRIBUTING.md) を確認してください。

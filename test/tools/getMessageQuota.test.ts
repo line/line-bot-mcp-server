@@ -1,50 +1,33 @@
-import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
-import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
-import { Client } from "@modelcontextprotocol/sdk/client/index.js";
-import { InMemoryTransport } from "@modelcontextprotocol/sdk/inMemory.js";
-import { createMockMessagingApiClient } from "../helpers/mock-line-clients.js";
-import GetMessageQuota from "../../src/tools/getMessageQuota.js";
+import { describe, it, expect, afterEach, vi } from "vitest";
+import { createToolHarness } from "../helpers/createToolHarness.js";
+import getMessageQuotaTool from "../../src/tools/getMessageQuota.js";
 
 describe("get_message_quota tool", () => {
-  let client: Client;
-  let server: McpServer;
-  let mockLineClient: ReturnType<typeof createMockMessagingApiClient>;
-
-  beforeEach(async () => {
-    mockLineClient = createMockMessagingApiClient();
-    server = new McpServer({ name: "test", version: "0.0.1" });
-    new GetMessageQuota(mockLineClient).register(server);
-
-    const [clientTransport, serverTransport] =
-      InMemoryTransport.createLinkedPair();
-    client = new Client({ name: "test-client", version: "0.0.1" });
-    await Promise.all([
-      client.connect(clientTransport),
-      server.connect(serverTransport),
-    ]);
-  });
+  const resources: Array<{ close(): Promise<void> }> = [];
 
   afterEach(async () => {
-    await client?.close();
-    await server?.close();
+    await Promise.all(resources.splice(0).map(resource => resource.close()));
   });
 
   it("returns quota and consumption data", async () => {
-    vi.mocked(mockLineClient.getMessageQuota).mockResolvedValue({
+    const h = await createToolHarness(getMessageQuotaTool);
+    resources.push(h);
+
+    vi.mocked(h.mocks.messaging.getMessageQuota).mockResolvedValue({
       type: "limited",
       value: 1000,
     } as never);
-    vi.mocked(mockLineClient.getMessageQuotaConsumption).mockResolvedValue({
+    vi.mocked(h.mocks.messaging.getMessageQuotaConsumption).mockResolvedValue({
       totalUsage: 250,
     } as never);
 
-    const result = await client.callTool({
+    const result = await h.client.callTool({
       name: "get_message_quota",
       arguments: {},
     });
 
-    expect(mockLineClient.getMessageQuota).toHaveBeenCalled();
-    expect(mockLineClient.getMessageQuotaConsumption).toHaveBeenCalled();
+    expect(h.mocks.messaging.getMessageQuota).toHaveBeenCalled();
+    expect(h.mocks.messaging.getMessageQuotaConsumption).toHaveBeenCalled();
     expect(result.isError).toBeFalsy();
     const text = (result.content as Array<{ type: string; text: string }>)[0]
       .text;
@@ -52,11 +35,14 @@ describe("get_message_quota tool", () => {
   });
 
   it("returns an error when LINE API fails", async () => {
-    vi.mocked(mockLineClient.getMessageQuota).mockRejectedValue(
+    const h = await createToolHarness(getMessageQuotaTool);
+    resources.push(h);
+
+    vi.mocked(h.mocks.messaging.getMessageQuota).mockRejectedValue(
       new Error("API error"),
     );
 
-    const result = await client.callTool({
+    const result = await h.client.callTool({
       name: "get_message_quota",
       arguments: {},
     });
