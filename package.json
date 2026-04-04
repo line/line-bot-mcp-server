@@ -23,7 +23,7 @@
     "typecheck:test": "tsc --project tsconfig.test.json",
     "release": "npm run build && npm publish --provenance --access public",
     "check:publint": "publint",
-    "test": "vitest run",
+    "test": "npm run build && vitest run",
     "test:watch": "vitest"
   },
   "repository": {
