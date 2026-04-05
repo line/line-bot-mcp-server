@@ -22,7 +22,7 @@
     "typecheck": "tsc --project tsconfig.test.json && tsc --project tsconfig.scripts.json",
     "lint": "npm run format:check && npm run typecheck",
     "compile": "npm run clean && tsc && shx chmod +x dist/*.js",
-    "build": "npm run generate:tools && npm run lint && npm run compile",
+    "build": "npm run lint && npm run compile",
     "test": "vitest run",
     "test:watch": "vitest",
     "check:tools": "tsx scripts/sync-tool-artifacts.ts --check",

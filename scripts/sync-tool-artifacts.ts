@@ -63,7 +63,10 @@ async function main() {
   assertUniqueToolNames(sortedTools);
 
   const ctx = createDocContext();
-  const toolFields = new Map<string, ReturnType<typeof collectDocumentedFields>>();
+  const toolFields = new Map<
+    string,
+    ReturnType<typeof collectDocumentedFields>
+  >();
   for (const tool of sortedTools) {
     toolFields.set(tool.name, collectDocumentedFields(tool.input(ctx), ""));
   }
@@ -71,7 +74,10 @@ async function main() {
   const changed = await Promise.all([
     writeIfChanged(generatedRegistryPath, buildRegistryContent(entries)),
     syncReadme(readmePath, renderToolsMarkdown(sortedTools, toolFields, "en")),
-    syncReadme(readmeJaPath, renderToolsMarkdown(sortedTools, toolFields, "ja")),
+    syncReadme(
+      readmeJaPath,
+      renderToolsMarkdown(sortedTools, toolFields, "ja"),
+    ),
     syncManifest(sortedTools),
   ]);
 
@@ -80,6 +86,11 @@ async function main() {
     if (staleFiles.length > 0) {
       console.error("Generated tool artifacts are out of date:");
       for (const file of staleFiles) console.error(`  - ${file}`);
+      console.error(
+        "\nRun the following to fix:\n  npm run generate:tools\n  git add " +
+          staleFiles.join(" ") +
+          "\n  git commit",
+      );
       process.exit(1);
     }
   } else {
