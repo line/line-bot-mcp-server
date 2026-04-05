@@ -5,8 +5,8 @@ import {
   createSuccessResponse,
 } from "../common/response.js";
 import { NO_USER_ID_ERROR } from "../common/schema/constants.js";
-import { profileUserIdField } from "../tooling/docFields.js";
 import { defineLineTool } from "../tooling/lineTool.js";
+import { documented } from "../tooling/schemaDocs.js";
 
 export default defineLineTool({
   kind: "line-tool",
@@ -22,16 +22,14 @@ export default defineLineTool({
   },
   input: ctx =>
     z.object({
-      userId: z
-        .string()
-        .default(ctx.env.destinationUserId)
-        .describe(
-          "The user ID to get a profile. Defaults to DESTINATION_USER_ID.",
-        ),
+      userId: documented(z.string().default(ctx.env.destinationUserId), {
+        description: {
+          en: "The ID of the user whose profile you want to retrieve. Defaults to DESTINATION_USER_ID.",
+          ja: "プロフィールを取得したいユーザーのユーザーID。デフォルトは DESTINATION_USER_ID。",
+        },
+        typeLabel: "string?",
+      }),
     }),
-  docs: {
-    fields: [profileUserIdField],
-  },
   run: async (ctx, { userId }) => {
     if (!userId) {
       return createErrorResponse(NO_USER_ID_ERROR);

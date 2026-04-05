@@ -6,11 +6,8 @@ import {
 } from "../common/response.js";
 import { NO_USER_ID_ERROR } from "../common/schema/constants.js";
 import { textMessageSchema } from "../common/schema/textMessage.js";
-import {
-  destinationUserIdField,
-  textMessageFields,
-} from "../tooling/docFields.js";
 import { defineLineTool } from "../tooling/lineTool.js";
+import { documented } from "../tooling/schemaDocs.js";
 
 export default defineLineTool({
   kind: "line-tool",
@@ -26,17 +23,15 @@ export default defineLineTool({
   },
   input: ctx =>
     z.object({
-      userId: z
-        .string()
-        .default(ctx.env.destinationUserId)
-        .describe(
-          "The user ID to receive a message. Defaults to DESTINATION_USER_ID.",
-        ),
+      userId: documented(z.string().default(ctx.env.destinationUserId), {
+        description: {
+          en: "The user ID to receive a message. Defaults to DESTINATION_USER_ID. Either `userId` or `DESTINATION_USER_ID` must be set.",
+          ja: "メッセージ受信者のユーザーID。デフォルトは DESTINATION_USER_ID。`userId` または `DESTINATION_USER_ID` のどちらか一方が必要です。",
+        },
+        typeLabel: "string?",
+      }),
       message: textMessageSchema,
     }),
-  docs: {
-    fields: [destinationUserIdField, ...textMessageFields("message")],
-  },
   run: async (ctx, { userId, message }) => {
     if (!userId) {
       return createErrorResponse(NO_USER_ID_ERROR);

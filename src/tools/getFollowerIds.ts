@@ -5,6 +5,7 @@ import {
   createSuccessResponse,
 } from "../common/response.js";
 import { defineLineTool } from "../tooling/lineTool.js";
+import { documented } from "../tooling/schemaDocs.js";
 
 export default defineLineTool({
   kind: "line-tool",
@@ -19,39 +20,21 @@ export default defineLineTool({
   },
   input: () =>
     z.object({
-      start: z
-        .string()
-        .optional()
-        .describe(
-          "Continuation token to get the next array of user IDs. Returned in the 'next' property of a previous response.",
-        ),
-      limit: z
-        .number()
-        .optional()
-        .describe(
-          "The maximum number of user IDs to retrieve in a single request.",
-        ),
-    }),
-  docs: {
-    fields: [
-      {
-        path: "start",
-        type: "string?",
+      start: documented(z.string().optional(), {
         description: {
           en: "Continuation token to get the next array of user IDs. Returned in the `next` property of a previous response.",
           ja: "次のユーザーID配列を取得するための継続トークン。前回のレスポンスの`next`プロパティから取得できる。",
         },
-      },
-      {
-        path: "limit",
-        type: "number?",
+        typeLabel: "string?",
+      }),
+      limit: documented(z.number().optional(), {
         description: {
           en: "The maximum number of user IDs to retrieve in a single request.",
           ja: "1回のリクエストで取得するユーザーIDの最大数。",
         },
-      },
-    ],
-  },
+        typeLabel: "number?",
+      }),
+    }),
   run: async (ctx, { start, limit }) => {
     try {
       const response = await ctx.clients.messaging.getFollowers(start, limit);

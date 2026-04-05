@@ -6,6 +6,7 @@ import {
 } from "../common/response.js";
 import { actionSchema } from "../common/schema/actionSchema.js";
 import { defineLineTool } from "../tooling/lineTool.js";
+import { documented } from "../tooling/schemaDocs.js";
 import { Marp } from "@marp-team/marp-core";
 import puppeteer from "puppeteer";
 import fs from "fs";
@@ -30,37 +31,21 @@ export default defineLineTool({
   },
   input: () =>
     z.object({
-      chatBarText: z
-        .string()
-        .describe(
-          "Text displayed in the chat bar and this is also used as name of the rich menu to create",
-        ),
-      actions: z
-        .array(actionSchema)
-        .min(1)
-        .max(6)
-        .describe("The actions of the rich menu."),
-    }),
-  docs: {
-    fields: [
-      {
-        path: "chatBarText",
-        type: "string",
+      chatBarText: documented(z.string(), {
         description: {
           en: "Text displayed in chat bar, also used as rich menu name.",
           ja: "チャットバー表示、リッチメニュー名にされるテキスト。",
         },
-      },
-      {
-        path: "actions",
-        type: "array",
+        typeLabel: "string",
+      }),
+      actions: documented(z.array(actionSchema).min(1).max(6), {
         description: {
           en: "The actions of the rich menu. You can specify minimum 1 to maximum 6 actions.",
           ja: "リッチメニューのアクション。最小1つから最大6つのアクションを指定できる。",
         },
-      },
-    ],
-  },
+        typeLabel: "array",
+      }),
+    }),
   run: async (ctx, { chatBarText, actions }) => {
     // Flow:
     // 1. Validate the rich menu image

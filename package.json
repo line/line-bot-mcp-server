@@ -25,7 +25,7 @@
     "build": "npm run generate:tools && npm run lint && npm run compile",
     "test": "vitest run",
     "test:watch": "vitest",
-    "check:tools": "npm run generate:tools && git diff --exit-code",
+    "check:tools": "tsx scripts/sync-tool-artifacts.ts --check",
     "check:publint": "publint",
     "release": "npm run build && npm publish --provenance --access public"
   },

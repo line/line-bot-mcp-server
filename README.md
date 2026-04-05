@@ -27,6 +27,7 @@
      - `message.altText` (string): Alternative text shown when the flex message cannot be displayed.
      - `message.contents` (any): The contents of the flex message. This is a JSON object that defines the layout and components of the message.
      - `message.contents.type` (enum): Type of the container. `bubble` for a single container, `carousel` for multiple swipeable bubbles.
+     - `message.contents.contents.type` (enum): Type of the container. `bubble` for a single container, `carousel` for multiple swipeable bubbles.
 
 3. **broadcast_text_message**
    - Broadcast a simple text message via LINE to all users who have followed your LINE Official Account. Use this for sending plain text messages without formatting. Please be aware that this message will be sent to all users.
@@ -39,6 +40,7 @@
      - `message.altText` (string): Alternative text shown when the flex message cannot be displayed.
      - `message.contents` (any): The contents of the flex message. This is a JSON object that defines the layout and components of the message.
      - `message.contents.type` (enum): Type of the container. `bubble` for a single container, `carousel` for multiple swipeable bubbles.
+     - `message.contents.contents.type` (enum): Type of the container. `bubble` for a single container, `carousel` for multiple swipeable bubbles.
 
 5. **get_profile**
    - Get detailed profile information of a LINE user including display name, profile picture URL, status message and language.

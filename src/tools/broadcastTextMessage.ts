@@ -5,7 +5,6 @@ import {
   createSuccessResponse,
 } from "../common/response.js";
 import { textMessageSchema } from "../common/schema/textMessage.js";
-import { textMessageFields } from "../tooling/docFields.js";
 import { defineLineTool } from "../tooling/lineTool.js";
 
 export default defineLineTool({
@@ -24,9 +23,6 @@ export default defineLineTool({
     z.object({
       message: textMessageSchema,
     }),
-  docs: {
-    fields: [...textMessageFields("message")],
-  },
   run: async (ctx, { message }) => {
     try {
       const response = await ctx.clients.messaging.broadcast({

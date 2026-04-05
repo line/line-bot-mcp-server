@@ -27,6 +27,7 @@ LINE公式アカウントとAI Agentを接続するために、LINE Messaging AP
      - `message.altText` (string): フレックスメッセージが表示できない場合に表示される代替テキスト。
      - `message.contents` (any): フレックスメッセージの内容。メッセージのレイアウトとコンポーネントを定義する JSON オブジェクト。
      - `message.contents.type` (enum): コンテナのタイプ。`bubble` は単一コンテナ、`carousel` は複数のスワイプ可能なバブル。
+     - `message.contents.contents.type` (enum): コンテナのタイプ。`bubble` は単一コンテナ、`carousel` は複数のスワイプ可能なバブル。
 
 3. **broadcast_text_message**
    - LINE公式アカウントと友だちになっているすべてのユーザーに、LINEでシンプルなテキストメッセージを送信する。書式設定なしのプレーンテキストメッセージの送信に使用。このメッセージはすべてのユーザーに送信されます。
@@ -39,6 +40,7 @@ LINE公式アカウントとAI Agentを接続するために、LINE Messaging AP
      - `message.altText` (string): フレックスメッセージが表示できない場合に表示される代替テキスト。
      - `message.contents` (any): フレックスメッセージの内容。メッセージのレイアウトとコンポーネントを定義する JSON オブジェクト。
      - `message.contents.type` (enum): コンテナのタイプ。`bubble` は単一コンテナ、`carousel` は複数のスワイプ可能なバブル。
+     - `message.contents.contents.type` (enum): コンテナのタイプ。`bubble` は単一コンテナ、`carousel` は複数のスワイプ可能なバブル。
 
 5. **get_profile**
    - LINEユーザーの詳細なプロフィール情報を取得する。表示名、プロフィール画像URL、ステータスメッセージ、言語を取得できる。

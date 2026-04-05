@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { documented } from "../../tooling/schemaDocs.js";
 
 const sizeSchema = z
   .enum(["xxs", "xs", "sm", "md", "lg", "xl", "xxl", "3xl", "4xl", "5xl"])
@@ -333,7 +334,13 @@ const flexBubbleStylesSchema = z.object({
 });
 
 export const flexBubbleSchema = z.object({
-  type: z.literal("bubble"),
+  type: documented(z.literal("bubble"), {
+    description: {
+      en: "Type of the container. `bubble` for a single container, `carousel` for multiple swipeable bubbles.",
+      ja: "コンテナのタイプ。`bubble` は単一コンテナ、`carousel` は複数のスワイプ可能なバブル。",
+    },
+    typeLabel: "enum",
+  }),
   size: z
     .enum(["nano", "micro", "deca", "hecto", "kilo", "mega", "giga"])
     .optional(),
@@ -376,6 +383,18 @@ const flexContainerSchema = z.discriminatedUnion("type", [
 
 export const flexMessageSchema = z.object({
   type: z.literal("flex").default("flex"),
-  altText: z.string().min(1).max(400),
-  contents: flexContainerSchema,
+  altText: documented(z.string().min(1).max(400), {
+    description: {
+      en: "Alternative text shown when the flex message cannot be displayed.",
+      ja: "フレックスメッセージが表示できない場合に表示される代替テキスト。",
+    },
+    typeLabel: "string",
+  }),
+  contents: documented(flexContainerSchema, {
+    description: {
+      en: "The contents of the flex message. This is a JSON object that defines the layout and components of the message.",
+      ja: "フレックスメッセージの内容。メッセージのレイアウトとコンポーネントを定義する JSON オブジェクト。",
+    },
+    typeLabel: "any",
+  }),
 });

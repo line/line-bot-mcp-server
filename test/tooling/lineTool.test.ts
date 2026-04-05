@@ -42,7 +42,6 @@ describe("defineLineTool", () => {
       order: 1,
       summary: { en: "Test", ja: "テスト" },
       input: () => z.object({}),
-      docs: { fields: [] },
       run: async () => ({ content: [] }),
     });
 
@@ -59,7 +58,6 @@ describe("registerLineTool", () => {
       order: 1,
       summary: { en: "Echo", ja: "エコー" },
       input: () => z.object({ text: z.string() }),
-      docs: { fields: [] },
       run: async (_ctx, { text }) => ({
         content: [{ type: "text" as const, text }],
       }),
@@ -88,7 +86,6 @@ describe("registerLineTool", () => {
       order: 1,
       summary: { en: "English summary", ja: "日本語サマリー" },
       input: () => z.object({}),
-      docs: { fields: [] },
       run: async () => ({ content: [] }),
     });
 
@@ -114,7 +111,6 @@ describe("registerLineTool", () => {
         z.object({
           userId: z.string().default(ctx.env.destinationUserId),
         }),
-      docs: { fields: [] },
       run: async (_ctx, { userId }) => ({
         content: [{ type: "text" as const, text: userId }],
       }),
@@ -145,7 +141,6 @@ describe("registerAllLineTools", () => {
       order: 1,
       summary: { en: "A", ja: "A" },
       input: () => z.object({}),
-      docs: { fields: [] },
       run: async () => ({ content: [] }),
     });
 
@@ -155,7 +150,6 @@ describe("registerAllLineTools", () => {
       order: 2,
       summary: { en: "B", ja: "B" },
       input: () => z.object({}),
-      docs: { fields: [] },
       run: async () => ({ content: [] }),
     });
 

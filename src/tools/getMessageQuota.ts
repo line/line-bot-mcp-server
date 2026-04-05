@@ -19,9 +19,6 @@ export default defineLineTool({
     readOnlyHint: true,
   },
   input: () => z.object({}),
-  docs: {
-    fields: [],
-  },
   run: async ctx => {
     try {
       const messageQuotaResponse =

@@ -14,16 +14,6 @@ export type ToolAnnotations = Readonly<{
   openWorldHint?: boolean;
 }>;
 
-export type ToolDocField = Readonly<{
-  path: string;
-  type: string;
-  description: LocalizedText;
-}>;
-
-export type ToolDocs = Readonly<{
-  fields: readonly ToolDocField[];
-}>;
-
 export type LineToolContext = Readonly<{
   clients: {
     messaging: messagingApi.MessagingApiClient;
@@ -48,7 +38,6 @@ export type LineTool<TInput extends LineToolInput = LineToolInput> = Readonly<{
   summary: LocalizedText;
   annotations?: ToolAnnotations;
   input: (ctx: LineToolContext) => TInput;
-  docs: ToolDocs;
   run: (ctx: LineToolContext, args: z.infer<TInput>) => Promise<CallToolResult>;
 }>;
 

@@ -5,6 +5,7 @@ import {
   createSuccessResponse,
 } from "../common/response.js";
 import { defineLineTool } from "../tooling/lineTool.js";
+import { documented } from "../tooling/schemaDocs.js";
 
 export default defineLineTool({
   kind: "line-tool",
@@ -20,20 +21,14 @@ export default defineLineTool({
   },
   input: () =>
     z.object({
-      richMenuId: z.string().describe("The ID of the rich menu to delete."),
-    }),
-  docs: {
-    fields: [
-      {
-        path: "richMenuId",
-        type: "string",
+      richMenuId: documented(z.string(), {
         description: {
           en: "The ID of the rich menu to delete.",
           ja: "削除するリッチメニューのID。",
         },
-      },
-    ],
-  },
+        typeLabel: "string",
+      }),
+    }),
   run: async (ctx, { richMenuId }) => {
     try {
       const response = await ctx.clients.messaging.deleteRichMenu(richMenuId);

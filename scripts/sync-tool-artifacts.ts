@@ -9,10 +9,8 @@
  *   3. README.ja.md (tools section between markers)
  *   4. manifest.json (tools array only; other fields are preserved)
  *
- * Why not import TOOL_REGISTRY and generate from that?
- *   tool-registry.ts is itself a generated file, so it can't exist
- *   before this script runs (chicken-and-egg). We must discover and
- *   import the individual tool files directly.
+ * Flags:
+ *   --check   Dry-run mode. Reports which files are out of date and exits 1.
  *
  * Run: npm run generate:tools
  */
@@ -22,6 +20,8 @@ import { fileURLToPath, pathToFileURL } from "node:url";
 import { promises as fs } from "node:fs";
 import { z } from "zod";
 import type { LineTool, LineToolContext } from "../src/tooling/lineTool.js";
+import type { LocalizedText } from "../src/tooling/lineTool.js";
+import { getFieldDoc } from "../src/tooling/schemaDocs.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -40,7 +40,15 @@ const manifestPath = path.join(repoRoot, "manifest.json");
 const MARKER_START = "<!-- GENERATED:TOOLS:START -->";
 const MARKER_END = "<!-- GENERATED:TOOLS:END -->";
 
+const checkMode = process.argv.includes("--check");
+
 type ToolEntry = { file: string; tool: LineTool };
+
+type CollectedField = {
+  path: string;
+  type: string;
+  description: LocalizedText;
+};
 
 async function main() {
   // 1. Discover *.ts files, import them, keep only kind === "line-tool"
@@ -52,18 +60,74 @@ async function main() {
 
   const sortedTools = entries.map(e => e.tool);
 
-  // 3. Validate: no duplicate names, no invalid docs paths
+  // 3. Validate: no duplicate names
   assertUniqueToolNames(sortedTools);
-  validateDocsAgainstSchemas(sortedTools);
 
-  // 4. Write all generated artifacts
-  await writeGeneratedRegistry(entries);
-  await syncReadme(readmePath, renderToolsMarkdown(sortedTools, "en"));
-  await syncReadme(readmeJaPath, renderToolsMarkdown(sortedTools, "ja"));
-  await syncManifest(sortedTools);
+  // 4. Collect documented fields from schemas
+  const ctx = createDocContext();
+  const toolFields = new Map<string, CollectedField[]>();
+  for (const tool of sortedTools) {
+    const schema = tool.input(ctx);
+    toolFields.set(tool.name, collectDocumentedFields(schema, ""));
+  }
 
-  console.log(`Synced ${sortedTools.length} tools.`);
+  // 5. Write / check all generated artifacts
+  const changed = await Promise.all([
+    writeIfChanged(generatedRegistryPath, buildRegistryContent(entries)),
+    syncReadme(readmePath, renderToolsMarkdown(sortedTools, toolFields, "en")),
+    syncReadme(
+      readmeJaPath,
+      renderToolsMarkdown(sortedTools, toolFields, "ja"),
+    ),
+    syncManifest(sortedTools),
+  ]);
+
+  const artifactPaths = [
+    "src/generated/tool-registry.ts",
+    "README.md",
+    "README.ja.md",
+    "manifest.json",
+  ];
+  const staleFiles = artifactPaths.filter((_, i) => changed[i]);
+
+  if (checkMode && staleFiles.length > 0) {
+    console.error("Generated tool artifacts are out of date:");
+    for (const file of staleFiles) console.error(`- ${file}`);
+    process.exit(1);
+  }
+
+  if (!checkMode) {
+    console.log(`Synced ${sortedTools.length} tools.`);
+  }
 }
+
+// ---------------------------------------------------------------------------
+// File I/O helpers
+// ---------------------------------------------------------------------------
+
+async function writeIfChanged(
+  filePath: string,
+  next: string,
+): Promise<boolean> {
+  let current: string | undefined;
+  try {
+    current = await fs.readFile(filePath, "utf8");
+  } catch {
+    // file does not exist yet
+  }
+
+  if (current === next) return false;
+
+  if (!checkMode) {
+    await fs.mkdir(path.dirname(filePath), { recursive: true });
+    await fs.writeFile(filePath, next, "utf8");
+  }
+  return true;
+}
+
+// ---------------------------------------------------------------------------
+// Tool discovery
+// ---------------------------------------------------------------------------
 
 /** Find all *.ts files in the given directory. */
 async function discoverToolFiles(dir: string): Promise<string[]> {
@@ -90,6 +154,10 @@ async function loadToolEntries(files: string[]): Promise<ToolEntry[]> {
   return entries;
 }
 
+// ---------------------------------------------------------------------------
+// Validation
+// ---------------------------------------------------------------------------
+
 /** Fail if any tool name or order is duplicated, or missing a bilingual summary. */
 function assertUniqueToolNames(tools: LineTool[]) {
   const seenNames = new Set<string>();
@@ -115,7 +183,11 @@ function assertUniqueToolNames(tools: LineTool[]) {
   }
 }
 
-/** Dummy context used only to build input schemas for validation. */
+// ---------------------------------------------------------------------------
+// Schema walking — collect documented() fields
+// ---------------------------------------------------------------------------
+
+/** Dummy context used only to build input schemas for documentation. */
 function createDocContext(): LineToolContext {
   return {
     clients: {
@@ -131,26 +203,6 @@ function createDocContext(): LineToolContext {
   };
 }
 
-/**
- * For each tool, verify that every docs.fields[].path actually exists
- * in the Zod input schema. Catches typos like "user_id" vs "userId".
- */
-function validateDocsAgainstSchemas(tools: LineTool[]) {
-  const ctx = createDocContext();
-
-  for (const tool of tools) {
-    const schema = tool.input(ctx);
-
-    for (const field of tool.docs.fields) {
-      if (!schemaHasPath(schema, field.path)) {
-        throw new Error(
-          `Invalid docs path "${field.path}" in tool "${tool.name}"`,
-        );
-      }
-    }
-  }
-}
-
 function unwrapSchema(schema: z.ZodTypeAny): z.ZodTypeAny {
   if (schema instanceof z.ZodOptional) return unwrapSchema(schema.unwrap());
   if (schema instanceof z.ZodNullable) return unwrapSchema(schema.unwrap());
@@ -160,59 +212,106 @@ function unwrapSchema(schema: z.ZodTypeAny): z.ZodTypeAny {
   return schema;
 }
 
-function schemaHasPath(schema: z.ZodTypeAny, dottedPath: string): boolean {
-  return schemaHasPathParts(unwrapSchema(schema), dottedPath.split("."));
+function inferZodType(schema: z.ZodTypeAny): string {
+  const unwrapped = unwrapSchema(schema);
+
+  if (unwrapped instanceof z.ZodString) return "string";
+  if (unwrapped instanceof z.ZodNumber) return "number";
+  if (unwrapped instanceof z.ZodBoolean) return "boolean";
+  if (unwrapped instanceof z.ZodArray) return "array";
+  if (unwrapped instanceof z.ZodObject) return "object";
+  if (unwrapped instanceof z.ZodEnum) return "enum";
+  if (unwrapped instanceof z.ZodLiteral) return String(unwrapped.value);
+  if (unwrapped instanceof z.ZodUnion) return "union";
+  if (unwrapped instanceof z.ZodDiscriminatedUnion) return "union";
+  return "any";
 }
 
-function schemaHasPathParts(schema: z.ZodTypeAny, parts: string[]): boolean {
-  const current = unwrapSchema(schema);
-
-  if (parts.length === 0) {
-    return true;
-  }
-
-  const [head, ...tail] = parts;
-
-  if (current instanceof z.ZodObject) {
-    const next = current.shape[head];
-    if (!next) return false;
-    return tail.length === 0 ? true : schemaHasPathParts(next, tail);
-  }
-
-  if (current instanceof z.ZodArray) {
-    return schemaHasPathParts(current.element, parts);
-  }
-
-  if (current instanceof z.ZodUnion) {
-    return current._def.options.some((option: z.ZodTypeAny) =>
-      schemaHasPathParts(option, parts),
-    );
-  }
-
-  if (current instanceof z.ZodDiscriminatedUnion) {
-    const options = Array.from(current.options.values()) as z.ZodTypeAny[];
-    return options.some(option => schemaHasPathParts(option, parts));
-  }
-
-  if (current instanceof z.ZodLazy) {
-    return schemaHasPathParts(current.schema, parts);
-  }
-
-  // Leaf types: no further nesting possible
-  if (current instanceof z.ZodEnum || current instanceof z.ZodLiteral) {
-    return parts.length === 0;
-  }
-
+function isOptionalLike(schema: z.ZodTypeAny): boolean {
+  if (schema instanceof z.ZodOptional) return true;
+  if (schema instanceof z.ZodDefault) return true;
+  if (schema instanceof z.ZodNullable) return isOptionalLike(schema.unwrap());
+  if (schema instanceof z.ZodEffects) return isOptionalLike(schema.innerType());
   return false;
 }
+
+/**
+ * Walk a Zod schema recursively and collect fields that have
+ * `documented()` metadata attached. Returns fields in traversal order.
+ */
+function collectDocumentedFields(
+  schema: z.ZodTypeAny,
+  prefix: string,
+): CollectedField[] {
+  const fields: CollectedField[] = [];
+  const unwrapped = unwrapSchema(schema);
+
+  if (unwrapped instanceof z.ZodObject) {
+    for (const [key, value] of Object.entries(
+      unwrapped.shape as Record<string, z.ZodTypeAny>,
+    )) {
+      const fieldPath = prefix ? `${prefix}.${key}` : key;
+      const doc = getFieldDoc(value);
+
+      if (doc) {
+        const type =
+          doc.typeLabel ??
+          inferZodType(value) + (isOptionalLike(value) ? "?" : "");
+        fields.push({
+          path: fieldPath,
+          type,
+          description: doc.description,
+        });
+      }
+
+      // Recurse into nested structures to find deeper documented fields
+      fields.push(...collectDocumentedFields(value, fieldPath));
+    }
+  } else if (unwrapped instanceof z.ZodArray) {
+    fields.push(...collectDocumentedFields(unwrapped.element, prefix));
+  } else if (unwrapped instanceof z.ZodUnion) {
+    for (const option of unwrapped._def.options as z.ZodTypeAny[]) {
+      fields.push(...collectDocumentedFields(option, prefix));
+    }
+    deduplicateFields(fields);
+  } else if (unwrapped instanceof z.ZodDiscriminatedUnion) {
+    const options = Array.from(unwrapped.options.values()) as z.ZodTypeAny[];
+    for (const option of options) {
+      fields.push(...collectDocumentedFields(option, prefix));
+    }
+    deduplicateFields(fields);
+  } else if (unwrapped instanceof z.ZodLazy) {
+    // Don't recurse into lazy schemas to avoid infinite loops
+  }
+
+  return fields;
+}
+
+/** Remove duplicate paths, keeping the first occurrence. */
+function deduplicateFields(fields: CollectedField[]): void {
+  const seen = new Set<string>();
+  let i = 0;
+  while (i < fields.length) {
+    if (seen.has(fields[i].path)) {
+      fields.splice(i, 1);
+    } else {
+      seen.add(fields[i].path);
+      i++;
+    }
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Code generation
+// ---------------------------------------------------------------------------
 
 /** Derive a JS import name from a file path: broadcastFlexMessage.ts → broadcastFlexMessage */
 function toolImportName(file: string): string {
   return path.basename(file, ".ts");
 }
 
-/** Generate src/generated/tool-registry.ts with sorted imports. */
-async function writeGeneratedRegistry(toolEntries: ToolEntry[]) {
+/** Build the contents of src/generated/tool-registry.ts. */
+function buildRegistryContent(toolEntries: ToolEntry[]): string {
   const imports = toolEntries
     .map(({ file }) => {
       const name = toolImportName(file);
@@ -225,7 +324,7 @@ async function writeGeneratedRegistry(toolEntries: ToolEntry[]) {
     .map(({ file }) => `  ${toolImportName(file)},`)
     .join("\n");
 
-  const output = `/* AUTO-GENERATED BY scripts/sync-tool-artifacts.ts */
+  return `/* AUTO-GENERATED BY scripts/sync-tool-artifacts.ts */
 /* DO NOT EDIT DIRECTLY. */
 
 import type { LineTool } from "../tooling/lineTool.js";
@@ -234,13 +333,14 @@ export const TOOL_REGISTRY: readonly LineTool[] = [
 ${entries}
 ];
 `;
-
-  await fs.mkdir(path.dirname(generatedRegistryPath), { recursive: true });
-  await fs.writeFile(generatedRegistryPath, output, "utf8");
 }
 
 /** Render a numbered markdown list of tools for a README. */
-function renderToolsMarkdown(tools: LineTool[], locale: "en" | "ja"): string {
+function renderToolsMarkdown(
+  tools: LineTool[],
+  toolFields: Map<string, CollectedField[]>,
+  locale: "en" | "ja",
+): string {
   const inputLabel = locale === "en" ? "Inputs" : "入力";
   const noneLabel = locale === "en" ? "None" : "なし";
 
@@ -250,12 +350,13 @@ function renderToolsMarkdown(tools: LineTool[], locale: "en" | "ja"): string {
       // Indent continuation lines to align with content after "N. "
       const indent = " ".repeat(num.length + 2);
       const summary = tool.summary[locale];
-      const fields =
-        tool.docs.fields.length === 0
+      const fields = toolFields.get(tool.name) ?? [];
+      const fieldsSection =
+        fields.length === 0
           ? `${indent}- **${inputLabel}:** ${noneLabel}`
           : [
               `${indent}- **${inputLabel}:**`,
-              ...tool.docs.fields.map(
+              ...fields.map(
                 field =>
                   `${indent}  - \`${field.path}\` (${field.type}): ${field.description[locale]}`,
               ),
@@ -263,17 +364,24 @@ function renderToolsMarkdown(tools: LineTool[], locale: "en" | "ja"): string {
 
       return `${num}. **${tool.name}**
 ${indent}- ${summary}
-${fields}`;
+${fieldsSection}`;
     })
     .join("\n\n");
 }
 
-/** Replace content between GENERATED markers in a README file. */
-async function syncReadme(filePath: string, toolsSectionBody: string) {
+// ---------------------------------------------------------------------------
+// Artifact sync
+// ---------------------------------------------------------------------------
+
+/** Replace content between GENERATED markers and write if changed. */
+async function syncReadme(
+  filePath: string,
+  toolsSectionBody: string,
+): Promise<boolean> {
   const original = await fs.readFile(filePath, "utf8");
   const replacement = `${MARKER_START}\n${toolsSectionBody}\n${MARKER_END}`;
   const next = replaceBetweenMarkers(original, replacement);
-  await fs.writeFile(filePath, next, "utf8");
+  return writeIfChanged(filePath, next);
 }
 
 function replaceBetweenMarkers(content: string, replacement: string): string {
@@ -290,8 +398,8 @@ function replaceBetweenMarkers(content: string, replacement: string): string {
   return `${before}${replacement}${after}`;
 }
 
-/** Update only the "tools" array in manifest.json, preserving everything else. */
-async function syncManifest(tools: LineTool[]) {
+/** Build updated manifest.json content and write if changed. */
+async function syncManifest(tools: LineTool[]): Promise<boolean> {
   const manifestRaw = await fs.readFile(manifestPath, "utf8");
   const manifest = JSON.parse(manifestRaw);
 
@@ -300,11 +408,8 @@ async function syncManifest(tools: LineTool[]) {
     description: tool.summary.en,
   }));
 
-  await fs.writeFile(
-    manifestPath,
-    `${JSON.stringify(manifest, null, 2)}\n`,
-    "utf8",
-  );
+  const next = `${JSON.stringify(manifest, null, 2)}\n`;
+  return writeIfChanged(manifestPath, next);
 }
 
 main().catch(error => {

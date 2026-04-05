@@ -19,9 +19,6 @@ export default defineLineTool({
     destructiveHint: true,
   },
   input: () => z.object({}),
-  docs: {
-    fields: [],
-  },
   run: async ctx => {
     try {
       const response = await ctx.clients.messaging.cancelDefaultRichMenu();
