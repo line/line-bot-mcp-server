@@ -35,16 +35,12 @@ jobs:
           # package-manager-cache: false
       - name: Install Dependency
         run: npm ci
+      - name: Check tool artifacts are up to date
+        run: npm run check:tools
       - name: Build
         run: npm run build
       - name: Test
         run: npm test
-      - name: Check tool artifacts are up to date
-        run: |
-          npm run check:tools || {
-            echo "::error::Generated tool artifacts are out of date. Run 'npm run generate:tools' locally and commit the changes."
-            exit 1
-          }
       - name: publint
         run: npm run check:publint
 
