@@ -118,6 +118,29 @@ Set the environment variables or arguments as follows:
 }
 ```
 
+**Kiro**
+
+[![Add to Kiro](https://kiro.dev/images/add-to-kiro.svg)](https://kiro.dev/launch/mcp/add?name=line-bot&config=%7B%22command%22%3A%20%22npx%22%2C%20%22args%22%3A%20%5B%22%40line/line-bot-mcp-server%22%5D%2C%20%22env%22%3A%20%7B%22CHANNEL_ACCESS_TOKEN%22%3A%20%22FILL_HERE%22%2C%20%22DESTINATION_USER_ID%22%3A%20%22FILL_HERE%22%7D%7D)
+
+Or add the following to your Kiro MCP config file (`~/.kiro/settings/mcp.json` for global, or `.kiro/settings/mcp.json` for project-scoped). See the [Kiro MCP documentation](https://kiro.dev/docs/mcp/) for more details.
+
+```json
+{
+  "mcpServers": {
+    "line-bot": {
+      "command": "npx",
+      "args": [
+        "@line/line-bot-mcp-server"
+      ],
+      "env": {
+        "CHANNEL_ACCESS_TOKEN": "FILL_HERE",
+        "DESTINATION_USER_ID": "FILL_HERE"
+      }
+    }
+  }
+}
+```
+
 ## Installation (Using Docker)
 
 ### Step 1: Create LINE Official Account
