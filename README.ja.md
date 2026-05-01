@@ -81,7 +81,7 @@ LINE公式アカウントとAI Agentを接続するために、LINE Messaging AP
 ## インストール (npxを使用)
 
 要件:
-- Node.js v20 以上
+- Node.js v22 以上
 
 ### Step 1: LINE公式アカウントを作成
 
