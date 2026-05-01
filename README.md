@@ -83,7 +83,7 @@
 ## Installation (Using npx)
 
 requirements:
-- Node.js v20 or later
+- Node.js v22 or later
 
 ### Step 1: Create LINE Official Account
 
