@@ -73,6 +73,10 @@
       "description": "Remove the default rich menu"
     },
     {
+      "name": "create_rich_menu",
+      "description": "Create a rich menu from actions, upload its image, and set it as default"
+    },
+    {
       "name": "get_follower_ids",
       "description": "Get a list of user IDs of followers"
     }
