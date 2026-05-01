@@ -40,9 +40,11 @@ const server = new McpServer({
 
 const channelAccessToken = process.env.CHANNEL_ACCESS_TOKEN || "";
 const destinationId = process.env.DESTINATION_USER_ID || "";
+const messagingApiBaseUrl = process.env.LINE_MESSAGING_API_BASE_URL;
 
 const messagingApiClient = new line.messagingApi.MessagingApiClient({
   channelAccessToken: channelAccessToken,
+  baseURL: messagingApiBaseUrl,
   defaultHeaders: {
     "User-Agent": USER_AGENT,
   },

@@ -23,7 +23,7 @@
     "typecheck:test": "tsc --project tsconfig.test.json",
     "release": "npm run build && npm publish --provenance --access public",
     "check:publint": "publint",
-    "test": "vitest run",
+    "test": "npm run build && vitest run",
     "test:watch": "vitest"
   },
   "repository": {
@@ -38,7 +38,7 @@
   "homepage": "https://github.com/line/line-bot-mcp-server",
   "bugs": "https://github.com/line/line-bot-mcp-server/issues",
   "dependencies": {
-    "@line/bot-sdk": "^10.0.0",
+    "@line/bot-sdk": "^11.0.0",
     "@marp-team/marp-cli": "^4.2.3",
     "@marp-team/marp-core": "^4.1.0",
     "@modelcontextprotocol/sdk": "^1.8.0",
@@ -47,7 +47,7 @@
   },
   "devDependencies": {
     "@types/node": "^24.9.2",
-    "prettier": "3.8.1",
+    "prettier": "3.8.3",
     "publint": "0.3.18",
     "shx": "^0.4.0",
     "tsx": "^4.19.3",
