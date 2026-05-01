@@ -21,7 +21,6 @@ jobs:
       - uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # v6.3.0
         with:
           node-version: 24
-          registry-url: 'https://registry.npmjs.org'
           # Enable this when setup-node v5 is released, and release is broken
           # package-manager-cache: false
       - name: Update version in package.json, package-lock.json
