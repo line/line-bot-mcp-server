@@ -14,12 +14,12 @@ LINE公式アカウントとAI Agentを接続するために、LINE Messaging AP
 1. **push_text_message**
    - LINEでユーザーにシンプルなテキストメッセージを送信する。
    - **入力:**
-     - `userId` (string?): メッセージ受信者のユーザーID。デフォルトはDESTINATION_USER_ID。`user_id`または`DESTINATION_USER_ID`のどちらか一方は必ず設定する必要があります。
+     - `userId` (string?): メッセージ受信者のユーザーID。デフォルトはDESTINATION_USER_ID。`userId`または`DESTINATION_USER_ID`のどちらか一方は必ず設定する必要があります。
      - `message.text` (string): ユーザーに送信するテキスト。
 2. **push_flex_message**
    - LINEでユーザーに高度にカスタマイズ可能なフレックスメッセージを送信する。
    - **入力:**
-     - `user_id` (string?): メッセージ受信者のユーザーID。デフォルトはDESTINATION_USER_ID。`user_id`または`DESTINATION_USER_ID`のどちらか一方は必ず設定する必要があります。
+     - `userId` (string?): メッセージ受信者のユーザーID。デフォルトはDESTINATION_USER_ID。`userId`または`DESTINATION_USER_ID`のどちらか一方は必ず設定する必要があります。
      - `message.altText` (string): フレックスメッセージが表示できない場合に表示される代替テキスト。
      - `message.contents` (any): フレックスメッセージの内容。メッセージのレイアウトとコンポーネントを定義するJSONオブジェクト。
      - `message.contents.type` (enum): コンテナのタイプ。'bubble'は単一コンテナ、'carousel'は複数のスワイプ可能なバブルを示す。
@@ -36,7 +36,7 @@ LINE公式アカウントとAI Agentを接続するために、LINE Messaging AP
 5. **get_profile**
    - LINEユーザーの詳細なプロフィール情報を取得する。表示名、プロフィール画像URL、ステータスメッセージ、言語を取得できる。
    - **入力:**
-      - `userId` (string?): プロフィールを取得したいユーザーのユーザーID。デフォルトはDESTINATION_USER_ID。`user_id`または`DESTINATION_USER_ID`のどちらか一方は必ず設定する必要があります。
+      - `userId` (string?): プロフィールを取得したいユーザーのユーザーID。デフォルトはDESTINATION_USER_ID。`userId`または`DESTINATION_USER_ID`のどちらか一方は必ず設定する必要があります。
 6. **get_message_quota**
    - LINE公式アカウントのメッセージ容量と消費量を取得します。月間メッセージ制限と現在の使用量が表示されます。
    - **入力:**
