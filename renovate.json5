@@ -13,7 +13,6 @@
   ],
   lockFileMaintenance: {
     enabled: true,
-    automerge: true,
     schedule: [
       "after 1am and before 4am every day"
     ]
