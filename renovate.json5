@@ -11,11 +11,11 @@
   labels: [
     "dependency upgrade"
   ],
-  ignoreDeps: [
-    "zod"
-  ],
-  // To prevent libraries in optionalDependencies from being removed from the lock file
-  constraints: {
-    npm: "11.15.0"
+  lockFileMaintenance: {
+    enabled: true,
+    automerge: true,
+    schedule: [
+      "after 1am and before 4am every day"
+    ]
   }
 }
