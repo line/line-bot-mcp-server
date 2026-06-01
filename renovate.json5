@@ -1,20 +1,13 @@
 {
   $schema: "https://docs.renovatebot.com/renovate-schema.json",
-  extends: [
-    "config:recommended",
-    "helpers:pinGitHubActionDigestsToSemver"
-  ],
+  extends: ["config:recommended", "helpers:pinGitHubActionDigestsToSemver"],
   timezone: "Asia/Tokyo",
   automerge: true,
   platformAutomerge: true,
-  minimumReleaseAge : "7 days",
-  labels: [
-    "dependency upgrade"
-  ],
+  minimumReleaseAge: "7 days",
+  labels: ["dependency upgrade"],
   lockFileMaintenance: {
     enabled: true,
-    schedule: [
-      "after 1am and before 4am every day"
-    ]
-  }
+    schedule: ["after 1am and before 4am"],
+  },
 }
