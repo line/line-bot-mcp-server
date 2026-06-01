@@ -39,7 +39,6 @@
   "bugs": "https://github.com/line/line-bot-mcp-server/issues",
   "dependencies": {
     "@line/bot-sdk": "^11.0.1",
-    "@marp-team/marp-cli": "^4.2.3",
     "@marp-team/marp-core": "^4.1.0",
     "@modelcontextprotocol/sdk": "^1.8.0",
     "puppeteer": "^24.27.0",
@@ -49,7 +48,6 @@
     "@types/node": "^24.9.2",
     "prettier": "3.8.3",
     "publint": "0.3.21",
-    "tsx": "^4.19.3",
     "typescript": "^6.0.2",
     "vitest": "^4.0.0"
   },
