@@ -1,23 +1,30 @@
 import { z } from "zod";
 
-const sizeSchema = z
-  .enum(["xxs", "xs", "sm", "md", "lg", "xl", "xxl", "3xl", "4xl", "5xl"])
-  .default("md");
-const imageSizeSchema = z
-  .enum([
-    "xxs",
-    "xs",
-    "sm",
-    "md",
-    "lg",
-    "xl",
-    "xxl",
-    "3xl",
-    "4xl",
-    "5xl",
-    "full",
-  ])
-  .default("md");
+const sizeSchema = z.enum([
+  "xxs",
+  "xs",
+  "sm",
+  "md",
+  "lg",
+  "xl",
+  "xxl",
+  "3xl",
+  "4xl",
+  "5xl",
+]);
+const imageSizeSchema = z.enum([
+  "xxs",
+  "xs",
+  "sm",
+  "md",
+  "lg",
+  "xl",
+  "xxl",
+  "3xl",
+  "4xl",
+  "5xl",
+  "full",
+]);
 const spacerSizeSchema = z.enum(["xs", "sm", "md", "lg", "xl", "xxl"]);
 const marginSchema = z.enum(["none", "xs", "sm", "md", "lg", "xl", "xxl"]);
 const spacingSchema = z.enum(["none", "xs", "sm", "md", "lg", "xl", "xxl"]);
