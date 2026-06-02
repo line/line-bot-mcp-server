@@ -41,7 +41,7 @@
     "@line/bot-sdk": "^11.0.1",
     "@marp-team/marp-core": "^4.1.0",
     "@modelcontextprotocol/sdk": "^1.8.0",
-    "puppeteer": "^24.27.0",
+    "puppeteer": "^25.0.0",
     "zod": "^4.0.0"
   },
   "devDependencies": {
