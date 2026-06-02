@@ -1,24 +1,30 @@
 import { z } from "zod";
 
-const sizeSchema = z
-  .enum(["xxs", "xs", "sm", "md", "lg", "xl", "xxl", "3xl", "4xl", "5xl"])
-  .default("md");
-const imageSizeSchema = z
-  .enum([
-    "xxs",
-    "xs",
-    "sm",
-    "md",
-    "lg",
-    "xl",
-    "xxl",
-    "3xl",
-    "4xl",
-    "5xl",
-    "full",
-  ])
-  .default("md");
-const spacerSizeSchema = z.enum(["xs", "sm", "md", "lg", "xl", "xxl"]);
+const sizeSchema = z.enum([
+  "xxs",
+  "xs",
+  "sm",
+  "md",
+  "lg",
+  "xl",
+  "xxl",
+  "3xl",
+  "4xl",
+  "5xl",
+]);
+const imageSizeSchema = z.enum([
+  "xxs",
+  "xs",
+  "sm",
+  "md",
+  "lg",
+  "xl",
+  "xxl",
+  "3xl",
+  "4xl",
+  "5xl",
+  "full",
+]);
 const marginSchema = z.enum(["none", "xs", "sm", "md", "lg", "xl", "xxl"]);
 const spacingSchema = z.enum(["none", "xs", "sm", "md", "lg", "xl", "xxl"]);
 const positionSchema = z.enum(["relative", "absolute"]);
@@ -109,7 +115,7 @@ const flexActionSchema = z.discriminatedUnion("type", [
       ),
     altUri: z
       .object({
-        desktop: z.string().url(),
+        desktop: z.url(),
       })
       .optional(),
   }),
@@ -185,7 +191,6 @@ const flexComponentSchema: z.ZodType<any> = z.lazy(() =>
     z.object({
       type: z.literal("icon"),
       url: z
-        .string()
         .url()
         .min(1)
         .max(2000)
@@ -204,7 +209,6 @@ const flexComponentSchema: z.ZodType<any> = z.lazy(() =>
     z.object({
       type: z.literal("image"),
       url: z
-        .string()
         .url()
         .min(1)
         .max(2000)
@@ -230,13 +234,11 @@ const flexComponentSchema: z.ZodType<any> = z.lazy(() =>
     z.object({
       type: z.literal("video"),
       url: z
-        .string()
         .url()
         .min(1)
         .max(2000)
         .refine(url => url.startsWith("https://"), "Must use HTTPS protocol"),
       previewUrl: z
-        .string()
         .url()
         .min(1)
         .max(2000)
