@@ -2,10 +2,7 @@ import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { InMemoryTransport } from "@modelcontextprotocol/sdk/inMemory.js";
-import {
-  createMockMessagingApiClient,
-  createMockBlobClient,
-} from "../helpers/mock-line-clients.js";
+import { createMockLineBotClient } from "../helpers/mock-line-clients.js";
 
 // Mock external dependencies before importing the tool.
 // vi.mock factories are hoisted, so all values must be created inline.
@@ -57,14 +54,12 @@ import CreateRichMenu from "../../src/tools/createRichMenu.js";
 describe("create_rich_menu tool", () => {
   let client: Client;
   let server: McpServer;
-  let mockLineClient: ReturnType<typeof createMockMessagingApiClient>;
-  let mockBlobClient: ReturnType<typeof createMockBlobClient>;
+  let mockLineClient: ReturnType<typeof createMockLineBotClient>;
 
   beforeEach(async () => {
-    mockLineClient = createMockMessagingApiClient();
-    mockBlobClient = createMockBlobClient();
+    mockLineClient = createMockLineBotClient();
     server = new McpServer({ name: "test", version: "0.0.1" });
-    new CreateRichMenu(mockLineClient, mockBlobClient).register(server);
+    new CreateRichMenu(mockLineClient).register(server);
 
     const [clientTransport, serverTransport] =
       InMemoryTransport.createLinkedPair();
@@ -87,7 +82,7 @@ describe("create_rich_menu tool", () => {
       vi.mocked(mockLineClient.createRichMenu).mockResolvedValue({
         richMenuId: "richmenu-new-123",
       } as never);
-      vi.mocked(mockBlobClient.setRichMenuImage).mockResolvedValue({} as never);
+      vi.mocked(mockLineClient.setRichMenuImage).mockResolvedValue({} as never);
       vi.mocked(mockLineClient.setDefaultRichMenu).mockResolvedValue(
         {} as never,
       );
@@ -111,7 +106,7 @@ describe("create_rich_menu tool", () => {
           size: { width: 1600, height: 910 },
         }),
       );
-      expect(mockBlobClient.setRichMenuImage).toHaveBeenCalledWith(
+      expect(mockLineClient.setRichMenuImage).toHaveBeenCalledWith(
         "richmenu-new-123",
         expect.any(Blob),
       );
@@ -220,7 +215,7 @@ describe("create_rich_menu tool", () => {
       vi.mocked(mockLineClient.createRichMenu).mockResolvedValue({
         richMenuId: "richmenu-new-123",
       } as never);
-      vi.mocked(mockBlobClient.setRichMenuImage).mockResolvedValue({} as never);
+      vi.mocked(mockLineClient.setRichMenuImage).mockResolvedValue({} as never);
       vi.mocked(mockLineClient.setDefaultRichMenu).mockResolvedValue(
         {} as never,
       );

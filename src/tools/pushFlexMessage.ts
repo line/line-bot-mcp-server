@@ -1,5 +1,5 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
-import { messagingApi } from "@line/bot-sdk";
+import { LineBotClient, messagingApi } from "@line/bot-sdk";
 import { z } from "zod";
 import {
   createErrorResponse,
@@ -10,10 +10,10 @@ import { NO_USER_ID_ERROR } from "../common/schema/constants.js";
 import { flexMessageSchema } from "../common/schema/flexMessage.js";
 
 export default class PushFlexMessage extends AbstractTool {
-  private client: messagingApi.MessagingApiClient;
+  private client: LineBotClient;
   private destinationId: string;
 
-  constructor(client: messagingApi.MessagingApiClient, destinationId: string) {
+  constructor(client: LineBotClient, destinationId: string) {
     super();
     this.client = client;
     this.destinationId = destinationId;

@@ -1,5 +1,5 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
-import { messagingApi } from "@line/bot-sdk";
+import { LineBotClient, messagingApi } from "@line/bot-sdk";
 import {
   createErrorResponse,
   createSuccessResponse,
@@ -19,16 +19,11 @@ const RICHMENU_HEIGHT = 910;
 const RICHMENU_WIDTH = 1600;
 
 export default class CreateRichMenu extends AbstractTool {
-  private client: messagingApi.MessagingApiClient;
-  private lineBlobClient: messagingApi.MessagingApiBlobClient;
+  private client: LineBotClient;
 
-  constructor(
-    client: messagingApi.MessagingApiClient,
-    lineBlobClient: messagingApi.MessagingApiBlobClient,
-  ) {
+  constructor(client: LineBotClient) {
     super();
     this.client = client;
-    this.lineBlobClient = lineBlobClient;
   }
 
   register(server: McpServer) {
@@ -95,7 +90,7 @@ export default class CreateRichMenu extends AbstractTool {
           const imageBuffer = fs.readFileSync(richMenuImagePath);
           const imageType = "image/png";
           const imageBlob = new Blob([imageBuffer], { type: imageType });
-          setImageResponse = await this.lineBlobClient.setRichMenuImage(
+          setImageResponse = await this.client.setRichMenuImage(
             richMenuId,
             imageBlob,
           );

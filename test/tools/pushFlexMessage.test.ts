@@ -2,7 +2,7 @@ import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { InMemoryTransport } from "@modelcontextprotocol/sdk/inMemory.js";
-import { createMockMessagingApiClient } from "../helpers/mock-line-clients.js";
+import { createMockLineBotClient } from "../helpers/mock-line-clients.js";
 import PushFlexMessage from "../../src/tools/pushFlexMessage.js";
 
 const DESTINATION_ID = "U_DEFAULT_USER";
@@ -37,10 +37,10 @@ const EXPECTED_FLEX_MESSAGE = {
 describe("push_flex_message tool", () => {
   let client: Client;
   let server: McpServer;
-  let mockLineClient: ReturnType<typeof createMockMessagingApiClient>;
+  let mockLineClient: ReturnType<typeof createMockLineBotClient>;
 
   beforeEach(async () => {
-    mockLineClient = createMockMessagingApiClient();
+    mockLineClient = createMockLineBotClient();
     server = new McpServer({ name: "test", version: "0.0.1" });
     new PushFlexMessage(mockLineClient, DESTINATION_ID).register(server);
 

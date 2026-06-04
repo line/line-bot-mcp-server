@@ -2,16 +2,16 @@ import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { InMemoryTransport } from "@modelcontextprotocol/sdk/inMemory.js";
-import { createMockMessagingApiClient } from "../helpers/mock-line-clients.js";
+import { createMockLineBotClient } from "../helpers/mock-line-clients.js";
 import DeleteRichMenu from "../../src/tools/deleteRichMenu.js";
 
 describe("delete_rich_menu tool", () => {
   let client: Client;
   let server: McpServer;
-  let mockLineClient: ReturnType<typeof createMockMessagingApiClient>;
+  let mockLineClient: ReturnType<typeof createMockLineBotClient>;
 
   beforeEach(async () => {
-    mockLineClient = createMockMessagingApiClient();
+    mockLineClient = createMockLineBotClient();
     server = new McpServer({ name: "test", version: "0.0.1" });
     new DeleteRichMenu(mockLineClient).register(server);
 

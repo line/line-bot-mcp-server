@@ -1,7 +1,7 @@
 import { vi } from "vitest";
-import type { messagingApi } from "@line/bot-sdk";
+import type { LineBotClient } from "@line/bot-sdk";
 
-export function createMockMessagingApiClient() {
+export function createMockLineBotClient() {
   return {
     pushMessage: vi.fn(),
     broadcast: vi.fn(),
@@ -14,11 +14,6 @@ export function createMockMessagingApiClient() {
     cancelDefaultRichMenu: vi.fn(),
     createRichMenu: vi.fn(),
     getFollowers: vi.fn(),
-  } as unknown as messagingApi.MessagingApiClient;
-}
-
-export function createMockBlobClient() {
-  return {
     setRichMenuImage: vi.fn(),
-  } as unknown as messagingApi.MessagingApiBlobClient;
+  } as unknown as LineBotClient;
 }

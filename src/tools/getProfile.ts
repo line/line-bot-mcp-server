@@ -1,5 +1,5 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
-import { messagingApi } from "@line/bot-sdk";
+import { LineBotClient } from "@line/bot-sdk";
 import { z } from "zod";
 import {
   createErrorResponse,
@@ -9,10 +9,10 @@ import { AbstractTool } from "./AbstractTool.js";
 import { NO_USER_ID_ERROR } from "../common/schema/constants.js";
 
 export default class GetProfile extends AbstractTool {
-  private client: messagingApi.MessagingApiClient;
+  private client: LineBotClient;
   private destinationId: string;
 
-  constructor(client: messagingApi.MessagingApiClient, destinationId: string) {
+  constructor(client: LineBotClient, destinationId: string) {
     super();
     this.client = client;
     this.destinationId = destinationId;
