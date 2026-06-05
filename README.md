@@ -220,3 +220,63 @@ See http://semver.org/
 ## Contributing
 
 Please check [CONTRIBUTING](./CONTRIBUTING.md) before making a contribution.
+
+## FAQ
+
+### What is LINE Bot MCP Server?
+
+LINE Bot MCP Server is an official LINE implementation of the Model Context Protocol (MCP) that integrates the LINE Messaging API. It allows AI agents to interact with LINE Official Accounts through 12 standardized tools for messaging, user profile management, and rich menu operations.
+
+### Available Tools
+
+| Tool | Description | Key Inputs |
+|------|-------------|------------|
+| push_text_message | Send text message to user | userId, message.text |
+| push_flex_message | Send customizable flex message | userId, contents (bubble/carousel) |
+| broadcast_text_message | Broadcast text to all followers | message.text |
+| broadcast_flex_message | Broadcast flex message to all | contents |
+| get_profile | Get user profile info | userId |
+| get_message_quota | Get monthly message limit/usage | None |
+| get_rich_menu_list | List all rich menus | None |
+| delete_rich_menu | Delete a rich menu | richMenuId |
+| set_rich_menu_default | Set default rich menu | richMenuId |
+| cancel_rich_menu_default | Cancel default rich menu | None |
+| create_rich_menu | Create rich menu with actions | chatBarText, actions (1-6) |
+| get_follower_ids | Get follower user IDs | start, limit |
+
+### How do I set up LINE Official Account?
+
+1. Create a LINE Official Account following [LINE's guide](https://developers.line.biz/en/docs/messaging-api/getting-started/#create-oa)
+2. Enable Messaging API via LINE Official Account Manager
+3. Obtain Channel Access Token from [LINE Developers Console](https://developers.line.biz/en/docs/basics/channel-access-token/#long-lived-channel-access-token)
+4. Optionally get your own user ID as DESTINATION_USER_ID
+
+### Installation Options
+
+| Method | Requirements | Use Case |
+|--------|--------------|----------|
+| npx | Node.js v22+ | Quick setup, recommended |
+| Docker | Docker installed | Isolated environment |
+| Local dev | npm + MCP Inspector | Debugging/testing |
+
+### What is Preview Version?
+
+This repository is provided as a preview version for experimental purposes. It may not include complete functionality or comprehensive support. Production use should be evaluated carefully.
+
+### Is it free?
+
+Yes! LINE Bot MCP Server is open-source and free to use under the Apache 2.0 License. Note that LINE Messaging API usage may have costs depending on your LINE Official Account plan.
+
+### How to contribute?
+
+Check [CONTRIBUTING.md](./CONTRIBUTING.md) for contribution guidelines. LINE welcomes community contributions to improve the MCP server.
+
+### Help Resources
+
+| Resource | Link |
+|----------|------|
+| LINE Messaging API Docs | https://developers.line.biz/en/docs/messaging-api/ |
+| MCP Specification | https://github.com/modelcontextprotocol |
+| npm Package | https://www.npmjs.com/package/@line/line-bot-mcp-server |
+| GitHub Issues | https://github.com/line/line-bot-mcp-server/issues |
+| Japanese README | [README.ja.md](README.ja.md) |
