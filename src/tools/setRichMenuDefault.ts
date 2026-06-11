@@ -1,5 +1,5 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
-import { messagingApi } from "@line/bot-sdk";
+import { LineBotClient } from "@line/bot-sdk";
 import {
   createErrorResponse,
   createSuccessResponse,
@@ -8,9 +8,9 @@ import { AbstractTool } from "./AbstractTool.js";
 import { z } from "zod";
 
 export default class SetRichMenuDefault extends AbstractTool {
-  private client: messagingApi.MessagingApiClient;
+  private client: LineBotClient;
 
-  constructor(client: messagingApi.MessagingApiClient) {
+  constructor(client: LineBotClient) {
     super();
     this.client = client;
   }

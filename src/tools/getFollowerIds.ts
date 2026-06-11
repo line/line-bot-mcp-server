@@ -1,5 +1,5 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
-import { messagingApi } from "@line/bot-sdk";
+import { LineBotClient } from "@line/bot-sdk";
 import { z } from "zod";
 import {
   createErrorResponse,
@@ -8,9 +8,9 @@ import {
 import { AbstractTool } from "./AbstractTool.js";
 
 export default class GetFollowerIds extends AbstractTool {
-  private client: messagingApi.MessagingApiClient;
+  private client: LineBotClient;
 
-  constructor(client: messagingApi.MessagingApiClient) {
+  constructor(client: LineBotClient) {
     super();
     this.client = client;
   }

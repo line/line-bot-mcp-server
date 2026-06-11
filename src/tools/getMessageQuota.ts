@@ -1,5 +1,5 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
-import { messagingApi } from "@line/bot-sdk";
+import { LineBotClient } from "@line/bot-sdk";
 import {
   createErrorResponse,
   createSuccessResponse,
@@ -7,9 +7,9 @@ import {
 import { AbstractTool } from "./AbstractTool.js";
 
 export default class GetMessageQuota extends AbstractTool {
-  private client: messagingApi.MessagingApiClient;
+  private client: LineBotClient;
 
-  constructor(client: messagingApi.MessagingApiClient) {
+  constructor(client: LineBotClient) {
     super();
     this.client = client;
   }

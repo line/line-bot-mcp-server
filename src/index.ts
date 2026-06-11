@@ -42,33 +42,26 @@ const channelAccessToken = process.env.CHANNEL_ACCESS_TOKEN || "";
 const destinationId = process.env.DESTINATION_USER_ID || "";
 const messagingApiBaseUrl = process.env.LINE_MESSAGING_API_BASE_URL;
 
-const messagingApiClient = new line.messagingApi.MessagingApiClient({
+const lineBotClient = line.LineBotClient.fromChannelAccessToken({
   channelAccessToken: channelAccessToken,
-  baseURL: messagingApiBaseUrl,
+  apiBaseURL: messagingApiBaseUrl,
   defaultHeaders: {
     "User-Agent": USER_AGENT,
   },
 });
 
-const lineBlobClient = new line.messagingApi.MessagingApiBlobClient({
-  channelAccessToken: channelAccessToken,
-  defaultHeaders: {
-    "User-Agent": USER_AGENT,
-  },
-});
-
-new PushTextMessage(messagingApiClient, destinationId).register(server);
-new PushFlexMessage(messagingApiClient, destinationId).register(server);
-new BroadcastTextMessage(messagingApiClient).register(server);
-new BroadcastFlexMessage(messagingApiClient).register(server);
-new GetProfile(messagingApiClient, destinationId).register(server);
-new GetMessageQuota(messagingApiClient).register(server);
-new GetRichMenuList(messagingApiClient).register(server);
-new DeleteRichMenu(messagingApiClient).register(server);
-new SetRichMenuDefault(messagingApiClient).register(server);
-new CancelRichMenuDefault(messagingApiClient).register(server);
-new CreateRichMenu(messagingApiClient, lineBlobClient).register(server);
-new GetFollowerIds(messagingApiClient).register(server);
+new PushTextMessage(lineBotClient, destinationId).register(server);
+new PushFlexMessage(lineBotClient, destinationId).register(server);
+new BroadcastTextMessage(lineBotClient).register(server);
+new BroadcastFlexMessage(lineBotClient).register(server);
+new GetProfile(lineBotClient, destinationId).register(server);
+new GetMessageQuota(lineBotClient).register(server);
+new GetRichMenuList(lineBotClient).register(server);
+new DeleteRichMenu(lineBotClient).register(server);
+new SetRichMenuDefault(lineBotClient).register(server);
+new CancelRichMenuDefault(lineBotClient).register(server);
+new CreateRichMenu(lineBotClient).register(server);
+new GetFollowerIds(lineBotClient).register(server);
 
 async function main() {
   if (!process.env.CHANNEL_ACCESS_TOKEN) {
