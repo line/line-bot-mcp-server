@@ -3,8 +3,8 @@
 name: Close inactive issues
 on:
   schedule:
-    # Every day at 1:30 UTC -> 10:30 JST
-    - cron: "30 1 * * *"
+    - cron: "30 10 * * *"
+      timezone: "Asia/Tokyo"
 
 jobs:
   close-issues:
@@ -16,13 +16,13 @@ jobs:
     steps:
       - uses: actions/stale@eb5cf3af3ac0a1aa4c9c45633dd1ae542a27a899 # v10.3.0
         with:
-          days-before-issue-stale: 28 # 4 weeks
+          days-before-issue-stale: 14
           days-before-issue-close: 0
           stale-issue-label: "no-activity"
-          close-issue-message: "This issue was closed because it has been inactive for 28 days."
+          close-issue-message: "This issue was closed because it has been inactive for 14 days."
           exempt-issue-labels: "bug,enhancement,keep,untriaged"
           days-before-pr-stale: -1
-          days-before-pr-close: 28
+          days-before-pr-close: 14
           stale-pr-label: "no-activity"
-          close-pr-message: "This pull request was closed because it has been inactive for 28 days. Please reopen if you still intend to submit this pull request."
+          close-pr-message: "This pull request was closed because it has been inactive for 14 days. Please reopen if you still intend to submit this pull request."
           repo-token: ${{ secrets.GITHUB_TOKEN }}
