@@ -1,4 +1,6 @@
-FROM node:24.16-alpine AS builder
+ARG NODE_IMAGE=node:24.17.0-bookworm-slim@sha256:c2d5ade763cacfb03fe9cb8e8af5d1be5041ff331921fa26a9b231ca3a4f780a
+
+FROM ${NODE_IMAGE} AS builder
 
 COPY . /app
 
@@ -9,17 +11,19 @@ RUN --mount=type=cache,target=/root/.npm-production npm ci --ignore-scripts
 RUN --mount=type=cache,target=/root/.npm npm run build
 
 # --- Release Stage ---
-FROM node:24-alpine AS release
+FROM ${NODE_IMAGE} AS release
 
 # Install necessary tools and base fonts
-RUN apk add --no-cache \
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    ca-certificates \
     fontconfig \
-    font-noto-cjk \
-    ttf-freefont \
+    fonts-noto-cjk \
+    fonts-freefont-ttf \
     curl \
     unzip \
     chromium \
-    nss
+    libnss3 \
+    && rm -rf /var/lib/apt/lists/*
 
 # Download and install Japanese fonts from GitHub
 RUN mkdir -p /usr/share/fonts/truetype/google && \
@@ -36,11 +40,10 @@ RUN mkdir -p /usr/share/fonts/truetype/google && \
 RUN fc-cache -f -v
 
 # Set Puppeteer to use system Chromium
-ENV PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium-browser
+ENV PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium
 
 # Set up a non-root user ('appuser'/'appgroup') to avoid running as root - good security practice!
-# (-S is the Alpine option for a system user/group, suitable here)
-RUN addgroup -S appgroup && adduser -S appuser -G appgroup
+RUN groupadd --system appgroup && useradd --system --gid appgroup appuser
 
 # Copy the built code and necessary package files from our builder stage
 COPY --from=builder /app/dist /app/dist
