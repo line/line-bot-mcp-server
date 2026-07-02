@@ -78,6 +78,20 @@ LINE公式アカウントとAI Agentを接続するために、LINE Messaging AP
       - `start` (string?): 次のユーザーID配列を取得するための継続トークン。前回のレスポンスの`next`プロパティから取得できる。
       - `limit` (number?): 1回のリクエストで取得するユーザーIDの最大数。
 
+13. **get_rich_menu_insight_summary**
+    - 指定した期間のリッチメニューの統計情報のサマリーを、期間全体で集計した1つの結果として取得する。
+    - **入力:**
+      - `richMenuId` (string): Messaging APIで作成したリッチメニューのID。
+      - `from` (string): 集計期間の開始日（この日を含む）。yyyyMMdd形式。直近3年以内である必要がある。
+      - `to` (string): 集計期間の終了日（この日を含む）。yyyyMMdd形式。開始日から最大396日後まで指定できる。
+
+14. **get_rich_menu_insight_daily**
+    - 指定した期間のリッチメニューの統計情報を日別に取得する。
+    - **入力:**
+      - `richMenuId` (string): Messaging APIで作成したリッチメニューのID。
+      - `from` (string): 集計期間の開始日（この日を含む）。yyyyMMdd形式。直近3年以内である必要がある。
+      - `to` (string): 集計期間の終了日（この日を含む）。yyyyMMdd形式。開始日から最大99日後まで指定できる。
+
 ## インストール (npxを使用)
 
 要件:
