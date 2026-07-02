@@ -28,9 +28,11 @@ import BroadcastFlexMessage from "./tools/broadcastFlexMessage.js";
 import GetProfile from "./tools/getProfile.js";
 import GetMessageQuota from "./tools/getMessageQuota.js";
 import GetRichMenuList from "./tools/getRichMenuList.js";
+import GetRichMenu from "./tools/getRichMenu.js";
 import DeleteRichMenu from "./tools/deleteRichMenu.js";
 import SetRichMenuDefault from "./tools/setRichMenuDefault.js";
 import CreateRichMenu from "./tools/createRichMenu.js";
+import UpdateRichMenuImage from "./tools/updateRichMenuImage.js";
 import GetFollowerIds from "./tools/getFollowerIds.js";
 
 const server = new McpServer({
@@ -57,10 +59,12 @@ new BroadcastFlexMessage(lineBotClient).register(server);
 new GetProfile(lineBotClient, destinationId).register(server);
 new GetMessageQuota(lineBotClient).register(server);
 new GetRichMenuList(lineBotClient).register(server);
+new GetRichMenu(lineBotClient).register(server);
 new DeleteRichMenu(lineBotClient).register(server);
 new SetRichMenuDefault(lineBotClient).register(server);
 new CancelRichMenuDefault(lineBotClient).register(server);
 new CreateRichMenu(lineBotClient).register(server);
+new UpdateRichMenuImage(lineBotClient).register(server);
 new GetFollowerIds(lineBotClient).register(server);
 
 async function main() {
