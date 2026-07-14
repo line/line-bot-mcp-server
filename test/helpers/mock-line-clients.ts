@@ -15,5 +15,7 @@ export function createMockLineBotClient() {
     createRichMenu: vi.fn(),
     getFollowers: vi.fn(),
     setRichMenuImage: vi.fn(),
+    getRichMenuInsightSummary: vi.fn(),
+    getRichMenuInsightDaily: vi.fn(),
   } as unknown as LineBotClient;
 }

@@ -32,6 +32,8 @@ import DeleteRichMenu from "./tools/deleteRichMenu.js";
 import SetRichMenuDefault from "./tools/setRichMenuDefault.js";
 import CreateRichMenu from "./tools/createRichMenu.js";
 import GetFollowerIds from "./tools/getFollowerIds.js";
+import GetRichMenuInsightSummary from "./tools/getRichMenuInsightSummary.js";
+import GetRichMenuInsightDaily from "./tools/getRichMenuInsightDaily.js";
 
 const server = new McpServer({
   name: "line-bot",
@@ -62,6 +64,8 @@ new SetRichMenuDefault(lineBotClient).register(server);
 new CancelRichMenuDefault(lineBotClient).register(server);
 new CreateRichMenu(lineBotClient).register(server);
 new GetFollowerIds(lineBotClient).register(server);
+new GetRichMenuInsightSummary(lineBotClient).register(server);
+new GetRichMenuInsightDaily(lineBotClient).register(server);
 
 async function main() {
   if (!process.env.CHANNEL_ACCESS_TOKEN) {

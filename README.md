@@ -80,6 +80,20 @@
       - `start` (string?): Continuation token to get the next array of user IDs. Returned in the `next` property of a previous response.
       - `limit` (number?): The maximum number of user IDs to retrieve in a single request.
 
+13. **get_rich_menu_insight_summary**
+    - Get a summary of rich menu statistics for the specified period, aggregated over the entire period as a single result.
+    - **Inputs:**
+      - `richMenuId` (string): ID of the rich menu created via the Messaging API.
+      - `from` (string): Start date of the aggregation period (inclusive), in yyyyMMdd format. Must be within the most recent 3 years.
+      - `to` (string): End date of the aggregation period (inclusive), in yyyyMMdd format. Up to 396 days after the start date.
+
+14. **get_rich_menu_insight_daily**
+    - Get rich menu statistics broken down by day for the specified period.
+    - **Inputs:**
+      - `richMenuId` (string): ID of the rich menu created via the Messaging API.
+      - `from` (string): Start date of the aggregation period (inclusive), in yyyyMMdd format. Must be within the most recent 3 years.
+      - `to` (string): End date of the aggregation period (inclusive), in yyyyMMdd format. Up to 99 days after the start date.
+
 ## Installation (Using npx)
 
 requirements:
