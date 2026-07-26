@@ -23,6 +23,7 @@ import { LINE_BOT_MCP_SERVER_VERSION, USER_AGENT } from "./version.js";
 import CancelRichMenuDefault from "./tools/cancelRichMenuDefault.js";
 import PushTextMessage from "./tools/pushTextMessage.js";
 import PushFlexMessage from "./tools/pushFlexMessage.js";
+import PushFlexMessages from "./tools/pushFlexMessages.js";
 import BroadcastTextMessage from "./tools/broadcastTextMessage.js";
 import BroadcastFlexMessage from "./tools/broadcastFlexMessage.js";
 import GetProfile from "./tools/getProfile.js";
@@ -52,6 +53,7 @@ const lineBotClient = line.LineBotClient.fromChannelAccessToken({
 
 new PushTextMessage(lineBotClient, destinationId).register(server);
 new PushFlexMessage(lineBotClient, destinationId).register(server);
+new PushFlexMessages(lineBotClient, destinationId).register(server);
 new BroadcastTextMessage(lineBotClient).register(server);
 new BroadcastFlexMessage(lineBotClient).register(server);
 new GetProfile(lineBotClient, destinationId).register(server);
