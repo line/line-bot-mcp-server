@@ -25,41 +25,46 @@
      - `message.altText` (string): Alternative text shown when flex message cannot be displayed.
      - `message.contents` (any): The contents of the flex message. This is a JSON object that defines the layout and components of the message.
      - `message.contents.type` (enum): Type of the container. 'bubble' for single container, 'carousel' for multiple swipeable bubbles.
-3. **broadcast_text_message**
+3. **push_flex_messages**
+   - Push one to five Flex messages to a user in a single LINE Messaging API request. Each item is displayed as a separate message; use a carousel inside one Flex message for swipeable bubbles.
+   - **Inputs:**
+     - `userId` (string?): The user ID to receive messages. Defaults to DESTINATION_USER_ID. Either `userId` or `DESTINATION_USER_ID` must be set.
+     - `messages` (array): One to five Flex message objects. Each item uses the same schema as `push_flex_message`'s `message` input.
+4. **broadcast_text_message**
    - Broadcast a simple text message via LINE to all users who have followed your LINE Official Account.
    - **Inputs:**
      - `message.text` (string): The plain text content to send to the users.
-4. **broadcast_flex_message**
+5. **broadcast_flex_message**
    - Broadcast a highly customizable flex message via LINE to all users who have added your LINE Official Account.
    - **Inputs:**
      - `message.altText` (string): Alternative text shown when flex message cannot be displayed.
      - `message.contents` (any): The contents of the flex message. This is a JSON object that defines the layout and components of the message.
      - `message.contents.type` (enum): Type of the container. 'bubble' for single container, 'carousel' for multiple swipeable bubbles.
-5. **get_profile**
+6. **get_profile**
    - Get detailed profile information of a LINE user including display name, profile picture URL, status message and language.
    - **Inputs:**
      - `userId` (string?): The ID of the user whose profile you want to retrieve. Defaults to DESTINATION_USER_ID.
-6. **get_message_quota**
+7. **get_message_quota**
    - Get the message quota and consumption of the LINE Official Account. This shows the monthly message limit and current usage.
    - **Inputs:**
      - None
-7. **get_rich_menu_list**
+8. **get_rich_menu_list**
    - Get the list of rich menus associated with your LINE Official Account.
    - **Inputs:**
      - None
-8. **delete_rich_menu**
+9. **delete_rich_menu**
    - Delete a rich menu from your LINE Official Account.
    - **Inputs:**
      - `richMenuId` (string): The ID of the rich menu to delete.
-9. **set_rich_menu_default**
+10. **set_rich_menu_default**
     - Set a rich menu as the default rich menu.
     - **Inputs:**
       - `richMenuId` (string): The ID of the rich menu to set as default.
-10. **cancel_rich_menu_default**
+11. **cancel_rich_menu_default**
     - Cancel the default rich menu.
     - **Inputs:**
       - None
-11. **create_rich_menu**
+12. **create_rich_menu**
     - Create a rich menu based on the given actions. Generate and upload an image. Set as default.
     - **Inputs:**
       - `chatBarText` (string): Text displayed in chat bar, also used as rich menu name.
@@ -74,7 +79,7 @@
         - `richmenuswitch`: For switching to another rich menu
         - `clipboard`: For copying text to clipboard
 
-12. **get_follower_ids**
+13. **get_follower_ids**
     - Get a list of user IDs of users who have added the LINE Official Account as a friend. This allows you to obtain user IDs for sending messages without manually preparing them.
     - **Inputs:**
       - `start` (string?): Continuation token to get the next array of user IDs. Returned in the `next` property of a previous response.
