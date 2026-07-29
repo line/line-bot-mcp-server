@@ -47,19 +47,23 @@
    - Get the list of rich menus associated with your LINE Official Account.
    - **Inputs:**
      - None
-8. **delete_rich_menu**
+8. **get_rich_menu**
+   - Get a rich menu by ID, including its size, chat bar text, and tap areas.
+   - **Inputs:**
+     - `richMenuId` (string): The ID of the rich menu to get.
+9. **delete_rich_menu**
    - Delete a rich menu from your LINE Official Account.
    - **Inputs:**
      - `richMenuId` (string): The ID of the rich menu to delete.
-9. **set_rich_menu_default**
+10. **set_rich_menu_default**
     - Set a rich menu as the default rich menu.
     - **Inputs:**
       - `richMenuId` (string): The ID of the rich menu to set as default.
-10. **cancel_rich_menu_default**
+11. **cancel_rich_menu_default**
     - Cancel the default rich menu.
     - **Inputs:**
       - None
-11. **create_rich_menu**
+12. **create_rich_menu**
     - Create a rich menu based on the given actions. Generate and upload an image. Set as default.
     - **Inputs:**
       - `chatBarText` (string): Text displayed in chat bar, also used as rich menu name.
@@ -74,7 +78,14 @@
         - `richmenuswitch`: For switching to another rich menu
         - `clipboard`: For copying text to clipboard
 
-12. **get_follower_ids**
+13. **update_rich_menu_image**
+    - Replace the image of an existing rich menu. LINE does not allow overwriting an already uploaded rich menu image, so this tool uses a clone-and-replace strategy: it creates a new rich menu with the same definition, uploads the new image, takes over the default assignment if the old menu was the default, and deletes the old menu. As a result, a **new `richMenuId` is issued** and the old one is no longer valid.
+    - **Inputs:**
+      - `richMenuId` (string): The ID of the rich menu whose image to update.
+      - `imagePath` (string): Local file path to the new image. PNG or JPEG, width 800-2500px, height >= 250px, aspect ratio >= 1.45, max 1MB. Dimensions must match the existing rich menu size (e.g. 1600x910).
+      - `deleteOldRichMenu` (boolean?): Whether to delete the old rich menu after replacement. Defaults to true.
+
+14. **get_follower_ids**
     - Get a list of user IDs of users who have added the LINE Official Account as a friend. This allows you to obtain user IDs for sending messages without manually preparing them.
     - **Inputs:**
       - `start` (string?): Continuation token to get the next array of user IDs. Returned in the `next` property of a previous response.
