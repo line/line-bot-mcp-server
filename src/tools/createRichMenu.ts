@@ -1,4 +1,4 @@
-import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
+import { McpServer } from "@modelcontextprotocol/server";
 import { LineBotClient, messagingApi } from "@line/bot-sdk";
 import {
   createErrorResponse,
@@ -33,7 +33,7 @@ export default class CreateRichMenu extends AbstractTool {
         title: "Create Rich Menu",
         description:
           "Create a rich menu based on the given actions. Generate and upload a rich menu image based on the given action. This rich menu will be registered as the default.",
-        inputSchema: {
+        inputSchema: z.object({
           chatBarText: z
             .string()
             .describe(
@@ -44,7 +44,7 @@ export default class CreateRichMenu extends AbstractTool {
             .min(1)
             .max(6)
             .describe("The actions of the rich menu."),
-        },
+        }),
         annotations: {
           destructiveHint: true,
         },

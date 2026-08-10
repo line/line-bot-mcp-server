@@ -1,4 +1,4 @@
-import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
+import { McpServer } from "@modelcontextprotocol/server";
 import { LineBotClient } from "@line/bot-sdk";
 import {
   createErrorResponse,
@@ -25,11 +25,11 @@ export default class SetRichMenuDefault extends AbstractTool {
       {
         title: "Set Rich Menu Default",
         description: "Set a rich menu as the default rich menu.",
-        inputSchema: {
+        inputSchema: z.object({
           richMenuId: richMenuIdSchema.describe(
             "The ID of the rich menu to set as default.",
           ),
-        },
+        }),
         annotations: {
           destructiveHint: true,
         },

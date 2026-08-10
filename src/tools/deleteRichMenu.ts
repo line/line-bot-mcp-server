@@ -1,4 +1,4 @@
-import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
+import { McpServer } from "@modelcontextprotocol/server";
 import { LineBotClient } from "@line/bot-sdk";
 import {
   createErrorResponse,
@@ -25,11 +25,11 @@ export default class DeleteRichMenu extends AbstractTool {
       {
         title: "Delete Rich Menu",
         description: "Delete a rich menu from your LINE Official Account.",
-        inputSchema: {
+        inputSchema: z.object({
           richMenuId: richMenuIdSchema.describe(
             "The ID of the rich menu to delete.",
           ),
-        },
+        }),
         annotations: {
           destructiveHint: true,
         },

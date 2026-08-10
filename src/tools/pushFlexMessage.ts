@@ -1,4 +1,4 @@
-import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
+import { McpServer } from "@modelcontextprotocol/server";
 import { LineBotClient, messagingApi } from "@line/bot-sdk";
 import { z } from "zod";
 import {
@@ -34,10 +34,10 @@ export default class PushFlexMessage extends AbstractTool {
         description:
           "Push a highly customizable flex message to a user via LINE. Supports both bubble (single container) and carousel " +
           "(multiple swipeable bubbles) layouts.",
-        inputSchema: {
+        inputSchema: z.object({
           userId: userIdSchema,
           message: flexMessageSchema,
-        },
+        }),
         annotations: {
           destructiveHint: true,
         },
