@@ -41,6 +41,10 @@
       "description": "Send a rich, customizable flex message to a specific LINE user"
     },
     {
+      "name": "push_flex_messages",
+      "description": "Send one to five Flex messages to a specific LINE user in one request"
+    },
+    {
       "name": "broadcast_text_message",
       "description": "Send a plain text message to all followers"
     },

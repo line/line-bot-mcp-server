@@ -23,41 +23,46 @@ LINE公式アカウントとAI Agentを接続するために、LINE Messaging AP
      - `message.altText` (string): フレックスメッセージが表示できない場合に表示される代替テキスト。
      - `message.contents` (any): フレックスメッセージの内容。メッセージのレイアウトとコンポーネントを定義するJSONオブジェクト。
      - `message.contents.type` (enum): コンテナのタイプ。'bubble'は単一コンテナ、'carousel'は複数のスワイプ可能なバブルを示す。
-3. **broadcast_text_message**
+3. **push_flex_messages**
+   - 1〜5個のフレックスメッセージを、1回のLINE Messaging APIリクエストでユーザーに送信する。各項目は個別のメッセージとして表示されます。スワイプ可能なバブルには、1個のフレックスメッセージ内でcarouselを使用します。
+   - **入力:**
+     - `userId` (string?): メッセージ受信者のユーザーID。デフォルトはDESTINATION_USER_ID。`userId`または`DESTINATION_USER_ID`のどちらか一方は必ず設定する必要があります。
+     - `messages` (array): 1〜5個のフレックスメッセージオブジェクト。各項目は`push_flex_message`の`message`入力と同じスキーマを使用します。
+4. **broadcast_text_message**
    - LINE公式アカウントと友だちになっているすべてのユーザーに、LINEでシンプルなテキストメッセージを送信する。
    - **入力:**
      - `message.text` (string): ユーザーに送信するテキスト。
-4. **broadcast_flex_message**
+5. **broadcast_flex_message**
    - LINE公式アカウントと友だちになっているすべてのユーザーに、LINEで高度にカスタマイズ可能なフレックスメッセージを送信する。
    - **入力:**
      - `message.altText` (string): フレックスメッセージが表示できない場合に表示される代替テキスト。
      - `message.contents` (any): フレックスメッセージの内容。メッセージのレイアウトとコンポーネントを定義するJSONオブジェクト。
      - `message.contents.type` (enum): コンテナのタイプ。'bubble'は単一コンテナ、'carousel'は複数のスワイプ可能なバブルを示す。
-5. **get_profile**
+6. **get_profile**
    - LINEユーザーの詳細なプロフィール情報を取得する。表示名、プロフィール画像URL、ステータスメッセージ、言語を取得できる。
    - **入力:**
       - `userId` (string?): プロフィールを取得したいユーザーのユーザーID。デフォルトはDESTINATION_USER_ID。`userId`または`DESTINATION_USER_ID`のどちらか一方は必ず設定する必要があります。
-6. **get_message_quota**
+7. **get_message_quota**
    - LINE公式アカウントのメッセージ容量と消費量を取得します。月間メッセージ制限と現在の使用量が表示されます。
    - **入力:**
      - なし
-7. **get_rich_menu_list**
+8. **get_rich_menu_list**
    - LINE公式アカウントに登録されているリッチメニューの一覧を取得する。
    - **入力:**
      - なし
-8. **delete_rich_menu**
+9. **delete_rich_menu**
    - LINE公式アカウントからリッチメニューを削除する。
    - **入力:**
      - `richMenuId` (string): 削除するリッチメニューのID。
-9. **set_rich_menu_default**
+10. **set_rich_menu_default**
     - リッチメニューをデフォルトとして設定する。
     - **入力:**
       - `richMenuId` (string): デフォルトとして設定するリッチメニューのID。
-10. **cancel_rich_menu_default**
+11. **cancel_rich_menu_default**
     - デフォルトのリッチメニューを解除する。
     - **入力:**
       - なし
-11. **create_rich_menu**
+12. **create_rich_menu**
     - 指定されたアクションに基づいてリッチメニューを作成。画像を生成してアップロード。デフォルトとして設定する。
     - **入力:**
       - `chatBarText` (string): チャットバー表示、リッチメニュー名にされるテキスト。
@@ -72,7 +77,7 @@ LINE公式アカウントとAI Agentを接続するために、LINE Messaging AP
         - `richmenuswitch`: 別のリッチメニューに切り替える
         - `clipboard`: テキストをクリップボードにコピーする
 
-12. **get_follower_ids**
+13. **get_follower_ids**
     - LINE公式アカウントを友だち追加しているユーザーのユーザーIDリストを取得する。これにより、DESTINATION_USER_IDを手動で準備せずにユーザーIDを取得できる。
     - **入力:**
       - `start` (string?): 次のユーザーID配列を取得するための継続トークン。前回のレスポンスの`next`プロパティから取得できる。
