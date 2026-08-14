@@ -1,7 +1,7 @@
 import { createServer, type IncomingHttpHeaders, type Server } from "node:http";
 import { fileURLToPath } from "node:url";
-import { Client } from "@modelcontextprotocol/sdk/client/index.js";
-import { StdioClientTransport } from "@modelcontextprotocol/sdk/client/stdio.js";
+import { StdioClientTransport } from "@modelcontextprotocol/client/stdio";
+import { Client } from "@modelcontextprotocol/client";
 import { describe, expect, it } from "vitest";
 import { USER_AGENT } from "../../src/version.js";
 
@@ -90,7 +90,7 @@ async function startMockLineApiServer(): Promise<{
 
 describe("push_text_message E2E with localhost mock LINE API", () => {
   it(
-    "routes the tool call through MCP stdio and sends the HTTP request to the mock server",
+    "routes the tool call through MCP stdio (2025-era legacy protocol)",
     { timeout: 30_000 },
     async () => {
       const mockApi = await startMockLineApiServer();
@@ -108,6 +108,7 @@ describe("push_text_message E2E with localhost mock LINE API", () => {
         });
 
         await client.connect(transport);
+        expect(client.getProtocolEra()).toBe("legacy");
 
         const result = await client.callTool({
           name: "push_text_message",
@@ -137,6 +138,60 @@ describe("push_text_message E2E with localhost mock LINE API", () => {
         expect(JSON.parse(mockApi.recordedRequests[0].body)).toEqual({
           to: "U_TEST_DESTINATION",
           messages: [{ type: "text", text: "hello from e2e" }],
+        });
+      } finally {
+        await client.close().catch(() => undefined);
+        await mockApi.close();
+      }
+    },
+  );
+
+  it(
+    "routes the tool call through MCP stdio (2026-07-28 modern protocol)",
+    { timeout: 30_000 },
+    async () => {
+      const mockApi = await startMockLineApiServer();
+      const client = new Client(
+        { name: "test-client", version: "0.0.1" },
+        { versionNegotiation: { mode: "auto" } },
+      );
+
+      try {
+        const transport = new StdioClientTransport({
+          command: process.execPath,
+          args: [DIST_SERVER_ENTRY],
+          env: {
+            CHANNEL_ACCESS_TOKEN: "test-channel-access-token",
+            DESTINATION_USER_ID: "U_TEST_DESTINATION",
+            LINE_MESSAGING_API_BASE_URL: mockApi.baseUrl,
+          },
+        });
+
+        await client.connect(transport);
+        expect(client.getProtocolEra()).toBe("modern");
+
+        const result = await client.callTool({
+          name: "push_text_message",
+          arguments: {
+            message: { type: "text", text: "hello from e2e modern" },
+          },
+        });
+
+        expect(result.isError).toBeFalsy();
+
+        const text = (
+          result.content as Array<{ type: string; text: string }>
+        )[0].text;
+        expect(JSON.parse(text)).toEqual({});
+
+        expect(mockApi.recordedRequests).toHaveLength(1);
+        expect(mockApi.recordedRequests[0]).toMatchObject({
+          method: "POST",
+          url: "/v2/bot/message/push",
+        });
+        expect(JSON.parse(mockApi.recordedRequests[0].body)).toEqual({
+          to: "U_TEST_DESTINATION",
+          messages: [{ type: "text", text: "hello from e2e modern" }],
         });
       } finally {
         await client.close().catch(() => undefined);

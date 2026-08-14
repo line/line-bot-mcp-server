@@ -1,4 +1,4 @@
-import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
+import { McpServer } from "@modelcontextprotocol/server";
 import { LineBotClient, messagingApi } from "@line/bot-sdk";
 import { z } from "zod";
 import {
@@ -33,10 +33,10 @@ export default class PushTextMessage extends AbstractTool {
         title: "Push Text Message",
         description:
           "Push a simple text message to a user via LINE. Use this for sending plain text messages without formatting.",
-        inputSchema: {
+        inputSchema: z.object({
           userId: userIdSchema,
           message: textMessageSchema,
-        },
+        }),
         annotations: {
           destructiveHint: true,
         },

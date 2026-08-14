@@ -1,4 +1,4 @@
-import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
+import { McpServer } from "@modelcontextprotocol/server";
 import { LineBotClient } from "@line/bot-sdk";
 import { z } from "zod";
 import {
@@ -32,9 +32,9 @@ export default class GetProfile extends AbstractTool {
         title: "Get Profile",
         description:
           "Get detailed profile information of a LINE user including display name, profile picture URL, status message and language.",
-        inputSchema: {
+        inputSchema: z.object({
           userId: userIdSchema,
-        },
+        }),
         annotations: {
           readOnlyHint: true,
         },

@@ -1,4 +1,4 @@
-import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
+import { McpServer } from "@modelcontextprotocol/server";
 import { LineBotClient } from "@line/bot-sdk";
 import { z } from "zod";
 import {
@@ -21,7 +21,7 @@ export default class GetFollowerIds extends AbstractTool {
       {
         description:
           "Get a list of user IDs of users who have added the LINE Official Account as a friend. This allows you to obtain user IDs for sending messages without manually preparing them.",
-        inputSchema: {
+        inputSchema: z.object({
           start: z
             .string()
             .optional()
@@ -34,7 +34,7 @@ export default class GetFollowerIds extends AbstractTool {
             .describe(
               "The maximum number of user IDs to retrieve in a single request.",
             ),
-        },
+        }),
         annotations: {
           readOnlyHint: true,
         },
