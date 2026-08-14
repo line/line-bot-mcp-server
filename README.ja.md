@@ -45,19 +45,23 @@ LINE公式アカウントとAI Agentを接続するために、LINE Messaging AP
    - LINE公式アカウントに登録されているリッチメニューの一覧を取得する。
    - **入力:**
      - なし
-8. **delete_rich_menu**
+8. **get_rich_menu**
+   - IDを指定してリッチメニューを取得する。サイズ、チャットバーのテキスト、タップ領域を含む。
+   - **入力:**
+     - `richMenuId` (string): 取得するリッチメニューのID。
+9. **delete_rich_menu**
    - LINE公式アカウントからリッチメニューを削除する。
    - **入力:**
      - `richMenuId` (string): 削除するリッチメニューのID。
-9. **set_rich_menu_default**
+10. **set_rich_menu_default**
     - リッチメニューをデフォルトとして設定する。
     - **入力:**
       - `richMenuId` (string): デフォルトとして設定するリッチメニューのID。
-10. **cancel_rich_menu_default**
+11. **cancel_rich_menu_default**
     - デフォルトのリッチメニューを解除する。
     - **入力:**
       - なし
-11. **create_rich_menu**
+12. **create_rich_menu**
     - 指定されたアクションに基づいてリッチメニューを作成。画像を生成してアップロード。デフォルトとして設定する。
     - **入力:**
       - `chatBarText` (string): チャットバー表示、リッチメニュー名にされるテキスト。
@@ -72,7 +76,14 @@ LINE公式アカウントとAI Agentを接続するために、LINE Messaging AP
         - `richmenuswitch`: 別のリッチメニューに切り替える
         - `clipboard`: テキストをクリップボードにコピーする
 
-12. **get_follower_ids**
+13. **update_rich_menu_image**
+    - 既存リッチメニューの画像を差し替える。LINEでは一度アップロードしたリッチメニュー画像の上書きができないため、clone-and-replace方式を採用する: 同一定義の新しいリッチメニューを作成し、新しい画像をアップロードし、旧メニューがデフォルトの場合はデフォルトを引き継ぎ、旧メニューを削除する。この結果、**新しい`richMenuId`が発行され**、旧`richMenuId`は無効になる。
+    - **入力:**
+      - `richMenuId` (string): 画像を更新するリッチメニューのID。
+      - `imagePath` (string): 新しい画像のローカルファイルパス。PNGまたはJPEG、幅800-2500px、高さ250px以上、アスペクト比1.45以上、最大1MB。寸法は既存のリッチメニューサイズ（例: 1600x910）と一致する必要がある。
+      - `deleteOldRichMenu` (boolean?): 差し替え後に旧リッチメニューを削除するかどうか。デフォルトはtrue。
+
+14. **get_follower_ids**
     - LINE公式アカウントを友だち追加しているユーザーのユーザーIDリストを取得する。これにより、DESTINATION_USER_IDを手動で準備せずにユーザーIDを取得できる。
     - **入力:**
       - `start` (string?): 次のユーザーID配列を取得するための継続トークン。前回のレスポンスの`next`プロパティから取得できる。
