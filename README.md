@@ -79,6 +79,10 @@
     - **Inputs:**
       - `start` (string?): Continuation token to get the next array of user IDs. Returned in the `next` property of a previous response.
       - `limit` (number?): The maximum number of user IDs to retrieve in a single request.
+13. **get_group_summary**
+    - Get the group chat summary including group ID, group name, and group icon URL, using the group ID.
+    - **Inputs:**
+      - `groupId` (string): The group ID of the target group chat.
 
 ## Installation (Using npx)
 
