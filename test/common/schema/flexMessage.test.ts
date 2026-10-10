@@ -99,3 +99,65 @@ describe("flexMessageSchema URL validation", () => {
     }
   });
 });
+
+describe("flexMessageSchema size values", () => {
+  const box = (props: object) => ({
+    type: "box",
+    layout: "vertical",
+    contents: [{ type: "text", text: "hi" }],
+    ...props,
+  });
+
+  it.each([
+    { width: "50%" },
+    { width: "23.5px" },
+    { height: "30%" },
+    { paddingAll: "md" },
+    { paddingTop: "5%" },
+    { paddingStart: "12.5px" },
+    { spacing: "10px" },
+    { margin: "8px" },
+    { offsetTop: "md" },
+    { offsetStart: "10%" },
+    { cornerRadius: "lg" },
+    { cornerRadius: "8px" },
+    { borderWidth: "semi-bold" },
+    { borderWidth: "2px" },
+  ])("accepts documented box value %o", props => {
+    expect(flexMessageSchema.safeParse(toFlexMessage(box(props))).success).toBe(
+      true,
+    );
+  });
+
+  it.each([
+    { type: "text", text: "hi", size: "18px" },
+    { type: "icon", url: "https://example.com/i.png", size: "20.5px" },
+    { type: "image", url: "https://example.com/i.png", size: "50%" },
+    { type: "image", url: "https://example.com/i.png", size: "120px" },
+  ])("accepts documented component size %o", component => {
+    expect(flexMessageSchema.safeParse(toFlexMessage(component)).success).toBe(
+      true,
+    );
+  });
+
+  it.each([
+    { width: "md" },
+    { spacing: "10%" },
+    { margin: "5%" },
+    { cornerRadius: "10%" },
+    { borderWidth: "thick" },
+    { paddingAll: "10" },
+  ])("rejects undocumented box value %o", props => {
+    expect(flexMessageSchema.safeParse(toFlexMessage(box(props))).success).toBe(
+      false,
+    );
+  });
+
+  it("rejects percentage for text size", () => {
+    expect(
+      flexMessageSchema.safeParse(
+        toFlexMessage({ type: "text", text: "hi", size: "50%" }),
+      ).success,
+    ).toBe(false);
+  });
+});

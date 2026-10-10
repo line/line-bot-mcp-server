@@ -1,6 +1,18 @@
 import { z } from "zod";
 
-const sizeSchema = z.enum([
+// https://developers.line.biz/en/docs/messaging-api/flex-message-layout/
+const pixelSchema = z.string().regex(/^\d+(\.\d+)?px$/, "Format: '10px'");
+const percentSchema = z.string().regex(/^\d+(\.\d+)?%$/, "Format: '50%'");
+const spaceKeywordSchema = z.enum([
+  "none",
+  "xs",
+  "sm",
+  "md",
+  "lg",
+  "xl",
+  "xxl",
+]);
+const sizeKeywordSchema = z.enum([
   "xxs",
   "xs",
   "sm",
@@ -12,25 +24,20 @@ const sizeSchema = z.enum([
   "4xl",
   "5xl",
 ]);
-const imageSizeSchema = z.enum([
-  "xxs",
-  "xs",
-  "sm",
-  "md",
-  "lg",
-  "xl",
-  "xxl",
-  "3xl",
-  "4xl",
-  "5xl",
-  "full",
+const sizeSchema = z.union([sizeKeywordSchema, pixelSchema]);
+const imageSizeSchema = z.union([
+  z.enum([...sizeKeywordSchema.options, "full"]),
+  pixelSchema,
+  percentSchema,
 ]);
-const marginSchema = z.enum(["none", "xs", "sm", "md", "lg", "xl", "xxl"]);
-const spacingSchema = z.enum(["none", "xs", "sm", "md", "lg", "xl", "xxl"]);
+const marginSchema = z.union([spaceKeywordSchema, pixelSchema]);
+const spacingSchema = z.union([spaceKeywordSchema, pixelSchema]);
+const paddingSchema = z.union([spaceKeywordSchema, pixelSchema, percentSchema]);
+const boxLengthSchema = z.union([pixelSchema, percentSchema]);
 const positionSchema = z.enum(["relative", "absolute"]);
 const alignSchema = z.enum(["start", "end", "center"]);
 const gravitySchema = z.enum(["top", "bottom", "center"]);
-const offsetSchema = z.string().regex(/^\d+px$/, "Format: '10px'");
+const offsetSchema = z.union([spaceKeywordSchema, pixelSchema, percentSchema]);
 const colorSchema = z
   .string()
   .regex(/^#[0-9A-Fa-f]{6}$/, "Hex format: '#FF0000'");
@@ -66,26 +73,11 @@ const textStyleFields = {
 };
 
 const paddingFields = {
-  paddingAll: z
-    .string()
-    .regex(/^\d+px$/)
-    .optional(),
-  paddingTop: z
-    .string()
-    .regex(/^\d+px$/)
-    .optional(),
-  paddingBottom: z
-    .string()
-    .regex(/^\d+px$/)
-    .optional(),
-  paddingStart: z
-    .string()
-    .regex(/^\d+px$/)
-    .optional(),
-  paddingEnd: z
-    .string()
-    .regex(/^\d+px$/)
-    .optional(),
+  paddingAll: paddingSchema.optional(),
+  paddingTop: paddingSchema.optional(),
+  paddingBottom: paddingSchema.optional(),
+  paddingStart: paddingSchema.optional(),
+  paddingEnd: paddingSchema.optional(),
 };
 
 const flexActionSchema = z.discriminatedUnion("type", [
@@ -279,22 +271,15 @@ const flexComponentSchema: z.ZodType<any> = z.lazy(() =>
       backgroundColor: colorSchema.optional(),
       borderColor: colorSchema.optional(),
       borderWidth: z
-        .string()
-        .regex(/^\d+px$/)
+        .union([
+          z.enum(["none", "light", "normal", "medium", "semi-bold", "bold"]),
+          pixelSchema,
+        ])
         .optional(),
-      cornerRadius: z
-        .string()
-        .regex(/^\d+px$/)
-        .optional(),
+      cornerRadius: z.union([spaceKeywordSchema, pixelSchema]).optional(),
       spacing: spacingSchema.optional(),
-      width: z
-        .string()
-        .regex(/^\d+px$/)
-        .optional(),
-      height: z
-        .string()
-        .regex(/^\d+px$/)
-        .optional(),
+      width: boxLengthSchema.optional(),
+      height: boxLengthSchema.optional(),
       justifyContent: z
         .enum([
           "flex-start",
