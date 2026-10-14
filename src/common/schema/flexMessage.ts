@@ -25,6 +25,7 @@ const sizeKeywordSchema = z.enum([
   "5xl",
 ]);
 const sizeSchema = z.union([sizeKeywordSchema, pixelSchema]);
+const iconSizeSchema = z.union([sizeKeywordSchema, pixelSchema, percentSchema]);
 const imageSizeSchema = z.union([
   z.enum([...sizeKeywordSchema.options, "full"]),
   pixelSchema,
@@ -187,7 +188,7 @@ const flexComponentSchema: z.ZodType<any> = z.lazy(() =>
         .min(1)
         .max(2000)
         .refine(url => url.startsWith("https://"), "Must use HTTPS protocol"),
-      size: sizeSchema.optional(),
+      size: iconSizeSchema.optional(),
       aspectRatio: z
         .string()
         .regex(/^\d+:\d+$/)

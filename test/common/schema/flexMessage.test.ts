@@ -132,6 +132,7 @@ describe("flexMessageSchema size values", () => {
   it.each([
     { type: "text", text: "hi", size: "18px" },
     { type: "icon", url: "https://example.com/i.png", size: "20.5px" },
+    { type: "icon", url: "https://example.com/i.png", size: "50%" },
     { type: "image", url: "https://example.com/i.png", size: "50%" },
     { type: "image", url: "https://example.com/i.png", size: "120px" },
   ])("accepts documented component size %o", component => {
