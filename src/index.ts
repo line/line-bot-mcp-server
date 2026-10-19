@@ -32,6 +32,7 @@ import SetRichMenuDefault from "./tools/setRichMenuDefault.js";
 import CreateRichMenu from "./tools/createRichMenu.js";
 import GetFollowerIds from "./tools/getFollowerIds.js";
 import GetGroupSummary from "./tools/getGroupSummary.js";
+import GetNumberOfFollowers from "./tools/getNumberOfFollowers.js";
 
 if (!process.env.CHANNEL_ACCESS_TOKEN) {
   console.error("Please set CHANNEL_ACCESS_TOKEN");
@@ -70,6 +71,7 @@ serveStdio(
     new CreateRichMenu(lineBotClient).register(server);
     new GetFollowerIds(lineBotClient).register(server);
     new GetGroupSummary(lineBotClient).register(server);
+    new GetNumberOfFollowers(lineBotClient).register(server);
 
     return server;
   },

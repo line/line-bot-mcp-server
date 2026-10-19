@@ -7,6 +7,7 @@ export function createMockLineBotClient() {
     broadcast: vi.fn(),
     getProfile: vi.fn(),
     getGroupSummary: vi.fn(),
+    getNumberOfFollowers: vi.fn(),
     getMessageQuota: vi.fn(),
     getMessageQuotaConsumption: vi.fn(),
     getRichMenuList: vi.fn(),
