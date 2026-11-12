@@ -83,6 +83,10 @@
     - Get the group chat summary including group ID, group name, and group icon URL, using the group ID.
     - **Inputs:**
       - `groupId` (string): The group ID of the target group chat.
+14. **get_number_of_followers**
+    - Get the number of followers of the LINE Official Account as of a specified date: total friend adds, users reachable by targeted messages, and users blocking the account.
+    - **Inputs:**
+      - `date` (string): Date for which to retrieve the number of followers. Format: yyyyMMdd (e.g. 20191231). Timezone: UTC+9.
 
 ## Installation (Using npx)
 
