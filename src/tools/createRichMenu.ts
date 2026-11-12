@@ -109,6 +109,15 @@ export default class CreateRichMenu extends AbstractTool {
           });
         } catch (error) {
           console.error("Rich menu creation error:", error);
+          let cleanupError: string | undefined;
+          const createdRichMenuId = createRichMenuResponse?.richMenuId;
+          if (createdRichMenuId) {
+            try {
+              await this.client.deleteRichMenu(createdRichMenuId);
+            } catch (deleteError) {
+              cleanupError = `Failed to delete partially created rich menu ${createdRichMenuId}: ${deleteError instanceof Error ? deleteError.message : String(deleteError)}`;
+            }
+          }
           return createErrorResponse(
             JSON.stringify({
               error: error instanceof Error ? error.message : String(error),
@@ -116,6 +125,7 @@ export default class CreateRichMenu extends AbstractTool {
               createRichMenuResponse,
               setImageResponse,
               setDefaultResponse,
+              cleanupError,
             }),
           );
         }
@@ -211,21 +221,24 @@ async function generateRichMenuImage(
       "--disable-extensions",
     ],
   });
-  const page = await browser.newPage();
-  await page.setViewport({ width: RICHMENU_WIDTH, height: RICHMENU_HEIGHT });
-  await page.goto(`file://${tempHtmlPath}`, {
-    waitUntil: "networkidle0",
-  });
+  try {
+    const page = await browser.newPage();
+    await page.setViewport({ width: RICHMENU_WIDTH, height: RICHMENU_HEIGHT });
+    await page.goto(`file://${tempHtmlPath}`, {
+      waitUntil: "networkidle0",
+    });
 
-  // Wait for fonts to load
-  await page.evaluate(() => document.fonts.ready);
-  await new Promise(resolve => setTimeout(resolve, 2000));
+    // Wait for fonts to load
+    await page.evaluate(() => document.fonts.ready);
+    await new Promise(resolve => setTimeout(resolve, 2000));
 
-  await page.screenshot({
-    path: richMenuImagePath as `${string}.png`,
-    clip: { x: 0, y: 0, width: RICHMENU_WIDTH, height: RICHMENU_HEIGHT },
-  });
-  await browser.close();
+    await page.screenshot({
+      path: richMenuImagePath as `${string}.png`,
+      clip: { x: 0, y: 0, width: RICHMENU_WIDTH, height: RICHMENU_HEIGHT },
+    });
+  } finally {
+    await browser.close();
+  }
 
   // Save image to output directory
   const outputPath = path.join("/tmp", path.basename(richMenuImagePath));
