@@ -48,6 +48,7 @@ vi.mock("fs", async importOriginal => {
 });
 
 // Import after mocks are set up
+import puppeteer from "puppeteer";
 import CreateRichMenu from "../../src/tools/createRichMenu.js";
 
 describe("create_rich_menu tool", () => {
@@ -271,6 +272,99 @@ describe("create_rich_menu tool", () => {
       const text = (result.content as Array<{ type: string; text: string }>)[0]
         .text;
       expect(text).toContain("API error");
+      expect(mockLineClient.deleteRichMenu).not.toHaveBeenCalled();
+    },
+  );
+
+  it(
+    "deletes the created rich menu when image upload fails",
+    { timeout: 10000 },
+    async () => {
+      vi.mocked(mockLineClient.createRichMenu).mockResolvedValue({
+        richMenuId: "richmenu-new-123",
+      } as never);
+      vi.mocked(mockLineClient.setRichMenuImage).mockRejectedValue(
+        new Error("upload failed"),
+      );
+      vi.mocked(mockLineClient.deleteRichMenu).mockResolvedValue({} as never);
+
+      const result = await client.callTool({
+        name: "create_rich_menu",
+        arguments: {
+          chatBarText: "My Menu",
+          actions: [{ type: "message", label: "Action 1", text: "action1" }],
+        },
+      });
+
+      expect(result.isError).toBe(true);
+      expect(mockLineClient.deleteRichMenu).toHaveBeenCalledWith(
+        "richmenu-new-123",
+      );
+      expect(mockLineClient.setDefaultRichMenu).not.toHaveBeenCalled();
+    },
+  );
+
+  it(
+    "closes the browser and deletes the rich menu when image generation fails",
+    { timeout: 10000 },
+    async () => {
+      vi.mocked(mockLineClient.createRichMenu).mockResolvedValue({
+        richMenuId: "richmenu-new-123",
+      } as never);
+      vi.mocked(mockLineClient.deleteRichMenu).mockResolvedValue({} as never);
+      const browser = await puppeteer.launch();
+      const page = await browser.newPage();
+      vi.mocked(page.screenshot).mockRejectedValueOnce(
+        new Error("screenshot failed"),
+      );
+      vi.mocked(browser.close).mockClear();
+
+      const result = await client.callTool({
+        name: "create_rich_menu",
+        arguments: {
+          chatBarText: "My Menu",
+          actions: [{ type: "message", label: "Action 1", text: "action1" }],
+        },
+      });
+
+      expect(result.isError).toBe(true);
+      expect(browser.close).toHaveBeenCalledTimes(1);
+      expect(mockLineClient.deleteRichMenu).toHaveBeenCalledWith(
+        "richmenu-new-123",
+      );
+      expect(mockLineClient.setRichMenuImage).not.toHaveBeenCalled();
+    },
+  );
+
+  it(
+    "reports cleanup failure when deleting the rich menu also fails",
+    { timeout: 10000 },
+    async () => {
+      vi.mocked(mockLineClient.createRichMenu).mockResolvedValue({
+        richMenuId: "richmenu-new-123",
+      } as never);
+      vi.mocked(mockLineClient.setRichMenuImage).mockRejectedValue(
+        new Error("upload failed"),
+      );
+      vi.mocked(mockLineClient.deleteRichMenu).mockRejectedValue(
+        new Error("delete failed"),
+      );
+
+      const result = await client.callTool({
+        name: "create_rich_menu",
+        arguments: {
+          chatBarText: "My Menu",
+          actions: [{ type: "message", label: "Action 1", text: "action1" }],
+        },
+      });
+
+      expect(result.isError).toBe(true);
+      const text = (result.content as Array<{ type: string; text: string }>)[0]
+        .text;
+      const parsed = JSON.parse(text);
+      expect(parsed.error).toBe("upload failed");
+      expect(parsed.cleanupError).toContain("richmenu-new-123");
+      expect(parsed.cleanupError).toContain("delete failed");
     },
   );
 });
